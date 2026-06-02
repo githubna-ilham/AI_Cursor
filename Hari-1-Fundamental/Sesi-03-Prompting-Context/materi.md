@@ -39,7 +39,7 @@ flowchart TD
     P --> C[Context]
     P --> X[Constraint]
     R --> Re[Reasoning style]
-    C --> F[@file @folder @docs @web]
+    C --> F["@file @folder @docs @web"]
     X --> A[Acceptance criteria]
 ```
 
@@ -102,11 +102,11 @@ Setiap model punya **token window** terbatas (puluhan ribu hingga jutaan). Atura
 ```mermaid
 flowchart LR
     Q[Question] --> S{Scope?}
-    S -- "1 file" --> F[@file]
-    S -- "1 fungsi lintas file" --> C[@code symbol]
-    S -- "arsitektur" --> Fo[@folder ringkas]
-    S -- "API external" --> D[@docs]
-    S -- "info terbaru" --> W[@web]
+    S -- "1 file" --> F["@file"]
+    S -- "1 fungsi lintas file" --> C["@code symbol"]
+    S -- "arsitektur" --> Fo["@folder ringkas"]
+    S -- "API external" --> D["@docs"]
+    S -- "info terbaru" --> W["@web"]
 ```
 
 ### 1.6 Tiga Pola Prompting (Detail)

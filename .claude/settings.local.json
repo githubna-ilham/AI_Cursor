@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk git *)",
+      "Bash(rtk ls *)",
+      "Bash(rtk find *)",
+      "Bash(/usr/bin/find . -name \"speaker-notes.md\" -not -path \"./.git/*\")",
+      "Bash(/usr/bin/find . -name \"diskusi.md\" -not -path \"./.git/*\")",
+      "Bash(/usr/bin/find . -type d -name \"lab-*\" -not -path \"./.git/*\")",
+      "Bash(rtk grep *)"
+    ]
+  }
+}
