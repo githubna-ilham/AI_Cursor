@@ -138,33 +138,7 @@ Mitigasi (akan Anda pelajari mendalam di Hari 3 Sesi 10 — Security & Governanc
 
 ---
 
-## 2. Refleksi Pribadi
-
-Sebelum lanjut ke Sesi 2, luangkan **10 menit** untuk menjawab 5 pertanyaan ini di catatan pribadi Anda. Jawaban ini akan Anda pakai sendiri sebagai acuan saat memilih *use case* di Latihan 03 (Sesi 4):
-
-1. Pekerjaan rutin apa di sprint terakhir Anda yang **paling cocok** didelegasikan ke AI? Mengapa?
-2. Pekerjaan apa yang menurut Anda **tidak boleh** didelegasikan ke AI? Apa alasannya?
-3. Apa 1 ketakutan terbesar Anda tentang AI coding di tim?
-4. Setelah membaca materi ini, definisi "developer senior" di tim Anda berubah atau tidak? Bagaimana?
-5. Metrik apa yang akan Anda pakai untuk mengukur "AI ini benar-benar membantu saya"?
-
----
-
-## 3. Studi Kasus Project: DevNotes
-
-Mulai Sesi 2, semua latihan 3 hari akan dirangkai membangun **satu aplikasi**: **DevNotes** — catatan pembelajaran teknis untuk developer.
-
-Ringkas alur 3 hari:
-
-- **Hari 1** — Anda bangun web statis DevNotes (HTML/CSS/JS, data dummy + localStorage).
-- **Hari 2** — migrasi ke Next.js + Supabase + Vercel, BE punya API & auth.
-- **Hari 3** — FE Next.js konsumsi BE, deploy final, demo end-to-end.
-
-Baca BRD lengkap (FR/NFR, model data, mockup, flow) di [`/project-brd.md`](../../project-brd.md) — minimal Section 1 (Latar Belakang), Section 4 (Ruang Lingkup), dan Section 11 (Mockup) sebelum memulai Sesi 2.
-
----
-
-## 4. Bacaan Lanjutan
+## 2. Bacaan Lanjutan
 
 - Cursor — *Welcome to Cursor*: <https://cursor.com/docs/get-started/welcome>
 - Cursor — *Models overview*: <https://cursor.com/docs/models>
