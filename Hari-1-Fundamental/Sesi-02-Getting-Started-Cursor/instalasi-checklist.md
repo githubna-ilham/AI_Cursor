@@ -57,6 +57,37 @@ Gunakan checklist ini **sebelum** Sesi 2 dimulai bila memungkinkan, atau pandu p
 
 ---
 
+## 3a. Plan & Quota Awareness (PENTING — baca sebelum hari pelatihan)
+
+Cursor membatasi penggunaan AI lewat **request count**, bukan token. Cek halaman resmi <https://cursor.com/pricing> untuk angka terbaru (sering berubah). Gambaran umum:
+
+| Plan                  | Premium Requests           | Cocok untuk                                    |
+| --------------------- | -------------------------- | ---------------------------------------------- |
+| **Hobby (Free)**      | ~50 request premium/bulan + Tab autocomplete unlimited (model kecil) | Eksplorasi ringan; **TIDAK cukup untuk 3 hari pelatihan intensif** |
+| **Pro Trial**         | Akses penuh selama 2 minggu sejak sign-up | Cocok bila peserta baru daftar maksimal H-14 |
+| **Pro** ($20/bulan)   | ~500 request premium/bulan | Rekomendasi untuk peserta yang ingin lanjut pakai pasca-pelatihan |
+| **Business / Team**   | Lebih besar + admin & privacy controls | Rekomendasi untuk adopsi tim/organisasi |
+
+**Yang dihitung sebagai 1 premium request:**
+- 1 Chat (Cmd+L) ke model premium (Sonnet/Opus/GPT/Gemini)
+- 1 Inline Edit (Cmd+K) ke model premium
+- 1 Agent / Composer (Cmd+I) — 1 task multi-step bisa makan 1 atau lebih request
+
+**Yang TIDAK menghabiskan premium request:**
+- Tab autocomplete (model kecil)
+- Chat/Cmd+K ke model auto/free fallback
+
+### Rekomendasi untuk peserta pelatihan
+
+- [ ] **Idealnya pakai Pro Trial** — daftar akun H-1 sampai maksimal H-14 sebelum hari pertama agar trial aktif selama 3 hari pelatihan.
+- [ ] Bila tidak mau bayar: gunakan **Auto model** sebanyak mungkin untuk hemat request, simpan request premium untuk lab yang kompleks (Hari 2-3).
+- [ ] Bila peserta sudah Pro berbayar: tidak perlu khawatir, kuota cukup.
+- [ ] Fasilitator: bila organisasi mengadakan pelatihan tim, pertimbangkan **Business plan** terlebih dahulu.
+
+> ⚠️ Free tier 50 request/bulan biasanya **habis di pertengahan Hari 1**. Pastikan peserta tahu pilihannya sebelum hari pertama agar tidak terganggu.
+
+---
+
 ## 4. Verifikasi Versi & Update
 
 - [ ] Buka **Help → About** (atau Cmd/Ctrl+Shift+P → "About").
