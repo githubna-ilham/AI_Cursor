@@ -144,13 +144,13 @@ Tiga prinsip yang harus disepakati tim:
 
 ---
 
-## 4. Hands-on Lab
+## 4. Hands-on Latihan
 
-**Lokasi lab**: [`./lab-08-git-cicd-workflow/`](./lab-08-git-cicd-workflow/README.md)
+**Lokasi latihan**: [`./latihan-08-git-cicd-workflow/`](./latihan-08-git-cicd-workflow/README.md)
 
 **Briefing singkat**: Peserta bekerja pada repo demo `cursor-orders-api`. Tugas: (1) buat feature branch, (2) implement endpoint sederhana, (3) generate commit + PR description via Cursor, (4) tambahkan workflow CI minimal, (5) simulasikan code review dengan rekan sebelah.
 
-**Durasi lab**: 30 menit.
+**Durasi latihan**: 30 menit.
 
 ---
 

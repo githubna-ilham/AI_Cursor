@@ -96,8 +96,7 @@ AI_CURSOR/
 Setiap sesi mengikuti format seragam:
 
 - `materi.md` — bahan utama (slide-friendly, bisa di-render dengan Marp/reveal.js)
-- `speaker-notes.md` — cue fasilitator, alokasi waktu, jawaban kunci
-- `lab-*/` — folder hands-on dengan `README.md` (brief + rubrik) dan kode stack-specific
+- `latihan-*/` — folder hands-on dengan `README.md` (brief + rubrik) dan kode stack-specific
 
 ## Kontak
 

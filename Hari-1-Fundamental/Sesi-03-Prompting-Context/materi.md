@@ -178,10 +178,10 @@ Pesan kunci: **prompt yang baik adalah investasi, bukan biaya**.
 
 ---
 
-## 3. Hands-on Lab
+## 3. Hands-on Latihan
 
-**Lab 02 — Prompting Drill** (35 menit).
-Lokasi: `./lab-02-prompting-drill/README.md`.
+**Latihan 02 — Prompting Drill** (35 menit).
+Lokasi: `./latihan-02-prompting-drill/README.md`.
 
 Briefing: peserta diberi 5 skenario, harus menulis prompt produksi dan mengeksekusinya di Cursor, lalu menilai sendiri dengan rubrik.
 

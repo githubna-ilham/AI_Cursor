@@ -55,16 +55,13 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 ├── README.md                                  (file ini)
 ├── Sesi-09-Advanced-Workflow/
 │   ├── materi.md
-│   ├── speaker-notes.md
-│   └── lab-08-git-cicd-workflow/
+│   └── latihan-08-git-cicd-workflow/
 │       └── README.md
 ├── Sesi-10-Security-Ethics-Governance/
 │   ├── materi.md
-│   ├── speaker-notes.md
 │   └── studi-kasus-kebocoran-data.md
 ├── Sesi-11-Best-Practices-Performance/
-│   ├── materi.md
-│   └── speaker-notes.md
+│   └── materi.md
 └── Sesi-12-Capstone/
     ├── panduan-capstone.md
     ├── opsi-project.md

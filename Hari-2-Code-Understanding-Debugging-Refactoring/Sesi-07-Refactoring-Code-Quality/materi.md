@@ -151,9 +151,9 @@ Langkah:
 4. **Decompose Conditional** — pisahkan business logic, commit.
 5. **Verify** — semua test masih green, complexity turun.
 
-## Hands-on Lab
+## Hands-on Latihan
 
-Lihat [`lab-06-refactor-legacy/`](./lab-06-refactor-legacy/).
+Lihat [`latihan-06-refactor-legacy/`](./latihan-06-refactor-legacy/).
 
 ## Wrap-up & Q&A
 

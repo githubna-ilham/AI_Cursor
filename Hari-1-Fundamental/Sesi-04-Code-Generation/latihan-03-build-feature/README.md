@@ -114,7 +114,7 @@ src/
 5.3. Tulis 1 commit terakhir kalau ada polish: `chore(notes): lint + fix`.
 
 ### 6. Refleksi (5')
-Tulis di `submissions/<nama>/lab-03-refleksi.md`:
+Tulis di `submissions/<nama>/latihan-03-refleksi.md`:
 - Rasio waktu prompt : review : manual.
 - 1 hallucination/bug yang Anda temukan & cara menemukannya.
 - 1 hal yang akan dilakukan berbeda kalau diulang.

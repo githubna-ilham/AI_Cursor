@@ -151,11 +151,11 @@ Pesan kunci yang harus tersampaikan: **kecepatan datang dari kemampuan review, b
 
 ---
 
-## 3. Hands-on Lab
+## 3. Hands-on Latihan
 
-Sesi 1 belum ada lab teknis — fokus pada **diskusi kelompok**. Lihat `diskusi.md`.
+Sesi 1 belum ada latihan teknis — fokus pada **diskusi kelompok** dipandu fasilitator.
 
-Output diskusi (peta use case per peserta) akan dipakai sebagai input untuk **Lab 03** di Sesi 4.
+Output diskusi (peta use case per peserta) akan dipakai sebagai input untuk **Latihan 03** di Sesi 4.
 
 ---
 

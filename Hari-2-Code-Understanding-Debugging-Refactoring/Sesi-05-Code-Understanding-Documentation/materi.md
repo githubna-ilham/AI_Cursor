@@ -111,9 +111,9 @@ Langkah:
 4. **Generate ADR singkat** — Prompt: `Buat ADR untuk pilihan arsitektur Y, format MADR`. Diskusi: bagian mana yang fiktif vs faktual.
 5. **Verifikasi** — Buka 2 klaim AI yang paling mencurigakan, validasi bersama peserta.
 
-## Hands-on Lab
+## Hands-on Latihan
 
-Lihat folder [`lab-04-eksplorasi-codebase/`](./lab-04-eksplorasi-codebase/).
+Lihat folder [`latihan-04-eksplorasi-codebase/`](./latihan-04-eksplorasi-codebase/).
 
 Briefing singkat: peserta dipasangkan, memilih satu open-source repo (atau repo internal yang disediakan), dan dalam 45 menit menghasilkan:
 

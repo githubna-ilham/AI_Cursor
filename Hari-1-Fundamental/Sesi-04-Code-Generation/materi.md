@@ -183,10 +183,10 @@ Pesan kunci: **6 langkah kecil, masing-masing reviewable, masing-masing testable
 
 ---
 
-## 3. Hands-on Lab
+## 3. Hands-on Latihan
 
-**Lab 03 — Build a Small Feature** (45 menit).
-Lokasi: `./lab-03-build-feature/README.md`.
+**Latihan 03 — Build a Small Feature** (45 menit).
+Lokasi: `./latihan-03-build-feature/README.md`.
 
 Briefing:
 - Peserta diberi user story (sesuaikan stack peserta) — fitur CRUD ringan.

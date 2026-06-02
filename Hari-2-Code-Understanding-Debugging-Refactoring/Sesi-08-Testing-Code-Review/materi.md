@@ -153,9 +153,9 @@ Langkah:
 4. **Validasi 2 test** — apply, jalankan, lihat green/red.
 5. **Susun komentar PR** — konversi temuan jadi 3 komentar konstruktif.
 
-## Hands-on Lab
+## Hands-on Latihan
 
-Lihat [`lab-07-testing-review/`](./lab-07-testing-review/).
+Lihat [`latihan-07-testing-review/`](./latihan-07-testing-review/).
 
 ## Wrap-up & Q&A
 

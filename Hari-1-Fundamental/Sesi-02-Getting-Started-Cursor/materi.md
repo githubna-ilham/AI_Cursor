@@ -159,10 +159,10 @@ Pesan kunci: **4 cara berinteraksi (Tab, K, Chat, Composer)** — tiap cara puny
 
 ---
 
-## 3. Hands-on Lab
+## 3. Hands-on Latihan
 
-**Lab 01 — Tour Cursor** (20 menit).
-Lokasi: `./lab-01-tour-cursor/README.md`.
+**Latihan 01 — Tour Cursor** (20 menit).
+Lokasi: `./latihan-01-tour-cursor/README.md`.
 
 Briefing singkat:
 - Peserta install Cursor, login, import settings.

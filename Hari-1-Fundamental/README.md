@@ -71,23 +71,18 @@ flowchart LR
 Hari-1-Fundamental/
 ├── README.md                                  <- file ini
 ├── Sesi-01-Introduction-AI-Coding/
-│   ├── materi.md
-│   ├── speaker-notes.md
-│   └── diskusi.md
+│   └── materi.md
 ├── Sesi-02-Getting-Started-Cursor/
 │   ├── materi.md
-│   ├── speaker-notes.md
 │   ├── instalasi-checklist.md
-│   └── lab-01-tour-cursor/README.md
+│   └── latihan-01-tour-cursor/README.md
 ├── Sesi-03-Prompting-Context/
 │   ├── materi.md
-│   ├── speaker-notes.md
 │   ├── prompting-cheatsheet.md
-│   └── lab-02-prompting-drill/README.md
+│   └── latihan-02-prompting-drill/README.md
 └── Sesi-04-Code-Generation/
     ├── materi.md
-    ├── speaker-notes.md
-    └── lab-03-build-feature/README.md
+    └── latihan-03-build-feature/README.md
 ```
 
 ---

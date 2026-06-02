@@ -121,9 +121,9 @@ Langkah:
 4. **Minta 3 hipotesis + verifikasi** — pilih hipotesis paling mungkin, buat unit test reproduksi.
 5. **Fix + regression test** — tunjukkan fix yang behaviour-preserving.
 
-## Hands-on Lab
+## Hands-on Latihan
 
-Lihat [`lab-05-debugging-studi-kasus/`](./lab-05-debugging-studi-kasus/).
+Lihat [`latihan-05-debugging-studi-kasus/`](./latihan-05-debugging-studi-kasus/).
 
 3 skenario disediakan: off-by-one, race condition, null reference. Peserta wajib menyelesaikan minimal 2 dari 3.
 

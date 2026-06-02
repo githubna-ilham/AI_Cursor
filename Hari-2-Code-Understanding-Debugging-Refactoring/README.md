@@ -56,20 +56,16 @@ Hari-2-Code-Understanding-Debugging-Refactoring/
 ├── README.md                          (file ini)
 ├── Sesi-05-Code-Understanding-Documentation/
 │   ├── materi.md
-│   ├── speaker-notes.md
-│   └── lab-04-eksplorasi-codebase/
+│   └── latihan-04-eksplorasi-codebase/
 ├── Sesi-06-Debugging-Error-Analysis/
 │   ├── materi.md
-│   ├── speaker-notes.md
-│   └── lab-05-debugging-studi-kasus/
+│   └── latihan-05-debugging-studi-kasus/
 ├── Sesi-07-Refactoring-Code-Quality/
 │   ├── materi.md
-│   ├── speaker-notes.md
-│   └── lab-06-refactor-legacy/
+│   └── latihan-06-refactor-legacy/
 └── Sesi-08-Testing-Code-Review/
     ├── materi.md
-    ├── speaker-notes.md
-    └── lab-07-testing-review/
+    └── latihan-07-testing-review/
 ```
 
 ## Catatan Fasilitator
