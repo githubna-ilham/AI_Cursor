@@ -134,15 +134,17 @@ Prompt pertama jarang sempurna. Loop:
 3. **Beri umpan balik** spesifik (bukan "ini salah, coba lagi"). Contoh: *"Bagian transactional belum dibungkus, dan nama variabel masih camelCase padahal repo ini pakai snake_case."*
 4. **Ulangi** maks 3–4 kali. Jika belum konvergen, *reset* dengan prompt baru yang lebih spesifik.
 
-### 1.8 Anti-pattern Prompting
+### 1.8 Kebiasaan Prompting yang Sering Gagal
 
-| Anti-pattern | Contoh | Fix |
-|--------------|--------|-----|
-| Terlalu vague | "buatkan login" | "buat endpoint POST /login pakai JWT, validasi pakai zod, tulis test" |
-| Multi-tujuan | "buat login, register, reset password, lupa password" | Pecah jadi 4 prompt |
-| Tanpa konteks | "kenapa kode ini lambat?" | "kenapa `@file query.ts` lambat saat input >10rb baris?" |
-| Argumentatif | "kamu salah, harusnya begini" | "Saya melihat X di output; expected Y; tolong jelaskan asumsi yang dipakai" |
-| Over-spec | 30-baris constraint untuk task 10-baris | Pakai 3 constraint paling kritikal |
+Lima pola prompt yang **terlihat masuk akal tapi konsisten menghasilkan output buruk**. Kenali dan hindari sejak hari pertama.
+
+| Kebiasaan buruk            | Contoh prompt                                              | Cara membenahi                                                                |
+| -------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Terlalu samar**          | "buatkan login"                                            | "buat endpoint POST /login pakai JWT, validasi pakai zod, tulis test"         |
+| **Banyak tujuan sekaligus**| "buat login, register, reset password, lupa password"      | Pecah jadi 4 prompt terpisah                                                  |
+| **Tanpa konteks**          | "kenapa kode ini lambat?"                                  | "kenapa `@file query.ts` lambat saat input >10rb baris?"                      |
+| **Menyalahkan AI**         | "kamu salah, harusnya begini"                              | "Saya melihat X di output; expected Y; tolong jelaskan asumsi yang dipakai"   |
+| **Terlalu banyak aturan**  | 30 baris constraint untuk task 10 baris                    | Pakai 3 constraint paling kritikal saja                                       |
 
 ### 1.9 Reusable Prompt: Snippets & Rules
 
