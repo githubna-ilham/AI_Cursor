@@ -92,7 +92,16 @@ Untuk mulai DevNotes: klik **Open project** → pilih `~/devnotes-workshop/devno
 
 ![Cursor Editor — project terbuka, mode klasik](../../images/cursor-03-editor-full.png)
 
-Mode klasik mirip VS Code. **Di sinilah seluruh latihan dikerjakan**.
+Tampilan ini disebut **mode klasik** karena layout-nya identik dengan **Visual Studio Code (VS Code)** — *code editor* gratis dari Microsoft yang menjadi standar de facto pengembangan software modern. Cursor memang dibangun di atas basis kode VS Code, lalu di-*augment* dengan panel AI di sebelah kanan dan fitur seperti Cmd/Ctrl+K (inline edit) dan Composer.
+
+Konsekuensinya untuk Anda:
+
+- **Layout sama persis**: Activity Bar di kiri, file tree, editor di tengah, status bar di bawah. Kalau Anda pernah pakai VS Code, semua shortcut & habit Anda langsung berlaku.
+- **Extension VS Code kompatibel**: ESLint, Prettier, Docker, GitLens, dll. bisa di-install dari marketplace (OpenVSX).
+- **Theme & keybinding bisa diimpor** dari VS Code di first-run.
+- **Yang berbeda**: panel AI di kanan, status bar tambahan untuk indexing/privacy, dan ikon "Cursor Tab" di pojok kanan-bawah.
+
+**Di sinilah seluruh latihan dikerjakan.**
 
 | Area | Fungsi |
 | ---- | ------ |
@@ -126,14 +135,17 @@ Alternatif tanpa setting: tutup window Hub setelah Editor terbuka — Cursor aka
 
 ## 3a. Plan & Quota Awareness (PENTING — baca sebelum hari pelatihan)
 
-Cursor membatasi penggunaan AI lewat **request count**, bukan token. Cek halaman resmi <https://cursor.com/pricing> untuk angka terbaru (sering berubah). Gambaran umum:
+Sejak 2026, Cursor menggunakan model billing berbasis **usage credit** (bukan request count). Setiap plan punya kredit bulanan; pemakaian model premium mengurangi kredit, sedangkan **model Auto unlimited** di semua plan berbayar. Cek halaman resmi <https://cursor.com/pricing> untuk update terbaru. Gambaran umum (Juni 2026):
 
-| Plan                  | Premium Requests           | Cocok untuk                                    |
-| --------------------- | -------------------------- | ---------------------------------------------- |
-| **Hobby (Free)**      | ~50 request premium/bulan + Tab autocomplete unlimited (model kecil) | Eksplorasi ringan; **TIDAK cukup untuk 3 hari pelatihan intensif** |
-| **Pro Trial**         | Akses penuh selama 2 minggu sejak sign-up | Cocok bila peserta baru daftar maksimal H-14 |
-| **Pro** ($20/bulan)   | ~500 request premium/bulan | Rekomendasi untuk peserta yang ingin lanjut pakai pasca-pelatihan |
-| **Business / Team**   | Lebih besar + admin & privacy controls | Rekomendasi untuk adopsi tim/organisasi |
+| Plan                  | Harga/bulan | Kredit & Kuota                                                                   | Cocok untuk                                                                                       |
+| --------------------- | ----------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Hobby (Free)**      | $0          | Limited Agent requests + Limited Tab completions                                 | Eksplorasi ringan; **TIDAK cukup untuk 3 hari pelatihan intensif**                                |
+| **Pro Trial**         | $0 (14 hari)| Akses penuh Pro selama 2 minggu sejak sign-up                                    | Cocok bila Anda baru daftar maksimal H-14 sebelum pelatihan                                       |
+| **Pro**               | $20         | ~$20 kredit/bulan, Auto model unlimited, akses MCPs/skills/hooks/cloud agents    | Lanjut pakai Cursor pasca-pelatihan                                                               |
+| **Pro+**              | $60         | **3× kredit Pro** (~$60), Auto unlimited, akses prioritas model frontier         | **Plan yang dipakai di pelatihan ini** (2 akun Pro+ disediakan untuk dibagi 5 peserta per sesi)  |
+| **Ultra**             | $200        | **20× kredit Pro** (~$400 effective), prioritas akses model & fitur terbaru      | Power user / agent-heavy workflow                                                                 |
+| **Teams**             | $40/user    | Sama dengan Individual + SSO, audit, shared context, Bugbot code review          | Adopsi tim/organisasi                                                                             |
+| **Enterprise**        | Custom      | Pooled usage, SCIM, model access control, AI tracking API, priority support      | Korporasi besar                                                                                   |
 
 **Yang dihitung sebagai 1 premium request:**
 - 1 Chat (Cmd+L) ke model premium (Sonnet/Opus/GPT/Gemini)
