@@ -57,9 +57,9 @@ Gunakan checklist ini **sebelum** Sesi 2 dimulai bila memungkinkan, atau pandu p
 
 ---
 
-## 3b. Mengenal Antarmuka Cursor 2.x
+## 3b. Mengenal Antarmuka Cursor 3.x (Agents Window)
 
-Sejak Cursor 2.x (akhir 2025), saat pertama membuka aplikasi Anda akan melihat **3 state antarmuka** yang berbeda. Pahami perpindahan antar-state ini supaya tidak bingung saat mulai latihan.
+Sejak **Cursor 3.0** (rilis April 2026), tampilan default berubah ke antarmuka *agent-first* yang disebut **Agents Window** (Hub). Versi yang akan Anda pakai di pelatihan ini adalah **Cursor 3.6** (rilis 29 Mei 2026, fitur Auto-review Run Mode). Saat pertama membuka aplikasi, Anda akan melihat **3 state antarmuka** yang berbeda. Pahami perpindahan antar-state ini supaya tidak bingung saat mulai latihan.
 
 ### State 1 — Hub View (default saat pertama buka)
 

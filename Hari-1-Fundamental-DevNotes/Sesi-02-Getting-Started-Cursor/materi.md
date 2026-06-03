@@ -138,7 +138,7 @@ Checklist lengkap ada di [`instalasi-checklist.md`](./instalasi-checklist.md). K
 
 ### 1.6 Tour Antarmuka
 
-Setelah Cursor terbuka dan project ter-load (lihat 3 state antarmuka di [`instalasi-checklist.md`](./instalasi-checklist.md#3b-mengenal-antarmuka-cursor-2x)), area utama dari kiri ke kanan:
+Setelah Cursor terbuka dan project ter-load (lihat 3 state antarmuka di [`instalasi-checklist.md`](./instalasi-checklist.md#3b-mengenal-antarmuka-cursor-3x-agents-window)), area utama dari kiri ke kanan:
 
 1. **Activity Bar** — explorer, search, git, debug, extensions.
 2. **Editor** — sama seperti VS Code, plus *inline diff ghost text*.
