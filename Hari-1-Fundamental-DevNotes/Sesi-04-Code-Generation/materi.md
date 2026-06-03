@@ -85,6 +85,62 @@ Strategi penerjemahan:
 - Sebut signature, behavior, edge case, error mode.
 - Selalu generate test pada langkah berikutnya — jangan tunggu nanti.
 
+**Contoh prompt baik (untuk DevNotes — fungsi `formatRelativeTime`):**
+
+```
+Buat fungsi formatRelativeTime(iso: string): string
+
+Behavior:
+- Input: ISO 8601 timestamp (mis. "2026-06-02T14:30:00Z").
+- Output: relative time string dalam bahasa Indonesia:
+  - < 60 detik → "baru saja"
+  - 1-59 menit → "X menit lalu"
+  - 1-23 jam → "X jam lalu"
+  - 1 hari → "kemarin"
+  - 2-6 hari → "X hari lalu"
+  - ≥ 7 hari → format "DD MMM YYYY" (mis. "15 Mei 2026")
+
+Edge cases:
+- iso invalid / null / undefined → return "—"
+- Tanggal di masa depan → tetap pakai logika di atas (anggap selisih=0 = "baru saja")
+
+Constraints:
+- Vanilla JS, tidak boleh impor library (jangan pakai date-fns / moment).
+- Tidak melempar exception — return "—" untuk semua error.
+- Selalu kembalikan string, tidak boleh null.
+
+Konsisten dengan style fungsi lain di @file assets/app.js.
+```
+
+**Lanjutan (prompt test untuk fungsi yang sama):**
+
+```
+Buat 6 unit test untuk fungsi formatRelativeTime di file assets/app.test.html
+(pakai <script> tag + assertion sederhana, output ke DevTools console):
+
+1. iso < 60 detik dari sekarang → "baru saja"
+2. iso 30 menit lalu → "30 menit lalu"
+3. iso 2 jam lalu → "2 jam lalu"
+4. iso ~24 jam lalu → "kemarin"
+5. iso 10 hari lalu → format DD MMM YYYY
+6. iso null → "—"
+
+Gunakan helper `assert(condition, message)` dan log ✓/✗ per test.
+```
+
+**Anti-pattern yang harus dihindari:**
+
+```
+❌ "buat fungsi format waktu"
+   → terlalu samar; AI tebak format, lokal Inggris, mungkin pakai library besar.
+
+❌ "buat fungsi formatRelativeTime(iso) yang ngembaliin 'X jam lalu', '2 hari lalu', dst"
+   → kurang edge case (null? masa depan? > 7 hari?), tidak sebut bahasa, tidak sebut
+     larangan library, tidak sebut style yang harus ditiru.
+
+✓ Prompt yang baik = 4 blok: behavior + edge cases + constraints + style reference.
+```
+
 #### Class
 - Sebut **single responsibility** secara eksplisit.
 - Sebut dependency yang di-inject (DI).
