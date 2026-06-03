@@ -112,9 +112,24 @@ Buat class UserService dengan:
 ```
 
 #### Module / Folder
-- Gunakan **Composer** dengan scope file/folder eksplisit.
+- Gunakan **Agent** dengan scope file/folder eksplisit.
 - Wajib **list file yang akan dibuat** sebelum accept.
 - Wajib **review per-file**, bukan accept-all.
+
+Contoh prompt (untuk DevNotes — modul `DevNotesStorage`):
+
+```
+Buat modul storage tipis untuk DevNotes di assets/app.js (jangan bikin file baru):
+- Konstanta STORAGE_KEY = 'devnotes:notes'
+- getUserNotes(): Note[] — return [] kalau kosong, try/catch JSON.parse
+- saveUserNote(note): Note — push atau replace by id
+- deleteUserNote(id): boolean
+- generateSlug(title): string — url-safe + 4 digit random
+- getAllNotes(): Note[] — gabung MOCK_NOTES + getUserNotes(), sort desc
+
+Constraints: vanilla JS, no library, export via window.DevNotesStorage.
+List dulu fungsi yang akan ditambah sebelum apply — saya mau review.
+```
 
 ### 1.4 Pseudocode → Kode
 
