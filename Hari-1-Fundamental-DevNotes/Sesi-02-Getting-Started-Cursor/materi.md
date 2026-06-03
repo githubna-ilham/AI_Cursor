@@ -42,6 +42,7 @@ Cursor adalah **code editor yang dibangun di atas basis VS Code**, lalu dirancan
 ```mermaid
 flowchart LR
     subgraph Cursor
+        direction LR
         T[Tab<br/>autocomplete]
         K[Cmd/Ctrl+K<br/>inline edit]
         C[Chat<br/>Q&A + context]
