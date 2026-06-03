@@ -192,7 +192,7 @@ Checklist minimal sebelum commit:
 ### 1.8 Loop Kerja Rekomendasi (Build Feature)
 
 ```mermaid
-flowchart TD
+flowchart LR
     S[User story] --> P[Pecah ke task]
     P --> X[Tulis prompt task-1]
     X --> G[Generate]
