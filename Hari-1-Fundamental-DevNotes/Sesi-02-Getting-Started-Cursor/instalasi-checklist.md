@@ -242,10 +242,3 @@ Bila semua ✓ → peserta siap masuk Lab 01.
 | Tab tidak muncul | Pastikan auto-save aktif, cek Settings → Features → Cursor Tab |
 | Login terus loop | Hapus cache: keluar app → hapus `~/.cursor` (backup dulu) |
 
----
-
-## 10. Tanda Tangan Peserta
-
-- [ ] Peserta verifikasi semua poin 0–8 ✓.
-- [ ] Nama: ____________________
-- [ ] Tanggal: ____________________
