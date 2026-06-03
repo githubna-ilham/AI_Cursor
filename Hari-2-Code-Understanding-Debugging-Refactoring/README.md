@@ -1,75 +1,98 @@
-# HARI 2 — Code Understanding, Debugging & Refactoring
+# HARI 2 — Code Understanding, Debugging & Refactoring (Project: DevNotes Backend)
 
-Pelatihan AI Cursor untuk Developer Profesional — Multimatics
-Durasi: 1 hari penuh (4 sesi @ 90 menit)
+**Penyelenggara**: Multimatics
+**Durasi**: 1 hari penuh (8 jam efektif, 4 sesi × 90 menit + break)
+**Project akhir Hari 2**: Backend **DevNotes** (Next.js App Router + Supabase) — API CRUD, auth magic link, RLS policy, tests. Berjalan di `localhost:3000`, siap di-deploy & di-konsumsi FE di Hari 3.
 
-## Ringkasan
+> Catatan: project Hari 2-3 (DevNotes) **terpisah** dari project Hari 1 (portfolio personal). Anda mulai folder `devnotes/` baru di awal Sesi 5. Lihat [`../project-brd.md`](../project-brd.md) untuk spek DevNotes.
 
-Hari 2 berfokus pada kemampuan inti developer sehari-hari: memahami codebase yang sudah ada, menemukan dan memperbaiki bug, melakukan refactoring berkualitas, serta menulis test dan code review berbantuan AI. Peserta akan banyak praktik langsung pada kode nyata.
+---
 
-## Learning Outcomes Hari 2
+## Tujuan Hari 2
 
-Setelah menyelesaikan Hari 2, peserta diharapkan mampu:
+Hari 2 mempraktikkan **4 kemampuan inti developer sehari-hari** sambil membangun BE DevNotes dari nol:
 
-1. Mengeksplorasi codebase besar (>10k LOC) menggunakan Cursor AI untuk memahami arsitektur, flow utama, dan dependency tanpa membuka tiap file manual.
+1. **Memahami codebase** yang ada (Next.js template + Supabase docs) dengan bantuan AI.
+2. **Mendiagnosis bug** sistematis dari error message & stack trace — AI sebagai partner berpikir, bukan oracle.
+3. **Refactoring** kode hasil generate AI agar maintainable dan konsisten.
+4. **Menulis test** + melakukan code review berbantuan AI dengan kesadaran terhadap false positive dan hallucination.
+
+---
+
+## Yang Akan Anda Pahami
+
+Setelah Hari 2 selesai, Anda akan mampu:
+
+1. Mengeksplorasi codebase baru menggunakan Cursor AI untuk memahami arsitektur, flow utama, dan dependency tanpa membuka tiap file manual.
 2. Menghasilkan dokumentasi teknis (README modul, ADR, diagram) berbantuan AI yang akurat dan dapat diverifikasi.
-3. Mendiagnosis bug dari error message dan stack trace secara sistematis menggunakan AI sebagai partner berpikir, bukan oracle.
-4. Melakukan refactoring kode legacy (extract function, rename, decompose) dengan AI sambil menjaga behaviour-preserving melalui karakterisasi test.
-5. Menulis unit test dan melakukan code review berbantuan AI dengan kesadaran terhadap false positive, hallucination, dan technical debt.
+3. Mendiagnosis bug dari error message dan stack trace secara sistematis.
+4. Melakukan refactoring (extract function, rename, decompose) sambil menjaga behaviour-preserving melalui test.
+5. Menulis unit test untuk API routes Next.js + skenario RLS Supabase.
+
+---
 
 ## Alur Sesi
 
 ```mermaid
 flowchart LR
-    S5[Sesi 5<br/>Code Understanding] --> S6[Sesi 6<br/>Debugging]
-    S6 --> S7[Sesi 7<br/>Refactoring]
-    S7 --> S8[Sesi 8<br/>Testing & Review]
-    S5 -.lab 04.-> L4[Eksplorasi Codebase]
-    S6 -.lab 05.-> L5[Debug 3 Skenario]
-    S7 -.lab 06.-> L6[Refactor Legacy]
-    S8 -.lab 07.-> L7[Test + AI Review]
+    S5[Sesi 5<br/>Code Understanding<br/>+ Setup Next.js & Supabase] --> S6[Sesi 6<br/>Debugging<br/>+ Build first API]
+    S6 --> S7[Sesi 7<br/>Refactoring<br/>+ Full CRUD]
+    S7 --> S8[Sesi 8<br/>Testing & Review<br/>+ Auth & RLS]
 ```
 
-## Jadwal
+| Sesi | Topik                                       | Tahap Project   | Output utama                                                                  |
+| ---- | ------------------------------------------- | --------------- | ----------------------------------------------------------------------------- |
+| 5    | Code Understanding & Documentation          | **Tahap 11–12** | Next.js + Supabase project terinit, `docs/architecture.md` ter-generate       |
+| 6    | Debugging & Error Analysis                  | **Tahap 13–15** | Tabel `notes` + RLS di Supabase, `GET /api/notes` jalan, debug-log catatan    |
+| 7    | Refactoring & Code Quality                  | **Tahap 16–17** | Full CRUD API + refactor (supabase client split, response helpers)            |
+| 8    | Testing & Code Review                       | **Tahap 18–20** | Auth magic link + protected routes, Vitest test, PR simulasi siap deploy      |
 
-| Waktu | Sesi | Topik | Lab |
-|-------|------|-------|-----|
-| 08.30 – 10.00 | Sesi 5 | Code Understanding & Documentation | Lab 04 |
-| 10.00 – 10.15 | Coffee Break | — | — |
-| 10.15 – 11.45 | Sesi 6 | Debugging & Error Analysis | Lab 05 |
-| 11.45 – 13.00 | ISHOMA | — | — |
-| 13.00 – 14.30 | Sesi 7 | Refactoring & Code Quality | Lab 06 |
-| 14.30 – 14.45 | Coffee Break | — | — |
-| 14.45 – 16.15 | Sesi 8 | Testing & Code Review | Lab 07 |
-| 16.15 – 16.30 | Wrap-up Hari 2 | Refleksi & preview Hari 3 | — |
+> 📋 Detail 10 tahap, urutan kerja, dan checkpoint per tahap ada di [`perjalanan-project.md`](./perjalanan-project.md). **Baca file itu sebelum mulai latihan apa pun di Hari 2.**
 
-## Prasyarat Hari 2
+---
 
-- Telah menyelesaikan Hari 1 (Setup Cursor, prompt engineering dasar, fitur inti).
-- Repository contoh yang akan dipakai pada lab sudah di-clone (lihat tiap lab).
-- Akses Cursor aktif (Pro atau trial), model Claude / GPT tersedia di workspace.
+## Jadwal Harian (Acuan)
+
+| Waktu          | Sesi                                  | Durasi |
+| -------------- | ------------------------------------- | ------ |
+| 08.30 – 09.00  | Registrasi & recap Hari 1             | 30'    |
+| 09.00 – 10.30  | **Sesi 5**: Code Understanding         | 90'    |
+| 10.30 – 10.45  | Coffee break                          | 15'    |
+| 10.45 – 12.15  | **Sesi 6**: Debugging                  | 90'    |
+| 12.15 – 13.15  | ISHOMA                                | 60'    |
+| 13.15 – 14.45  | **Sesi 7**: Refactoring                | 90'    |
+| 14.45 – 15.00  | Coffee break                          | 15'    |
+| 15.00 – 16.30  | **Sesi 8**: Testing & Review           | 90'    |
+| 16.30 – 17.00  | Wrap-up & briefing Hari 3             | 30'    |
+
+---
 
 ## Struktur Folder
 
 ```
 Hari-2-Code-Understanding-Debugging-Refactoring/
-├── README.md                          (file ini)
+├── README.md                                          <- file ini
+├── perjalanan-project.md                              <- master narrative 10 tahap (BACA DULU)
 ├── Sesi-05-Code-Understanding-Documentation/
 │   ├── materi.md
-│   └── latihan-04-eksplorasi-codebase/
+│   └── latihan-04-eksplorasi-codebase/                <- Tahap 11–12
 ├── Sesi-06-Debugging-Error-Analysis/
 │   ├── materi.md
-│   └── latihan-05-debugging-studi-kasus/
+│   └── latihan-05-debugging-studi-kasus/              <- Tahap 13–15
 ├── Sesi-07-Refactoring-Code-Quality/
 │   ├── materi.md
-│   └── latihan-06-refactor-legacy/
+│   └── latihan-06-refactor-legacy/                    <- Tahap 16–17
 └── Sesi-08-Testing-Code-Review/
     ├── materi.md
-    └── latihan-07-testing-review/
+    └── latihan-07-testing-review/                     <- Tahap 18–20
 ```
 
-## Catatan Fasilitator
+---
 
-- Stack peserta bervariasi (Backend, Frontend, Full-stack, DevOps, Data). Setiap lab menyediakan placeholder `<!-- STACK-PLACEHOLDER -->` untuk disesuaikan sebelum kelas.
-- Siapkan repository contoh per stack minimal H-3.
-- Pastikan peserta sudah login Cursor sejak Hari 1 untuk menghindari kehilangan waktu setup.
+## Prasyarat Hari 2
+
+- Telah menyelesaikan Hari 1 (Setup Cursor lulus, prompt engineering dasar di tangan, portfolio statis tuntas).
+- Akun **Supabase** aktif (daftar di <https://supabase.com> dengan GitHub login — 1 menit).
+- Node.js LTS terinstall (untuk `npx create-next-app`).
+- `curl` di terminal atau Postman/Insomnia untuk test API.
+- Akses Cursor aktif.
