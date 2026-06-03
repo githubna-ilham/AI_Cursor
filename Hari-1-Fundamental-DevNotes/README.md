@@ -1,21 +1,23 @@
-# HARI 1 — Fundamental AI Cursor (Project: DevNotes Web Statis)
+# HARI 1 — Fundamental AI Cursor (Project: Website Portfolio Personal)
 
 **Penyelenggara**: Multimatics
 **Durasi**: 1 hari penuh (8 jam efektif, 4 sesi × 90 menit + break)
 **Target peserta**: Developer profesional (Backend, Frontend, Full-Stack, DevOps, Data Engineer)
 **Prasyarat**: Familiar dengan minimal 1 bahasa pemrograman, Git basic, terminal/CLI basic.
-**Project akhir Hari 1**: Web statis **DevNotes** (HTML/CSS/JS vanilla) — feed publik + halaman detail + form new note dengan persistensi `localStorage`. Lihat BRD lengkap di [`/project-brd.md`](../project-brd.md).
+**Project akhir Hari 1**: Website **portfolio personal** Anda sendiri (HTML/CSS/JS vanilla) — Hero, Skills, Projects, Contact form dengan persistensi `localStorage`. Lihat BRD lengkap di [`portfolio-brd.md`](./portfolio-brd.md).
+
+> Catatan: Hari 2 & 3 melanjutkan **project berbeda** (DevNotes — full-stack app dengan Supabase BE). Hari 1 ini "warm-up" + artefak portfolio milik Anda sendiri.
 
 ---
 
 ## Tujuan Hari 1
 
-Hari pertama membentuk **fondasi mental dan teknis** peserta sebelum masuk ke topik lanjutan di Hari 2 (BE Next.js + Supabase + Vercel) dan Hari 3 (FE Next.js terintegrasi BE). Fokusnya bukan "menulis kode lebih cepat", tetapi **mengubah cara berpikir** developer dalam berkolaborasi dengan AI sambil menghasilkan **artefak nyata** yang akan dilanjutkan 2 hari berikutnya:
+Hari pertama membentuk **fondasi mental dan teknis** peserta sebelum masuk ke topik lanjutan di Hari 2 (BE Next.js + Supabase + Vercel) dan Hari 3 (FE Next.js terintegrasi BE). Fokusnya bukan "menulis kode lebih cepat", tetapi **mengubah cara berpikir** developer dalam berkolaborasi dengan AI sambil menghasilkan **artefak nyata yang langsung dapat Anda pakai** — website portfolio personal:
 
 1. Memahami posisi AI coding assistant dalam siklus pengembangan modern.
 2. Menguasai Cursor sebagai IDE — bukan sekadar VS Code dengan ChatGPT.
 3. Membangun keterampilan prompting yang reproducible dan context-aware.
-4. Menghasilkan web statis DevNotes fungsional (FR-01, FR-02, FR-04 versi lokal) dengan kualitas yang dapat dipertanggungjawabkan.
+4. Menghasilkan website portfolio personal Anda sendiri (FR-01 sampai FR-07) yang layak ditampilkan di CV / LinkedIn.
 
 ---
 
@@ -44,9 +46,9 @@ flowchart LR
 | Sesi | Topik                              | Tahap Project | Output utama yang Anda hasilkan                                              |
 | ---- | ---------------------------------- | ------------- | ----------------------------------------------------------------------------- |
 | 1    | Introduction to AI-Assisted Coding | —             | Pemahaman lanskap, belum ada praktik Cursor                                   |
-| 2    | Getting Started with Cursor        | **Tahap 1–2** | Repo `devnotes/` ter-scaffold + `index.html` (feed publik dummy)              |
-| 3    | Prompting & Context Management     | **Tahap 3–6** | `notes/[id].html` (halaman detail dengan markdown render)                     |
-| 4    | Code Generation Fundamentals       | **Tahap 7–10**| `new.html` + localStorage CRUD (create/edit/delete)                           |
+| 2    | Getting Started with Cursor        | **Tahap 1–2** | Repo `portfolio/` ter-scaffold + skeleton HTML/CSS dengan CSS variables       |
+| 3    | Prompting & Context Management     | **Tahap 3–6** | 4 section terisi: Hero, Skills, Projects (+ `data.js`), project detail modal  |
+| 4    | Code Generation Fundamentals       | **Tahap 7–10**| Contact form + localStorage submit, nav sticky responsive, Lighthouse audit   |
 
 > 📋 Detail 10 tahap, urutan kerja, dan checkpoint per tahap ada di [`perjalanan-project.md`](./perjalanan-project.md). **Baca file itu sebelum mulai latihan apa pun di Hari 1.**
 
@@ -73,7 +75,8 @@ flowchart LR
 ```
 Hari-1-Fundamental-DevNotes/
 ├── README.md                                  <- file ini
-├── perjalanan-project.md                      <- master narrative 10 tahap (BACA DULU)
+├── portfolio-brd.md                           <- BRD portfolio Hari 1 (BACA DULU)
+├── perjalanan-project.md                      <- master narrative 10 tahap
 ├── Sesi-01-Introduction-AI-Coding/
 │   └── materi.md
 ├── Sesi-02-Getting-Started-Cursor/

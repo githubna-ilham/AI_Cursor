@@ -1,115 +1,128 @@
-# Latihan 02 — Prompting Drill: Halaman Detail DevNotes
+# Latihan 02 — Prompting Drill: Isi Section Portfolio
 
-> 🗺️ **Tahap 3–6 dari 10** di [Perjalanan Project DevNotes](../../perjalanan-project.md)
-> Sebelumnya: Tahap 1–2 (Scaffold + Tour Cursor) di Sesi 2 | Setelah ini: Tahap 7 (Storage layer) di Sesi 4
+> 🗺️ **Tahap 3–6 dari 10** di [Perjalanan Project Hari 1](../../perjalanan-project.md)
+> Sebelumnya: Tahap 1–2 (Scaffold + Tour Cursor) di Sesi 2 | Setelah ini: Tahap 7 (Contact form) di Sesi 4
 
-**Durasi**: 45 menit (5 skenario × ~8 menit + peer review)
-**Tipe**: Hands-on individual + peer review
-**Sesi**: Sesi 3 — Prompting & Context Management
-**Output**: `notes/[id].html` (halaman detail catatan) + 5 file `skenario-N.md` berisi prompt yang dilatih.
+**Durasi**: 60 menit (4 tahap × ~13 menit + review)
+**Tipe**: Hands-on individual
+**Output**: 4 section portfolio terisi (Hero, Skills, Projects, project detail) + `assets/data.js` + 4 file `tahap-N.md` berisi prompt yang dilatih.
 
 ---
 
 ## Konteks BRD
 
-Latihan ini menyelesaikan **FR-02** (baca detail catatan tanpa login). Mengacu mockup **Section 11.2** di [`/project-brd.md`](../../../project-brd.md). Semua skenario menggunakan repo `devnotes/` hasil Sesi 2.
+Latihan ini mengisi **FR-01 (lengkap)** dan **FR-03** — content portfolio nyata milik Anda. Mengacu wireframe **Section 9** dan model data **Section 6** di [`/Hari-1-Fundamental-DevNotes/portfolio-brd.md`](../../portfolio-brd.md).
+
+Semua tahap menggunakan repo `portfolio/` hasil Sesi 2.
 
 ---
 
 ## Tujuan
 
-Peserta berlatih menulis prompt produksi pada 5 skenario kerja nyata yang **semua outputnya berkontribusi** ke pembangunan halaman detail DevNotes. Setiap prompt menerapkan template Cheatsheet (Role + Context + Constraint + Acceptance).
+Peserta berlatih menulis prompt produksi pada 4 tahap pengisian section portfolio yang **semua outputnya** membangun portfolio personal Anda. Setiap prompt menerapkan template Cheatsheet (Role + Context + Constraint + Acceptance) dan @-mentions.
 
 ---
 
 ## Prasyarat
 
-- Lulus Latihan 01 (repo `devnotes/` ada dengan home page + MOCK_NOTES).
+- Lulus Latihan 01 (Tahap 1-2): repo `portfolio/` ada dengan skeleton + CSS variables.
 - `prompting-cheatsheet.md` dalam jangkauan.
-- File submission di-tempatkan di `devnotes/submissions/<nama>/`.
+- File submission di-tempatkan di `portfolio/submissions/<nama>/`.
+- **Siapkan data pribadi**: foto profil (boleh `https://i.pravatar.cc/300` placeholder), 6+ skill yang Anda kuasai, 3+ project nyata atau fiksi.
 
 ---
 
 ## Aturan Main
 
-- Untuk setiap skenario, peserta **wajib**:
-  1. Tulis prompt di file `skenario-N.md` **sebelum** dijalankan.
-  2. Jalankan di Cursor (Chat / Composer / K — bebas, sebutkan mode di file).
+- Untuk setiap tahap, peserta **wajib**:
+  1. Tulis prompt di file `tahap-N.md` **sebelum** dijalankan.
+  2. Jalankan di Cursor (Chat / Agent / Cmd+K — bebas, sebutkan mode di file).
   3. Salin output Cursor ke file submission.
   4. Tulis penilaian diri (rubrik di bawah).
-- Boleh iterasi (`prompt-v1`, `prompt-v2`), maks 3 iterasi per skenario.
+- Boleh iterasi (`prompt-v1`, `prompt-v2`), maks 3 iterasi per tahap.
+- **Commit di akhir tiap tahap** dengan pesan jelas (mis. `feat: add Hero section (Tahap 3)`).
 
 ---
 
-## Skenario
+## Tahap
 
-### Skenario 1 — Eksplorasi Codebase Sendiri
+### Tahap 3 — Section Hero / About
 
-> Anggap rekan baru Anda buka repo `devnotes/`. Dalam 5 menit dia harus paham strukturnya. Buat prompt yang menghasilkan ringkasan arsitektur, file kunci, dan 3 pertanyaan yang biasanya muncul.
+Isi `<section id="hero">` dengan: foto profil, nama, headline (role / 1 kalimat), bio 2-3 paragraf, 2 tombol CTA ("Lihat Project", "Hubungi Saya").
 
-**Hint mode**: Chat dengan `@folder devnotes`.
+**Pertimbangkan untuk prompt Anda**:
+- @-mention `@file index.html` & `@file assets/styles.css` sebagai konteks.
+- Sebutkan **data pribadi Anda** (nama, headline, bio) langsung di prompt.
+- Constraint: pakai CSS variables yang sudah ada di `:root`, tidak boleh inline style.
+- Acceptance: tombol CTA pakai `<a href="#contact">` dan `<a href="#projects">` — scroll ke section terkait.
 
-### Skenario 2 — Tambah Field di Mock Data
+**Hint mode**: Agent atau Cmd+K di `index.html`.
 
-> Mock data Anda di Sesi 2 punya field `title`, `author`, `createdAt`, `excerpt`. Untuk halaman detail, butuh field tambahan: `body_md` (markdown lengkap), `id` (string slug), dan `is_public` (boolean). Buat prompt untuk memperbarui `MOCK_NOTES` minimal 3 item lengkap dengan field baru, gaya markdown realistis (heading, list, code block).
+### Tahap 4 — Section Skills
 
-**Hint mode**: Cmd/Ctrl+K di array `MOCK_NOTES` atau Chat.
+Isi `<section id="skills">` dengan grid icon + label dari minimal 6 skill. Pakai inline SVG sederhana atau Unicode emoji jika belum mau pasang library icon.
 
-### Skenario 3 — Generate Halaman Detail
+**Pertimbangkan untuk prompt Anda**:
+- Sebutkan **6+ skill spesifik** yang Anda kuasai.
+- Constraint: grid responsive (2 kolom di mobile, 4 kolom di desktop), tanpa library CSS.
+- Acceptance: tiap skill ada icon + nama, ter-arrange rapi tanpa overflow.
 
-> Buat halaman `notes/[id].html` yang menampilkan detail satu catatan berdasarkan `?id=` di URL. Layout mengikuti mockup 11.2 BRD: tombol "← Kembali", judul, meta (author + waktu + visibility), body markdown ter-render. Buat prompt yang menghasilkan file ini lengkap dengan logic JS membaca query string, lookup dari MOCK_NOTES, dan render markdown (boleh import library `marked` via CDN).
+**Hint mode**: Cmd+K di section skills.
 
-**Hint mode**: Composer dengan `@file index.html` + `@file assets/app.js` sebagai context.
+### Tahap 5 — Section Projects + data.js
 
-### Skenario 4 — Link Home → Detail
+Bikin file baru `assets/data.js` berisi array `PROJECTS` (minimal 3 project, schema lihat BRD Section 6). Render section projects dari data ini, **bukan hardcoded di HTML**.
 
-> Halaman home harus link ke `notes/[id].html?id=<slug>`. Buat prompt untuk mengubah `renderNotes()` agar tiap kartu wrap dalam `<a>` dengan href yang benar. Output: diff minimal, tidak mengubah style.
+**Pertimbangkan untuk prompt Anda**:
+- @-mention `@file index.html` sebagai konteks markup.
+- Sebutkan struktur object project (id, title, description, thumbnail, tags, demo, repo).
+- **Sebutkan minimal 3 project nyata Anda** (atau project fiksi yang dideskripsikan baik).
+- Constraint: render lewat JS (fetch dari `window.PROJECTS`), tidak hardcoded `<article>` di HTML.
+- Acceptance: tambah/ubah project = ubah `data.js`, tidak sentuh HTML.
 
-**Hint mode**: Cmd/Ctrl+K dengan highlight fungsi `renderNotes()`.
+**Hint mode**: Agent dengan scope `index.html` + `assets/data.js` + `assets/app.js`.
 
-### Skenario 5 — 404 Handling
+### Tahap 6 — Project Detail / Hover State
 
-> Kalau `?id=` tidak ada atau tidak match, tampilkan empty state sesuai mockup 11.6 ("Catatan tidak ditemukan" + tombol kembali). Buat prompt yang menghasilkan kode penanganan ini di `notes/[id].html`, tidak boleh memanggil `alert()` atau redirect otomatis.
+Tambah interaksi pada kartu project: hover effect (transisi visual) + klik kartu buka modal/expanded view berisi deskripsi panjang + screenshot besar + tombol close.
 
-**Hint mode**: Chat dengan `@file notes/[id].html` + `@docs` untuk pattern URL handling.
+**Pertimbangkan untuk prompt Anda**:
+- Sebutkan: hover = scale ringan + shadow + transisi 200ms. Klik = modal centered + backdrop blur.
+- Constraint: modal pakai `<dialog>` element (native HTML), tidak pakai library.
+- Acceptance: tutup modal pakai `Esc` atau klik backdrop. Body scroll lock saat modal terbuka.
+
+**Hint mode**: Agent dengan multi-file edit (CSS untuk hover, JS untuk modal logic, HTML untuk `<dialog>`).
 
 ---
 
 ## Rubrik Penilaian Diri
 
-Setiap skenario dinilai 0–4 di **5 dimensi**:
+Setiap tahap dinilai 0–4 di **5 dimensi**:
 
-| Dimensi              | 0          | 1                 | 2             | 3                | 4                            |
-| -------------------- | ---------- | ----------------- | ------------- | ---------------- | ---------------------------- |
-| Kejelasan tujuan     | Tidak ada  | Vague             | Ada tapi multi | 1 kalimat jelas  | + alasan bisnis (ref FR/BRD) |
-| Konteks (@-mention)  | Tidak ada  | 1, kurang tepat   | 1 tepat       | 2 tepat          | 3+ tepat & efisien           |
-| Constraint           | Tidak ada  | Generik           | 1 kritikal    | 2–3 kritikal     | + ranked priority            |
-| Acceptance           | Tidak ada  | "harus jalan"     | Subjektif     | Terukur          | Terukur + contoh I/O         |
-| Output sesuai        | Tidak      | Sebagian          | Mostly        | Sesuai           | Sesuai + tanpa hallucination |
+| Dimensi              | 0          | 1                 | 2             | 3                | 4                              |
+| -------------------- | ---------- | ----------------- | ------------- | ---------------- | ------------------------------ |
+| Kejelasan tujuan     | Tidak ada  | Vague             | Ada tapi multi | 1 kalimat jelas  | + alasan bisnis (ref BRD)      |
+| Konteks (@-mention)  | Tidak ada  | 1, kurang tepat   | 1 tepat       | 2 tepat          | 3+ tepat & efisien             |
+| Constraint           | Tidak ada  | Generik           | 1 kritikal    | 2–3 kritikal     | + ranked priority              |
+| Acceptance           | Tidak ada  | "harus jalan"     | Subjektif     | Terukur          | Terukur + contoh perilaku      |
+| Output sesuai        | Tidak      | Sebagian          | Mostly        | Sesuai           | Sesuai + tanpa hallucination   |
 
-**Lolos skenario**: total ≥ 12/20.
-**Lolos latihan**: minimal 4/5 skenario lolos **DAN** halaman detail dapat dibuka di browser (klik 1 kartu home → muncul detail).
+**Lolos tahap**: total ≥ 12/20.
+**Lolos latihan**: minimal 3/4 tahap lolos **DAN** keempat section terlihat di browser dengan data nyata Anda.
 
 ---
 
 ## Submit
 
-Folder `devnotes/submissions/<nama>/` berisi:
+Folder `portfolio/submissions/<nama>/` berisi:
 
-- `skenario-1.md` … `skenario-5.md` (prompt + output + penilaian diri).
+- `tahap-3.md` … `tahap-6.md` (prompt + output + penilaian diri).
 - `refleksi.md` (≤200 kata) menjawab:
-  1. Skenario tersulit & mengapa.
+  1. Tahap tersulit & mengapa.
   2. Pola prompting paling efektif untuk Anda.
   3. 1 template yang akan Anda pakai minggu depan.
 
-Kode tambahan ter-commit di repo dengan pesan jelas (mis. `feat: add detail page (FR-02)`).
-
----
-
-## Peer Review Singkat (5 menit terakhir)
-
-- Tukar `skenario-3.md` (paling kompleks) dengan tetangga.
-- Beri 1 catatan: bagian terkuat & 1 saran perbaikan prompt.
+Commit per tahap dengan pesan jelas (`feat: add Skills section (Tahap 4)`, dst).
 
 ---
 
@@ -117,8 +130,9 @@ Kode tambahan ter-commit di repo dengan pesan jelas (mis. `feat: add detail page
 
 | Issue                                          | Solusi                                                                |
 | ---------------------------------------------- | --------------------------------------------------------------------- |
-| Output AI generik                              | Tambah @-mention; tambah constraint spesifik (ref mockup BRD)         |
-| AI memperkenalkan library yang tidak diminta   | Tolak; minta solusi tanpa dependency tambahan atau via CDN saja       |
-| Markdown render menampilkan HTML mentah        | Pastikan output `marked.parse()` di-set ke `innerHTML`, bukan `textContent` |
-| 404 page redirect ke home tanpa pesan          | Iterasi prompt dengan constraint "tampilkan pesan, jangan auto-redirect" |
-| Composer ngubah file di luar scope             | Reset Composer, sebut file tepat di prompt + tambahkan "jangan ubah index.html" |
+| Output AI generik / pakai data placeholder     | Tegaskan di prompt: "pakai data berikut: <data nyata Anda>"           |
+| AI memperkenalkan library yang tidak diminta   | Tolak; minta solusi tanpa dependency tambahan                         |
+| Grid skill tidak responsive                    | Cek media query; tambah `grid-template-columns: repeat(auto-fit, minmax(...))` |
+| Project card tidak ke-render                   | Cek di DevTools: apakah `PROJECTS` array ter-load? Cek urutan `<script>` |
+| Modal tidak buka                               | `dialog.showModal()` (bukan `dialog.show()`); cek event listener      |
+| Agent ngubah file di luar scope                | Reset Agent, sebut file tepat di prompt + tambahkan "jangan ubah CSS variables" |

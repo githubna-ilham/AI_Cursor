@@ -6,28 +6,30 @@ Selamat datang di pelatihan **AI Cursor — 3 Hari Fundamental sampai Project En
 
 ## 1. Pengantar
 
-Pelatihan ini dirancang sebagai **satu perjalanan project**. Selama 3 hari Anda akan membangun satu aplikasi nyata bernama **DevNotes** — catatan pembelajaran teknis untuk developer — sambil mempelajari fundamental sampai praktik lanjutan menggunakan Cursor.
+Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak nyata** selama 3 hari:
+
+1. **Hari 1**: Website **portfolio personal** Anda sendiri (HTML/CSS/JS vanilla) — siap di-deploy & dipakai apply kerja.
+2. **Hari 2–3**: Aplikasi full-stack **DevNotes** (catatan teknis untuk developer) — Next.js + Supabase + Vercel.
 
 ### Alur 3 Hari
 
-| Hari | Topik utama                                  | Apa yang Anda hasilkan                                                              |
-| ---- | -------------------------------------------- | ----------------------------------------------------------------------------------- |
-| 1    | Fundamental Cursor & AI-Assisted Coding      | Web statis DevNotes (HTML/CSS/JS) dengan feed, detail, form, persistensi `localStorage` |
-| 2    | Code Understanding, Debugging, Refactoring   | Migrasi ke Next.js + Supabase + Vercel; BE punya API, auth, RLS                     |
-| 3    | Advanced Workflow, Security, Capstone        | FE Next.js konsumsi BE, deploy final, audit security & performance, demo end-to-end |
+| Hari | Topik utama                                  | Apa yang Anda hasilkan                                                                  |
+| ---- | -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| 1    | Fundamental Cursor & AI-Assisted Coding      | **Website portfolio personal** Anda (HTML/CSS/JS) dengan Hero, Skills, Projects, Contact form |
+| 2    | Code Understanding, Debugging, Refactoring   | Mulai project DevNotes: BE Next.js + Supabase + Vercel (API, auth, RLS)                  |
+| 3    | Advanced Workflow, Security, Capstone        | FE Next.js DevNotes konsumsi BE, deploy final, audit security & performance              |
 
-### Studi Kasus: DevNotes
+### Studi Kasus
 
-Aplikasi yang Anda bangun adalah **DevNotes** — tempat developer mencatat pembelajaran teknis (debugging story, decision record, learning log) dan bisa membagikannya secara publik atau menjaganya privat.
-
-Detail bisnis & teknis lengkap (Functional Requirements, model data, mockup UI, process flow) ada di [`project-brd.md`](./project-brd.md). **Minimal baca Section 1 (Latar Belakang), Section 4 (Ruang Lingkup), dan Section 11 (Mockup)** sebelum mulai Hari 1.
+- **Hari 1 — Portfolio Personal**: Hari 1 berfokus pada fundamental Cursor. Anda membangun artefak yang langsung berguna: website portfolio Anda. BRD lengkap di [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md).
+- **Hari 2 & 3 — DevNotes**: Aplikasi catatan pembelajaran teknis (debugging story, decision record, learning log) yang bisa dishare publik atau dijaga privat. BRD lengkap di [`project-brd.md`](./project-brd.md). Minimal baca Section 1, 4, 11 sebelum Hari 2.
 
 ### Filosofi Pelatihan
 
 - **Project-driven**: setiap latihan menambah artefak nyata ke project Anda, bukan latihan terpisah.
 - **Cursor sebagai kolaborator**: AI bukan generator yang Anda terima begitu saja; Anda tetap *reviewer-first*.
 - **Belajar dengan tangan**: lebih banyak praktik daripada teori. Materi tipis, latihan tebal.
-- **Hasilnya milik Anda**: di akhir Hari 3, repo `devnotes/` di GitHub Anda berisi aplikasi yang bisa Anda demo, lanjutkan, atau adaptasi untuk pekerjaan.
+- **Hasilnya milik Anda**: di akhir pelatihan Anda pulang dengan **portfolio personal** (Hari 1) + **DevNotes full-stack app** (Hari 2-3) di GitHub.
 
 ---
 
@@ -104,11 +106,11 @@ git config --global init.defaultBranch main
 Buat folder kosong di laptop Anda untuk project:
 
 ```bash
-mkdir ~/devnotes-workshop
-cd ~/devnotes-workshop
+mkdir ~/cursor-workshop
+cd ~/cursor-workshop
 ```
 
-Di Hari 1 Sesi 2 Anda akan `git init` di sini.
+Di Hari 1 Sesi 2 Anda akan `git init` folder `portfolio/` di sini. Di Hari 2 Anda akan menambah folder kedua untuk project DevNotes.
 
 ### 3.5 Akses Repo Pelatihan
 
@@ -121,17 +123,14 @@ Repo ini ([github.com/githubna-ilham/AI_Cursor](https://github.com/githubna-ilha
   git clone https://github.com/githubna-ilham/AI_Cursor.git
   ```
 
-Anda **tidak** perlu menulis kode di repo ini — kode aplikasi DevNotes ada di folder kerja Anda sendiri (langkah 3.4).
+Anda **tidak** perlu menulis kode di repo ini — kode aplikasi (portfolio Hari 1, DevNotes Hari 2-3) ada di folder kerja Anda sendiri (langkah 3.4).
 
 ### 3.6 Baca BRD
 
-Buka [`project-brd.md`](./project-brd.md). Minimal pahami:
+Anda akan membangun **dua project** dengan dua BRD terpisah:
 
-- **Section 1** — Latar Belakang DevNotes (kenapa aplikasi ini ada).
-- **Section 4** — Ruang Lingkup (apa yang akan & tidak akan dibangun).
-- **Section 11** — Mockup (tampilan setiap halaman).
-
-Total waktu baca ~15 menit.
+- **Portfolio (Hari 1)** — [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md). Baca **Section 3 (Scope), Section 6 (Model Data), Section 9 (Wireframe)** sebelum Sesi 2. Total ~10 menit.
+- **DevNotes (Hari 2-3)** — [`project-brd.md`](./project-brd.md). Boleh ditunda baca sampai akhir Hari 1 / awal Hari 2. Minimal pahami **Section 1, 4, 11**. Total ~15 menit.
 
 ### 3.7 Persiapan Mental
 
@@ -170,7 +169,7 @@ Pelatihan ini cukup padat. Kalau Anda merasa tertinggal di tengah jalan:
 - **Selesai sesi tapi belum tuntas**: lanjutkan di break / malam hari. Latihan dirancang bisa di-resume kapan saja.
 - **Hari berikutnya**: kalau output Hari sebelumnya tidak selesai, fokus pada satu fitur kunci agar bisa lanjut. Boleh diskusi dengan fasilitator pilihan trade-off.
 
-Yang penting: **tidak ada nilai akhir**. Tujuan Anda adalah keluar dari pelatihan dengan satu aplikasi DevNotes yang berjalan + skill baru yang nyata. Bukan medali sempurna di setiap latihan.
+Yang penting: **tidak ada nilai akhir**. Tujuan Anda adalah keluar dari pelatihan dengan dua artefak yang berjalan (portfolio personal + aplikasi DevNotes) + skill baru yang nyata. Bukan medali sempurna di setiap latihan.
 
 ---
 

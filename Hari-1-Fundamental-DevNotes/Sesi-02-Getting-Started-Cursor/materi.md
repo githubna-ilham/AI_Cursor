@@ -1,6 +1,6 @@
 # Sesi 2 — Getting Started with Cursor
 
-Sesi pertama Anda menyalakan Cursor. Setelah Sesi 1 memberi pemahaman *kenapa* AI coding penting, sesi ini fokus ke **alat** — install Cursor, kenali antarmukanya, lalu siap-siap praktik di Latihan 01 (scaffold halaman home DevNotes).
+Sesi pertama Anda menyalakan Cursor. Setelah Sesi 1 memberi pemahaman *kenapa* AI coding penting, sesi ini fokus ke **alat** — install Cursor, kenali antarmukanya, lalu siap-siap praktik di Latihan 01 (scaffold skeleton website portfolio Anda).
 
 ---
 
@@ -98,7 +98,7 @@ Yang penting: **Anda tidak pernah kirim seluruh isi arsip** — selalu pilihan d
 
 #### Tiga konsep kunci
 
-**1. Codebase Index (lokal).** Saat pertama membuka folder, Cursor men-*scan* semua file, memecahnya jadi chunks, lalu menghitung *embedding* (representasi numerik). Index ini disimpan di laptop Anda. Project kecil seperti `devnotes/` selesai di-index < 30 detik; project besar bisa beberapa menit.
+**1. Codebase Index (lokal).** Saat pertama membuka folder, Cursor men-*scan* semua file, memecahnya jadi chunks, lalu menghitung *embedding* (representasi numerik). Index ini disimpan di laptop Anda. Project kecil seperti `portfolio/` selesai di-index < 30 detik; project besar bisa beberapa menit.
 
 **2. Retrieval-Augmented (konteks ter-batas).** LLM punya **token budget**. Tidak mungkin seluruh codebase dikirim sekaligus. Cursor hanya kirim *top-k snippets* paling relevan, ditentukan oleh: kemiripan embedding + file yang Anda sebut via `@-mention` + file yang sedang dibuka. **Karena itulah skill memilih konteks = skill kritis** — fokus Sesi 3.
 
@@ -178,11 +178,11 @@ Shortcut yang akan sering Anda pakai di Hari 1:
 
 ## 2. Lanjut ke Latihan
 
-Setelah membaca materi ini, lanjut ke **[Latihan 01 — Tour Cursor + Scaffold DevNotes (Home Statis)](./latihan-01-tour-cursor/README.md)**. Di sana Anda akan:
+Setelah membaca materi ini, lanjut ke **[Latihan 01 — Tour Cursor + Scaffold Portfolio](./latihan-01-tour-cursor/README.md)**. Di sana Anda akan:
 
-- Membuat repo `devnotes/` baru di laptop Anda.
-- Memakai 4 mode interaksi Cursor (Tab, Cmd/Ctrl+K, Chat, Composer) pada satu task nyata.
-- Menghasilkan halaman home statis DevNotes yang akan Anda lanjutkan di Sesi 3 & 4.
+- Membuat repo `portfolio/` baru di laptop Anda.
+- Memakai 4 mode interaksi Cursor (Tab, Cmd/Ctrl+K, Chat, Agent) pada satu task nyata.
+- Menghasilkan skeleton website portfolio dengan CSS variables siap pakai, yang akan Anda lanjutkan di Sesi 3 & 4.
 
 ---
 

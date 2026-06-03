@@ -1,61 +1,57 @@
-# Latihan 03 — Build Feature: Form New Note + localStorage CRUD
+# Latihan 03 — Build Feature: Contact Form + Polish Portfolio
 
-> 🗺️ **Tahap 7–10 dari 10** di [Perjalanan Project DevNotes](../../perjalanan-project.md)
-> Sebelumnya: Tahap 3–6 (Detail page + 404) di Sesi 3 | Setelah ini: Akhir Hari 1 — siap migrasi ke Next.js + Supabase di Hari 2
+> 🗺️ **Tahap 7–10 dari 10** di [Perjalanan Project Hari 1](../../perjalanan-project.md)
+> Sebelumnya: Tahap 3–6 (4 sections terisi) di Sesi 3 | Setelah ini: Akhir Hari 1 — portfolio siap di-deploy & dipakai
 
-**Durasi**: 60 menit
+**Durasi**: 75 menit
 **Tipe**: Hands-on individual (boleh diskusi tetangga)
-**Sesi**: Sesi 4 — Code Generation Fundamentals
-**Output**: `new.html` (form editor) + persistensi `localStorage` + tombol Edit/Hapus di home & detail, dengan minimal 4 mode interaksi Cursor terpakai dan 4 commit kecil bermakna.
+**Output**: Section Contact dengan form + validasi + submit ke `localStorage`, navigation sticky responsive, polish & Lighthouse audit. Minimal 4 mode interaksi Cursor terpakai dan 4 commit kecil bermakna.
 
 ---
 
 ## Konteks BRD
 
-Latihan ini menyelesaikan **FR-04** (create catatan) + **FR-06** lokal (edit/delete) versi Hari 1 — semua persistensi di `localStorage`, belum ada BE.
+Latihan ini menyelesaikan **FR-02, FR-04, FR-05, FR-06, FR-07** + **NFR-02 accessibility**. Portfolio Anda akan siap di-share di akhir tahap.
 
-Mengacu mockup **Section 11.5** (editor) dan **11.4** (dashboard list) di [`/project-brd.md`](../../../project-brd.md).
-
-> Catatan: di Hari 2, persistensi akan dipindah ke Supabase. Kode `localStorage` di Hari 1 sengaja dibuat **tipis & terisolasi** supaya mudah diganti — peserta akan praktik refactor di Sesi 7.
+Mengacu wireframe **Section 9** (form Contact, toast sukses) dan model data **Section 6** (schema `message`) di [`/Hari-1-Fundamental-DevNotes/portfolio-brd.md`](../../portfolio-brd.md).
 
 ---
 
 ## Tujuan
 
-Peserta membangun fitur CRUD lokal end-to-end menggunakan Cursor, dengan praktik commit kecil, review diff, dan verifikasi manual di browser.
+Peserta menyelesaikan portfolio personal end-to-end dengan praktik commit kecil, review diff, dan verifikasi manual di browser. Di akhir, portfolio bisa dibuka di laptop sendiri, di-share via GitHub Pages / Vercel / Netlify (opsional), dan layak ditampilkan di CV / LinkedIn.
 
 ---
 
 ## User Story
 
-> **Sebagai** developer, **saya ingin** menulis, mengubah, dan menghapus catatan saya di DevNotes dengan persistensi di browser, **agar** saya bisa drafting tanpa kehilangan data saat refresh halaman.
+> **Sebagai** pengunjung portfolio, **saya ingin** mengirim pesan langsung dari website tanpa harus pindah ke email, **agar** saya bisa menghubungi pemilik portfolio dengan cepat.
+
+> **Sebagai** pemilik portfolio (Anda), **saya ingin** website tampil rapi di mobile maupun desktop dan lulus standar accessibility, **agar** portfolio saya kredibel dipakai apply kerja.
 
 ### Acceptance Criteria
 
-- [ ] Halaman `new.html` (FR-04): form dengan input `title` (≥1, ≤120 char), textarea `body_md` (≤5000 char), radio `is_public`.
-- [ ] Tombol "Simpan" → push ke array `notes` di `localStorage` (key: `devnotes:notes`), redirect ke `notes/[id].html?id=<slug>`.
-- [ ] Halaman home (`index.html`) menggabungkan MOCK_NOTES + notes dari localStorage, urut terbaru di atas.
-- [ ] Halaman detail (`notes/[id].html`) tampilkan tombol "Edit" & "Hapus" **hanya** kalau note berasal dari localStorage (anggap user adalah owner).
-- [ ] Tombol "Edit" → buka `new.html?id=<slug>` dengan form ter-prefill.
-- [ ] Tombol "Hapus" → konfirmasi sebelum delete, refresh ke home setelah delete.
-- [ ] Validasi: title wajib (non-empty), karakter limit ditegakkan dengan disable tombol simpan kalau invalid.
+- [ ] **Tahap 7**: Form Contact (`<form id="contact-form">`) dengan field nama, email, pesan. Validasi inline aktif sebelum submit (nama ≥ 2 char, email format valid, pesan ≥ 10 char). Error muncul di bawah field terkait.
+- [ ] **Tahap 8**: Submit form → handler JS simpan ke `localStorage` (key: `portfolio:messages`) dengan schema `{ id, name, email, message, receivedAt }`. Tampil toast "Pesan terkirim, terima kasih!" auto-hide 3 detik. Form reset.
+- [ ] **Tahap 9**: Nav sticky di top saat scroll. Active section ter-highlight. Mobile (≤ 768px): nav berubah jadi hamburger menu dengan animasi buka-tutup.
+- [ ] **Tahap 10**: Run Lighthouse di Chrome DevTools. Skor minimum: Performance ≥ 85, Accessibility ≥ 90, Best Practices ≥ 90. Fix masalah yang muncul.
 - [ ] Tidak ada error di DevTools console pada flow happy path.
 
 ---
 
 ## Prasyarat
 
-- Lulus Latihan 01 & 02 (repo `devnotes/` punya home + detail).
+- Lulus Latihan 01 & 02: portfolio sudah punya skeleton + 4 sections terisi (Hero, Skills, Projects).
 - Git config siap untuk commit.
-- Browser dengan DevTools (Chrome/Firefox/Edge).
+- Browser dengan DevTools (Chrome direkomendasikan untuk Lighthouse).
 
 ---
 
 ## Stack & Starter
 
 - Stack: HTML + CSS + JavaScript vanilla (tidak ada framework, tidak ada build tool).
-- Starter: repo `devnotes/` Anda sendiri dari Sesi 2 & 3.
-- Exemplar `@-mention`: `assets/app.js` (mock data + render) dan `notes/[id].html` (URL param handling).
+- Starter: repo `portfolio/` Anda sendiri dari Sesi 2 & 3.
+- Exemplar `@-mention`: `assets/app.js` (untuk style consistency), `index.html` (untuk struktur).
 
 ---
 
@@ -63,123 +59,107 @@ Peserta membangun fitur CRUD lokal end-to-end menggunakan Cursor, dengan praktik
 
 ### 0. Persiapan (3')
 
-0.1. Buat branch baru: `git checkout -b feat/new-note`.
-0.2. Pastikan home + detail masih jalan: buka `index.html`, klik 1 kartu → detail muncul.
-0.3. Buka DevTools → Application → Local Storage. Pastikan key `devnotes:notes` belum ada (atau kosongkan).
+0.1. Buat branch baru: `git checkout -b feat/contact-and-polish`.
+0.2. Pastikan portfolio masih jalan: buka `index.html`, scroll dari Hero ke Projects.
+0.3. Buka DevTools → Application → Local Storage. Pastikan key `portfolio:messages` belum ada (atau kosongkan).
 
-### 1. Storage Layer (8') — Mode Cmd/Ctrl+K
+### Tahap 7. Contact Form + Validasi (15') — Mode Agent
 
-1.1. Buka `assets/app.js`. Di bagian atas (setelah `MOCK_NOTES`), highlight area kosong dan tekan `Cmd+K` / `Ctrl+K`.
-1.2. Prompt:
-
-```
-Buat modul storage tipis untuk DevNotes:
-- Konstanta STORAGE_KEY = 'devnotes:notes'
-- getUserNotes(): Note[] — baca dari localStorage, return [] jika kosong
-- saveUserNote(note: Note): Note — push (atau replace jika id sama), return note
-- deleteUserNote(id: string): boolean — hapus by id, return true jika ada
-- generateSlug(title: string): string — slug url-safe dari title + 4 digit random
-- getAllNotes(): Note[] — gabung MOCK_NOTES + getUserNotes(), urut createdAt desc
-
-Type Note: { id, title, body_md, author, createdAt, is_public, _source: 'mock'|'user' }
-Semua user notes set _source: 'user'. MOCK_NOTES set _source: 'mock' (tambahkan saat baca).
-
-Tidak ada library eksternal. Pakai try/catch untuk JSON.parse. Export via window.DevNotesStorage.
-```
-
-1.3. Review diff, accept.
-1.4. Test di DevTools console: `DevNotesStorage.saveUserNote({title:'test', body_md:'hi', author:'me', createdAt: new Date().toISOString(), is_public: true, id: DevNotesStorage.generateSlug('test')})`.
-1.5. Verifikasi key `devnotes:notes` muncul di Local Storage. Hapus dulu setelah verifikasi.
-1.6. **Commit**: `feat: add localStorage storage layer for notes`.
-
-### 2. Form New Note Page (12') — Mode Composer
-
-2.1. Buka Composer (`Cmd+I` / `Ctrl+I`).
-2.2. Prompt:
+7.1. Buka panel Agent (`Cmd+I` / `Ctrl+I`).
+7.2. Prompt:
 
 ```
-Buat halaman new.html sebagai form editor catatan DevNotes.
-Layout mengikuti mockup 11.5 BRD:
-- Header dengan tombol "← Batal" (link ke index.html) dan tombol "Simpan" di kanan
-- Input title (required, maxlength 120)
-- Textarea body_md (maxlength 5000), tinggi 12 baris
-- Preview pane di sebelah kanan textarea yang render markdown live (pakai marked via CDN)
-- Radio is_public: "🔒 Privat" (default) dan "🌐 Publik"
+Isi <section id="contact"> di index.html dengan form Contact:
+- 3 field: name (input text), email (input email), message (textarea 5 baris)
+- Tiap field punya <label> dan attribute required/minlength/maxlength
+- Tombol submit "Kirim Pesan"
+- Validasi inline JavaScript (di assets/app.js):
+  - name: minimal 2 karakter
+  - email: regex format valid
+  - message: minimal 10 karakter
+- Error message muncul di bawah tiap field saat blur kalau invalid
+- Tombol submit disabled sampai semua field valid
 
-JS:
-- On submit: validasi title non-empty, buat object Note pakai DevNotesStorage.generateSlug
-  untuk id, set author='me' (hardcoded Hari 1), createdAt=now, _source='user'.
-- Panggil DevNotesStorage.saveUserNote, lalu redirect ke notes/[id].html?id=<slug>.
-- Disable tombol Simpan kalau title kosong (gunakan event input).
+Constraints:
+- Pakai CSS variables yang sudah ada untuk warna error (--color-error, tambahkan kalau belum ada)
+- Tidak pakai library validation
+- @file index.html dan @file assets/app.js sebagai context
 
-Jangan ubah file lain. Pakai @file assets/app.js untuk konsistensi style.
+Jangan submit handler dulu — itu Tahap 8.
 ```
 
-2.3. Review per-file. Pastikan **tidak ada** package.json baru atau file aneh.
-2.4. Accept.
-2.5. Test manual: buka `new.html` di browser, isi form, simpan, verifikasi redirect & data di localStorage.
-2.6. **Commit**: `feat: add new note editor page (FR-04)`.
+7.3. Review per-file. Test manual di browser: isi form invalid → error muncul, isi valid → tombol enabled.
+7.4. **Commit**: `feat: add contact form with inline validation (Tahap 7)`.
 
-### 3. Update Home untuk Gabung User Notes (5') — Mode Cmd/Ctrl+K
+### Tahap 8. Submit ke localStorage + Toast (15') — Mode Cmd/Ctrl+K
 
-3.1. Buka `assets/app.js`, cari fungsi `renderNotes()`.
-3.2. Highlight fungsi, `Cmd+K` / `Ctrl+K`:
+8.1. Buka `assets/app.js`, cari area dekat fungsi validasi form.
+8.2. Highlight area, tekan `Cmd+K`:
 
 ```
-Ubah renderNotes() agar:
-- Ambil data dari DevNotesStorage.getAllNotes() (bukan langsung MOCK_NOTES)
-- Tambah indikator visual kecil "(draft)" di kartu yang _source='user' dan is_public=false
-- Tidak ubah signature fungsi atau struktur HTML lain
+Tambah submit handler untuk #contact-form:
+- preventDefault, kumpulkan { name, email, message } dari form
+- Generate id: `msg-${Date.now()}`, set receivedAt: new Date().toISOString()
+- Baca array existing dari localStorage key 'portfolio:messages' (default [])
+- Push message baru, save kembali ke localStorage (JSON.stringify)
+- Tampilkan toast: buat <div> sementara dengan class .toast, isi "Pesan terkirim, terima kasih!",
+  append ke body, auto-remove setelah 3 detik dengan transisi fade-out
+- Reset form setelah sukses
+
+Constraint: pakai try/catch untuk JSON operations, error → console.error + toast error.
 ```
 
-3.3. Verifikasi: buka home, draft yang baru disimpan harus muncul di paling atas dengan label "(draft)".
-3.4. **Commit**: `feat: merge user notes into home feed`.
+8.3. Test: submit form valid → cek DevTools → Local Storage → `portfolio:messages` muncul.
+8.4. Buat CSS untuk `.toast` di styles.css (fixed bottom-right, padding, shadow, transisi). Bisa pakai Cmd+K juga.
+8.5. **Commit**: `feat: submit contact form to localStorage with toast (Tahap 8)`.
 
-### 4. Edit & Delete di Detail (12') — Mode Chat + Composer
+### Tahap 9. Nav Sticky + Responsive (15') — Mode Agent
 
-4.1. Buka Chat (`Cmd+L` / `Ctrl+L`). Tambahkan context: `@file notes/[id].html` + `@file assets/app.js`.
-4.2. Prompt:
-
-```
-Saya butuh menambah tombol Edit dan Hapus di halaman detail (notes/[id].html),
-hanya muncul kalau note._source === 'user'.
-
-- Tombol Edit: link ke new.html?id=<slug>
-- Tombol Hapus: confirm() dulu, lalu DevNotesStorage.deleteUserNote, lalu redirect ke index.html
-
-Tunjukkan diff yang dibutuhkan, jangan langsung apply. Saya mau review dulu.
-```
-
-4.3. Baca diff yang diusulkan di Chat. Kalau bagus, lanjut ke Composer untuk apply, atau apply manual sebagian dengan `Cmd+K`.
-4.4. Sekarang, untuk **prefill form edit**, buka `new.html` dan tambahkan logic via `Cmd+K`:
+9.1. Buka panel Agent.
+9.2. Prompt:
 
 ```
-Kalau ada query string ?id=<slug> dan note ditemukan di DevNotesStorage.getUserNotes(),
-prefill form dengan field tersebut, ubah judul halaman jadi "Edit Catatan",
-dan saat submit lakukan replace (bukan create baru — DevNotesStorage.saveUserNote
-sudah handle ini selama id sama).
+Tambah perilaku navigation di portfolio:
+1. <header> dengan nav jadi position: sticky, top: 0, dengan backdrop-filter blur ringan
+2. Saat scroll, link nav yang sesuai dengan section yang sedang terlihat ditandai
+   .active (highlight underline atau warna). Gunakan IntersectionObserver, jangan
+   scroll event listener.
+3. Klik link nav → smooth scroll ke section (gunakan smoothScrollTo dari Tahap 2
+   kalau sudah ada; kalau belum, pakai scrollIntoView({ behavior: 'smooth' })).
+4. Mobile (max-width 768px): nav berubah jadi hamburger:
+   - Tombol hamburger icon di kanan
+   - Klik → drawer slide dari kanan dengan link vertikal
+   - Klik link → drawer close + scroll ke section
+   - Klik backdrop atau Esc → drawer close
+
+@file index.html, @file assets/styles.css, @file assets/app.js sebagai context.
+List dulu file yang akan diubah sebelum apply.
 ```
 
-4.5. Test flow lengkap: create → home → klik draft → detail muncul tombol Edit/Hapus → klik Edit → form ter-prefill → ubah → simpan → redirect ke detail dengan data baru.
-4.6. Test delete: buat 1 note dummy, hapus, verifikasi hilang dari home & localStorage.
-4.7. **Commit**: `feat: add edit and delete from detail page`.
+9.3. Test di DevTools responsive mode: desktop OK, lalu ganti ke iPhone 14 — hamburger muncul, drawer jalan.
+9.4. **Commit**: `feat: add sticky nav + mobile hamburger (Tahap 9)`.
 
-### 5. Verifikasi & Polish (5')
+### Tahap 10. Polish + Lighthouse Audit (15') — Mode Chat + Cmd+K
 
-5.1. Test happy path full: home → +New → isi → simpan → home → klik draft → detail → edit → simpan → hapus → home.
-5.2. Buka DevTools console, harus **kosong dari error** sepanjang flow.
-5.3. Lighthouse cepat (Chrome DevTools → Lighthouse) untuk halaman home, target accessibility ≥ 90 (NFR-05). Catat skor.
-5.4. Kalau ada polish kecil (label form, kontras), commit terpisah: `chore: a11y polish`.
+10.1. Buka Chrome DevTools → tab **Lighthouse** → pilih kategori Performance + Accessibility + Best Practices → Generate report (desktop).
+10.2. Catat skor awal.
+10.3. Untuk tiap kategori dengan skor < target:
+   - Buka Chat, paste daftar isu yang muncul.
+   - Tanya: *"Bantu saya fix 3 isu accessibility prioritas teratas berikut: [paste]"*.
+   - Apply fix lewat Cmd+K per file (alt text, label, kontras, focus visible, dll).
+10.4. (Opsional) Tambah dark mode toggle: tombol di nav yang toggle class `.dark` di `<body>`, simpan preferensi di localStorage `portfolio:theme`.
+10.5. Run Lighthouse ulang. Pastikan target tercapai.
+10.6. **Commit**: `chore: polish + lighthouse fixes (Tahap 10)` dan kalau ada dark mode: `feat: dark mode toggle`.
 
-### 6. Refleksi (5')
+### 11. Refleksi (5')
 
 Tulis di `submissions/<nama>/latihan-03-refleksi.md`:
 
 - Rasio waktu prompt : review : manual coding.
 - 1 hallucination/bug yang Anda temukan & cara menemukannya.
 - 1 hal yang akan dilakukan berbeda kalau diulang.
-- Skor Lighthouse accessibility yang Anda dapat.
-- 1 bagian kode yang menurut Anda **paling rapuh** dan akan Anda audit ulang di Sesi 5 (Hari 2).
+- Skor Lighthouse final yang Anda dapat.
+- 1 bagian portfolio yang paling Anda banggakan.
 
 ---
 
@@ -187,12 +167,13 @@ Tulis di `submissions/<nama>/latihan-03-refleksi.md`:
 
 | Kriteria                                                       | Bobot | Cukup       | Baik           | Sangat Baik                                |
 | -------------------------------------------------------------- | ----- | ----------- | -------------- | ------------------------------------------ |
-| Semua acceptance criteria functional terpenuhi                 | 30%   | Create only | Create + edit  | Full CRUD + validasi + a11y                |
-| Persistensi localStorage stabil (no data loss saat refresh)    | 15%   | Sebagian    | Stabil         | Stabil + handle JSON.parse error           |
-| Commit kecil reviewable                                        | 15%   | 1 commit    | 2–3 commit     | ≥4 commit bermakna dengan ref FR           |
-| 4 mode interaksi Cursor terpakai                               | 15%   | 1–2         | 3              | 4 (Tab + K + Chat + Composer)              |
-| DevTools console bersih dari error                             | 10%   | ≥3 error    | 1–2 error      | 0 error                                    |
-| Refleksi tulisan + skor Lighthouse                             | 15%   | < 3 poin    | 3 poin         | + insight spesifik + skor ≥ 90             |
+| Semua acceptance criteria 4 tahap terpenuhi                    | 30%   | 2 tahap     | 3 tahap        | 4 tahap (full)                             |
+| Persistensi localStorage stabil (no data loss saat refresh)    | 10%   | Sebagian    | Stabil         | Stabil + handle JSON.parse error           |
+| Responsive jalan di mobile viewport                            | 15%   | Layout pecah | OK ada bug minor | Smooth & polished                         |
+| Lighthouse target tercapai (Perf 85, A11y 90, BP 90)           | 20%   | 1 metrik    | 2 metrik       | 3 metrik tercapai                          |
+| 4 mode interaksi Cursor terpakai                               | 10%   | 1–2         | 3              | 4 (Tab + K + Chat + Agent)                 |
+| Commit kecil reviewable                                        | 10%   | 1 commit    | 2–3 commit     | ≥4 commit bermakna dengan ref Tahap         |
+| Refleksi tulisan                                               | 5%    | < 3 poin    | 3 poin         | + insight spesifik                         |
 
 Lolos: ≥ **70%**.
 
@@ -200,11 +181,28 @@ Lolos: ≥ **70%**.
 
 ## Tips
 
-- **Mulai kecil**: storage layer → form → integrasi. Jangan langsung Composer-all.
+- **Mulai kecil**: form → validasi → submit → toast. Jangan kerjakan semua sekaligus.
 - **Test sesering mungkin di browser**. Reload setelah tiap commit kecil.
-- **Pakai exemplar**: `@file assets/app.js` adalah teman terbaik Anda untuk style consistency.
+- **Pakai DevTools responsive mode** sejak Tahap 9 — jangan tunggu Tahap 10 baru cek mobile.
 - **Iterasi prompt** kalau diff aneh — jangan tambal manual kecuali kecil.
-- **Anggap diri Anda owner data sendiri** — di Hari 2, "owner" akan ditegakkan via Supabase RLS.
+- **Lighthouse desktop ≠ mobile**. Latihan ini target desktop dulu; mobile lighthouse boleh menyusul.
+
+---
+
+## (Opsional) Deploy ke GitHub Pages
+
+Kalau waktu masih ada di akhir:
+
+```bash
+# 1. Push ke GitHub
+git remote add origin https://github.com/<username>/portfolio.git
+git push -u origin main
+
+# 2. GitHub: Settings → Pages → Source = main branch / root → Save
+# 3. Tunggu ~1 menit, akses di https://<username>.github.io/portfolio/
+```
+
+Atau via Netlify / Vercel (gratis, drag-drop folder).
 
 ---
 
@@ -214,11 +212,12 @@ Lolos: ≥ **70%**.
 | ---------------------------------------------- | ------------------------------------------------------------------------------- |
 | Form submit reload halaman tanpa simpan        | Tambahkan `e.preventDefault()` di handler submit                                |
 | localStorage data hilang setelah refresh       | Cek JSON.stringify saat save & JSON.parse saat load; lihat try/catch            |
-| Draft muncul dua kali di home                  | Duplikasi MOCK_NOTES vs user notes — pastikan getAllNotes dedupe by id          |
-| Markdown preview menampilkan HTML mentah       | `previewEl.innerHTML = marked.parse(value)`, bukan `textContent`                |
-| Composer ngubah file di luar scope             | Reset Composer, sebut file tepat + tambahkan "jangan ubah file lain"            |
-| Dependency npm muncul (package.json)           | Tolak. Restate: "no build tool, vanilla JS only, marked via CDN"                |
-| Kehabisan waktu                                | Drop fitur **edit prefill** lebih dulu (paling tidak kritikal), fokus create + delete |
+| Toast tidak hilang                             | Cek `setTimeout` di handler; pastikan element ter-remove                        |
+| Hamburger menu tidak buka di mobile            | Cek media query CSS; cek event listener; cek z-index drawer                    |
+| Lighthouse A11y < 90                           | Periksa: alt text image, label form, kontras (cek di Lighthouse details), focus indicator visible |
+| Lighthouse Performance < 85                    | Image terlalu besar — compress dengan TinyPNG; preload font; minify CSS         |
+| Agent ngubah file di luar scope                | Reset Agent, sebut file tepat + "jangan ubah file lain"                         |
+| Dependency npm muncul (package.json)           | Tolak. Restate: "no build tool, vanilla JS only"                                |
 
 ---
 
@@ -227,5 +226,6 @@ Lolos: ≥ **70%**.
 2 peserta dipilih share:
 
 - Tunjukkan `git log --oneline` (bukti commit kecil).
-- Demo create → edit → delete live.
-- Refleksi 1 kalimat tentang hallucination yang ditemukan.
+- Demo portfolio live: scroll dari Hero ke Contact → submit form → toast → cek localStorage.
+- Tunjukkan Lighthouse score.
+- 1 kalimat refleksi tentang prompt yang paling powerful.

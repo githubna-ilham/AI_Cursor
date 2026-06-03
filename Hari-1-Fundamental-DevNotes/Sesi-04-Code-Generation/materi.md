@@ -1,6 +1,6 @@
 # Sesi 4 — Code Generation Fundamentals
 
-Setelah menguasai cara berbicara dengan Cursor di Sesi 3, sekarang waktunya merangkai banyak prompt menjadi **fitur fungsional**. Di sesi ini Anda akan menutup Hari 1 dengan menambahkan form catatan baru + CRUD lokal ke DevNotes — fitur yang akan Anda lanjutkan dan migrasi ke Supabase di Hari 2.
+Setelah menguasai cara berbicara dengan Cursor di Sesi 3, sekarang waktunya merangkai banyak prompt menjadi **fitur fungsional**. Di sesi ini Anda akan menutup Hari 1 dengan menambahkan Contact form (validasi + submit ke localStorage), navigation sticky responsive, dan polish accessibility ke portfolio Anda — portfolio siap dipakai di akhir hari.
 
 ---
 
@@ -36,13 +36,13 @@ Warna di diagram: **biru muda** = risiko rendah, **merah muda** = risiko tinggi.
 
 #### Penjelasan tiap level
 
-| Level        | Apa itu (contoh DevNotes)                                                                  | Mode Cursor Optimal              | Risiko        | Review effort |
-| ------------ | ------------------------------------------------------------------------------------------ | -------------------------------- | ------------- | ------------- |
-| **Snippet**  | 1 baris atau blok kecil — mis. `const TZ = 'Asia/Jakarta';` atau ternary inline             | **Tab** (autocomplete)           | Rendah        | Detik         |
-| **Function** | 1 unit logika utuh — mis. `formatRelativeTime(iso)` atau `validateTitle(s)`                 | **Cmd/Ctrl+K** (inline edit)     | Rendah–sedang | Menit         |
-| **Module**   | Kumpulan fungsi terkait — mis. modul storage `DevNotesStorage` (get/save/delete/slug)       | **Chat** atau Cmd/Ctrl+K bertahap | Sedang       | 10+ menit     |
-| **Feature**  | Vertical slice end-to-end — mis. form New Note (HTML + JS + integrasi storage + redirect)   | **Composer / Agent**             | Tinggi        | 30+ menit     |
-| **Service**  | Sistem dengan boundary jelas — mis. seluruh BE Hari 2 (Supabase + auth + RLS + API routes)  | Composer **bertahap** + desain manual | Sangat tinggi | Jam        |
+| Level        | Apa itu (contoh portfolio Hari 1)                                                            | Mode Cursor Optimal              | Risiko        | Review effort |
+| ------------ | -------------------------------------------------------------------------------------------- | -------------------------------- | ------------- | ------------- |
+| **Snippet**  | 1 baris atau blok kecil — mis. `const STORAGE_KEY = 'portfolio:messages';`                   | **Tab** (autocomplete)           | Rendah        | Detik         |
+| **Function** | 1 unit logika utuh — mis. `validateEmail(s)` atau `smoothScrollTo(id)`                       | **Cmd/Ctrl+K** (inline edit)     | Rendah–sedang | Menit         |
+| **Module**   | Kumpulan fungsi terkait — mis. modul form validation (validate per field + submit handler)   | **Chat** atau Cmd/Ctrl+K bertahap | Sedang       | 10+ menit     |
+| **Feature**  | Vertical slice end-to-end — mis. section Contact (form + validasi + submit + toast + storage) | **Agent**                        | Tinggi        | 30+ menit     |
+| **Service**  | Sistem dengan boundary jelas — mis. seluruh BE DevNotes Hari 2 (Supabase + auth + RLS)       | Agent **bertahap** + desain manual | Sangat tinggi | Jam        |
 
 #### Tiga pola yang muncul di tabel
 
@@ -85,14 +85,16 @@ Strategi penerjemahan:
 - Sebut signature, behavior, edge case, error mode.
 - Selalu generate test pada langkah berikutnya — jangan tunggu nanti.
 
-Contoh prompt (untuk DevNotes — fungsi `formatRelativeTime`):
+Contoh prompt (untuk portfolio — fungsi `validateEmail`):
 
 ```
-Buat fungsi formatRelativeTime(iso: string): string
-- Output Indonesia: "baru saja" (<60 detik), "X menit lalu", "X jam lalu",
-  "kemarin", "X hari lalu", "DD MMM YYYY" (≥7 hari)
-- Edge case: iso invalid/null → return "—"; tanggal masa depan → "baru saja"
-- Vanilla JS, tanpa library (no date-fns/moment), tidak melempar exception
+Buat fungsi validateEmail(value: string): { valid: boolean, error: string | null }
+- valid: true kalau format email RFC-5322 simple (regex /^[^\s@]+@[^\s@]+\.[^\s@]+$/),
+  panjang ≤ 254 karakter
+- Edge case: value null/undefined/"" → { valid: false, error: "Email wajib diisi" }
+- value valid → { valid: true, error: null }
+- value tidak match regex → { valid: false, error: "Format email tidak valid" }
+- Vanilla JS, tidak melempar exception
 - Konsisten dengan style fungsi lain di @file assets/app.js
 ```
 
@@ -116,18 +118,19 @@ Buat class UserService dengan:
 - Wajib **list file yang akan dibuat** sebelum accept.
 - Wajib **review per-file**, bukan accept-all.
 
-Contoh prompt (untuk DevNotes — modul `DevNotesStorage`):
+Contoh prompt (untuk portfolio — modul Contact form):
 
 ```
-Buat modul storage tipis untuk DevNotes di assets/app.js (jangan bikin file baru):
-- Konstanta STORAGE_KEY = 'devnotes:notes'
-- getUserNotes(): Note[] — return [] kalau kosong, try/catch JSON.parse
-- saveUserNote(note): Note — push atau replace by id
-- deleteUserNote(id): boolean
-- generateSlug(title): string — url-safe + 4 digit random
-- getAllNotes(): Note[] — gabung MOCK_NOTES + getUserNotes(), sort desc
+Buat modul Contact form di assets/app.js (jangan bikin file baru):
+- Konstanta STORAGE_KEY = 'portfolio:messages'
+- validateField(name, value): { valid, error } — name = 'name'|'email'|'message'
+- getMessages(): Message[] — return [] kalau kosong, try/catch JSON.parse
+- saveMessage(msg): Message — push ke array, save, return msg dengan id+receivedAt
+- showToast(text, type): void — buat <div.toast>, append body, auto-remove 3 detik
+- attachContactForm(formEl): void — bind submit handler yang validate semua field,
+  kalau valid: saveMessage, showToast sukses, form.reset
 
-Constraints: vanilla JS, no library, export via window.DevNotesStorage.
+Constraints: vanilla JS, no library, export via window.ContactForm.
 List dulu fungsi yang akan ditambah sebelum apply — saya mau review.
 ```
 
@@ -209,14 +212,15 @@ Karakter loop: **commit kecil, sering, dengan test**. Hindari mega-commit "featu
 
 ## 2. Lanjut ke Latihan
 
-Setelah membaca materi ini, lanjut ke **[Latihan 03 — Build Feature: Form New Note + localStorage CRUD](./latihan-03-build-feature/README.md)**. Di sana Anda akan:
+Setelah membaca materi ini, lanjut ke **[Latihan 03 — Build Feature: Contact Form + Polish Portfolio](./latihan-03-build-feature/README.md)**. Di sana Anda akan:
 
-- Menambahkan halaman `new.html` (form editor catatan) dan persistensi `localStorage` ke project DevNotes.
+- Menambahkan section Contact dengan form, validasi inline, dan submit ke `localStorage` ke portfolio Anda.
+- Membuat navigation sticky responsive (desktop nav + mobile hamburger).
+- Run Lighthouse audit dan fix isu accessibility/performance.
 - Menerapkan loop *prompt → review diff → test → commit* sebanyak ≥ 4 iterasi commit bermakna.
-- Memakai semua 4 mode interaksi Cursor (Tab, Cmd/Ctrl+K, Chat, Composer) minimal sekali.
-- Memvalidasi hasilnya dengan checklist kualitas + Lighthouse accessibility ≥ 90.
+- Memakai semua 4 mode interaksi Cursor (Tab, Cmd/Ctrl+K, Chat, Agent) minimal sekali.
 
-Output akhir Hari 1: aplikasi DevNotes statis yang sudah punya feed, detail, dan CRUD lengkap berbasis browser — siap dimigrasi ke Next.js + Supabase di Hari 2.
+Output akhir Hari 1: website portfolio personal Anda yang siap di-deploy & dipakai untuk apply kerja / freelance.
 
 ---
 

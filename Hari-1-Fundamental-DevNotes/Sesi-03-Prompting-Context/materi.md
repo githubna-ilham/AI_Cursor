@@ -1,6 +1,6 @@
 # Sesi 3 — Prompting & Context Management
 
-Setelah Sesi 2 mengenalkan **alat** Cursor, sesi ini fokus pada **bahasa** untuk berbicara dengannya. Kualitas output AI bukan ditentukan model, tapi prompt + konteks + rules yang Anda susun. Anda akan praktikkan langsung di Latihan 02 dengan membangun halaman detail DevNotes.
+Setelah Sesi 2 mengenalkan **alat** Cursor, sesi ini fokus pada **bahasa** untuk berbicara dengannya. Kualitas output AI bukan ditentukan model, tapi prompt + konteks + rules yang Anda susun. Anda akan praktikkan langsung di Latihan 02 dengan mengisi 4 section portfolio (Hero, Skills, Projects, project detail).
 
 ---
 
@@ -167,9 +167,9 @@ Sebelum tekan Enter, cek:
 
 ## 2. Lanjut ke Latihan
 
-Setelah membaca materi ini, lanjut ke **[Latihan 02 — Prompting Drill: Halaman Detail DevNotes](./latihan-02-prompting-drill/README.md)**. Di sana Anda akan:
+Setelah membaca materi ini, lanjut ke **[Latihan 02 — Prompting Drill: Isi Section Portfolio](./latihan-02-prompting-drill/README.md)**. Di sana Anda akan:
 
-- Menyelesaikan 5 skenario prompting yang outputnya **semua berkontribusi** ke halaman detail catatan DevNotes (lookup by `?id=`, render markdown, link dari home, 404 handling).
+- Menyelesaikan 4 tahap prompting yang outputnya **mengisi 4 section portfolio** Anda (Hero, Skills, Projects + `data.js`, project detail modal).
 - Menerapkan 3 lapis (Role + Context + Constraint) dan @-mentions yang Anda baru pelajari.
 - Menilai prompt Anda sendiri dengan rubrik 5 dimensi.
 

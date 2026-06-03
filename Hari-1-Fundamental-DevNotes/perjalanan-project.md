@@ -1,8 +1,10 @@
-# Perjalanan Project DevNotes — Hari 1
+# Perjalanan Project Hari 1 — Website Portfolio Personal
 
-Hari 1 dirancang sebagai **satu perjalanan linear** membangun DevNotes (web statis HTML/CSS/JS). Anda tidak menyelesaikan latihan-latihan terpisah — Anda menyelesaikan **1 project bertahap**, masing-masing tahap menambahkan kemampuan baru ke aplikasi yang sama.
+Hari 1 dirancang sebagai **satu perjalanan linear** membangun website portfolio personal Anda (HTML/CSS/JS vanilla). Anda tidak menyelesaikan latihan-latihan terpisah — Anda menyelesaikan **1 project bertahap**, masing-masing tahap menambahkan section atau kemampuan baru.
 
-Lihat juga BRD lengkap di [`../project-brd.md`](../project-brd.md).
+> Catatan: project ini **khusus Hari 1**. Hari 2 dan 3 melanjutkan project berbeda (DevNotes — backend & full-stack). Lihat [`../project-brd.md`](../project-brd.md) untuk konteks Hari 2-3.
+
+BRD lengkap portfolio: [`portfolio-brd.md`](./portfolio-brd.md).
 
 ---
 
@@ -10,15 +12,15 @@ Lihat juga BRD lengkap di [`../project-brd.md`](../project-brd.md).
 
 ```mermaid
 flowchart TD
-    T1[Tahap 1<br/>Setup repo + halaman home statis] --> T2[Tahap 2<br/>Tour 4 mode Cursor di project]
-    T2 --> T3[Tahap 3<br/>Mock data diperluas]
-    T3 --> T4[Tahap 4<br/>Halaman detail catatan]
-    T4 --> T5[Tahap 5<br/>Link home → detail]
-    T5 --> T6[Tahap 6<br/>404 handling]
-    T6 --> T7[Tahap 7<br/>Storage layer lokal]
-    T7 --> T8[Tahap 8<br/>Form catatan baru]
-    T8 --> T9[Tahap 9<br/>Merge home + user notes]
-    T9 --> T10[Tahap 10<br/>Edit & delete catatan]
+    T1[Tahap 1<br/>Setup repo + struktur HTML dasar] --> T2[Tahap 2<br/>Tour 4 mode Cursor + styling dasar]
+    T2 --> T3[Tahap 3<br/>Section Hero / About]
+    T3 --> T4[Tahap 4<br/>Section Skills]
+    T4 --> T5[Tahap 5<br/>Section Projects + data.js]
+    T5 --> T6[Tahap 6<br/>Project detail / hover state]
+    T6 --> T7[Tahap 7<br/>Section Contact form + validasi]
+    T7 --> T8[Tahap 8<br/>Submit form → localStorage + toast]
+    T8 --> T9[Tahap 9<br/>Navigation sticky + responsive]
+    T9 --> T10[Tahap 10<br/>Polish + Lighthouse audit]
 
     style T1 fill:#e3f2fd
     style T2 fill:#e3f2fd
@@ -38,29 +40,29 @@ Warna menandakan sesi: **biru** = Sesi 2, **oranye** = Sesi 3, **ungu** = Sesi 4
 
 ## Tabel Tahap
 
-| # | Tahap | Output yang Anda tambahkan ke `devnotes/` | Sesi | FR (BRD) |
-| - | ----- | ----------------------------------------- | ---- | -------- |
-| 1 | **Setup repo + halaman home statis** | `index.html`, `assets/styles.css`, `assets/app.js` dengan `MOCK_NOTES` array | Sesi 2 | FR-01 |
-| 2 | **Tour 4 mode Cursor di project** | 5 screenshot bukti pakai Tab/K/Chat/Agent + `formatRelativeTime()` di `app.js` | Sesi 2 | (skill) |
-| 3 | **Mock data diperluas** | `MOCK_NOTES` dapat field baru: `id`, `body_md`, `is_public` | Sesi 3 | — |
-| 4 | **Halaman detail catatan** | `notes/[id].html` dengan render markdown (via `marked` CDN) | Sesi 3 | FR-02 |
-| 5 | **Link home → detail** | `renderNotes()` wrap kartu dengan `<a href="notes/[id].html?id=...">` | Sesi 3 | FR-02 |
-| 6 | **404 handling** | Empty state "Catatan tidak ditemukan" di `notes/[id].html` | Sesi 3 | (UX) |
-| 7 | **Storage layer lokal** | `DevNotesStorage` di `app.js` (get/save/delete/slug/getAll) + JSON guard | Sesi 4 | FR-04 (lokal) |
-| 8 | **Form catatan baru** | `new.html` (form + markdown preview + radio public/private + submit handler) | Sesi 4 | FR-04 (lokal) |
-| 9 | **Merge home + user notes** | `renderNotes()` ambil dari `getAllNotes()` + label "(draft)" untuk privat | Sesi 4 | FR-04 (lokal) |
-| 10 | **Edit & delete catatan** | Tombol Edit/Hapus di detail (owner only) + prefill form di `new.html?id=...` | Sesi 4 | FR-06 (lokal) |
+| #  | Tahap                                          | Output yang Anda tambahkan ke `portfolio/`                                              | Sesi | FR (BRD) |
+| -- | ---------------------------------------------- | --------------------------------------------------------------------------------------- | ---- | -------- |
+| 1  | **Setup repo + struktur HTML dasar**           | `index.html` dengan skeleton semantic (header/nav/main/footer), `assets/styles.css` reset | Sesi 2 | FR-01 |
+| 2  | **Tour 4 mode Cursor + styling dasar**         | 5 screenshot bukti pakai Tab/K/Chat/Agent + variabel CSS dasar (warna, font, spacing)   | Sesi 2 | (skill) |
+| 3  | **Section Hero / About**                       | `<section id="hero">` dengan foto, nama, headline, bio singkat, 2 tombol CTA            | Sesi 3 | FR-01 |
+| 4  | **Section Skills**                             | `<section id="skills">` dengan grid icon + label dari array `SKILLS`                    | Sesi 3 | FR-01 |
+| 5  | **Section Projects + data.js**                 | `assets/data.js` (PROFILE, SKILLS, PROJECTS arrays) + `<section id="projects">` grid    | Sesi 3 | FR-03 |
+| 6  | **Project detail / hover state**               | Hover effect kartu + modal/expanded view berisi deskripsi panjang & screenshot          | Sesi 3 | (UX) |
+| 7  | **Section Contact form + validasi**            | `<section id="contact">` form (nama, email, pesan) + validasi inline                    | Sesi 4 | FR-04 |
+| 8  | **Submit form → localStorage + toast**         | Handler submit yang simpan ke `localStorage` + toast "Pesan terkirim"                   | Sesi 4 | FR-05 |
+| 9  | **Navigation sticky + responsive**             | Nav sticky dengan smooth scroll + hamburger menu mobile + media query ≤ 768px            | Sesi 4 | FR-02, FR-06 |
+| 10 | **Polish + Lighthouse audit**                  | Dark/light mode toggle (opsional), animasi halus, accessibility fixes, run Lighthouse   | Sesi 4 | FR-07, NFR-02 |
 
 ---
 
 ## Pengelompokan per Sesi
 
-| Sesi | Materi (baca) | Tahap (kerjakan) | Lokasi file |
-| ---- | ------------- | ---------------- | ----------- |
-| **1** | Introduction to AI-Assisted Coding | — (belum ada praktik Cursor) | [`Sesi-01-Introduction-AI-Coding/materi.md`](./Sesi-01-Introduction-AI-Coding/materi.md) |
-| **2** | Getting Started with Cursor | **Tahap 1–2** | [`Sesi-02-Getting-Started-Cursor/latihan-01-tour-cursor/`](./Sesi-02-Getting-Started-Cursor/latihan-01-tour-cursor/) |
-| **3** | Prompting & Context Management | **Tahap 3–6** | [`Sesi-03-Prompting-Context/latihan-02-prompting-drill/`](./Sesi-03-Prompting-Context/latihan-02-prompting-drill/) |
-| **4** | Code Generation Fundamentals | **Tahap 7–10** | [`Sesi-04-Code-Generation/latihan-03-build-feature/`](./Sesi-04-Code-Generation/latihan-03-build-feature/) |
+| Sesi  | Materi (baca)                       | Tahap (kerjakan) | Lokasi file                                                                                              |
+| ----- | ----------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------- |
+| **1** | Introduction to AI-Assisted Coding  | — (belum praktik) | [`Sesi-01-Introduction-AI-Coding/materi.md`](./Sesi-01-Introduction-AI-Coding/materi.md)                |
+| **2** | Getting Started with Cursor         | **Tahap 1–2**    | [`Sesi-02-Getting-Started-Cursor/latihan-01-tour-cursor/`](./Sesi-02-Getting-Started-Cursor/latihan-01-tour-cursor/) |
+| **3** | Prompting & Context Management      | **Tahap 3–6**    | [`Sesi-03-Prompting-Context/latihan-02-prompting-drill/`](./Sesi-03-Prompting-Context/latihan-02-prompting-drill/)   |
+| **4** | Code Generation Fundamentals        | **Tahap 7–10**   | [`Sesi-04-Code-Generation/latihan-03-build-feature/`](./Sesi-04-Code-Generation/latihan-03-build-feature/)           |
 
 ---
 
@@ -68,49 +70,56 @@ Warna menandakan sesi: **biru** = Sesi 2, **oranye** = Sesi 3, **ungu** = Sesi 4
 
 Untuk setiap tahap, peserta dinyatakan "lulus tahap" jika:
 
-| Tahap | Bukti lulus (commit minimal) |
-| ----- | ---------------------------- |
-| 1 | `git log` punya commit `feat: scaffold DevNotes home page (FR-01)`; `index.html` tampil di browser dengan 3 kartu |
-| 2 | 5 screenshot di `submissions/<nama>/` + `formatRelativeTime` dipakai di kartu home |
-| 3 | `MOCK_NOTES` punya minimal 3 item dengan field `id`, `body_md`, `is_public` lengkap |
-| 4 | Buka `notes/[id].html?id=<slug>` di browser → tampil judul, meta, body markdown ter-render |
-| 5 | Klik kartu di home → otomatis navigasi ke halaman detail (tidak ada `console.error`) |
-| 6 | Akses `notes/[id].html?id=tidak-ada` → muncul empty state, tidak crash, tidak redirect otomatis |
-| 7 | DevTools console: `DevNotesStorage.saveUserNote({...})` lalu lihat key `devnotes:notes` di Local Storage |
-| 8 | Buka `new.html`, isi form, submit → redirect ke detail catatan baru, data persistent setelah refresh |
-| 9 | Home page tampilkan draft baru di paling atas dengan label "(draft)" untuk yang `is_public=false` |
-| 10 | Edit catatan → simpan → data ter-update; delete → confirm → catatan hilang dari home & localStorage |
+| Tahap | Bukti lulus (commit minimal)                                                                            |
+| ----- | ------------------------------------------------------------------------------------------------------- |
+| 1     | `git log` punya commit `feat: scaffold portfolio skeleton`; `index.html` tampil di browser (boleh kosong) |
+| 2     | 5 screenshot di `submissions/<nama>/` + CSS variables (`--color-primary`, `--font-base`, dll) di `:root` |
+| 3     | Section Hero terlihat: foto + nama + headline + bio + 2 tombol CTA                                       |
+| 4     | Section Skills render minimal 6 skill dari array `SKILLS` di `data.js`                                   |
+| 5     | Section Projects render minimal 3 project dari array `PROJECTS`; tiap kartu link ke demo & repo          |
+| 6     | Hover kartu project ada transisi visual; klik kartu → modal/expanded view muncul dengan deskripsi penuh |
+| 7     | Form Contact tampil; validasi inline aktif (nama < 2, email invalid, pesan < 10 → error visible)        |
+| 8     | Submit form → toast muncul → cek DevTools → key `portfolio:messages` ada di localStorage                |
+| 9     | Buka di mobile viewport (DevTools responsive mode) → layout tetap rapi, nav berubah jadi hamburger      |
+| 10    | Lighthouse audit jalan → Performance ≥ 85, Accessibility ≥ 90, Best Practices ≥ 90                     |
 
 ---
 
 ## Skenario "Tertinggal"
 
-Pelatihan ini padat. Kalau Anda **tidak selesai 1 tahap** di waktu yang dialokasikan, ini panduan praktis:
+Kalau Anda **tidak selesai 1 tahap** di waktu yang dialokasikan:
 
-1. **Catat tahap terakhir yang selesai** di refleksi (mis. "selesai sampai Tahap 5, Tahap 6 belum").
-2. **Lanjut ikuti materi Sesi berikutnya** secara konseptual — jangan menahan diri di Tahap yang stuck.
-3. **Kejar tahap yang tertinggal di break atau malam hari** — semua brief latihan ada di repo, bisa diakses kapan saja.
-4. **Tahap minimum untuk masuk Hari 2**: idealnya selesai sampai **Tahap 8** (web statis fungsional dengan create catatan). Tahap 9–10 boleh menyusul.
-
-Yang penting: di akhir Hari 1, Anda punya **artefak `devnotes/` yang bisa di-`git push`** ke GitHub, walaupun belum sempurna.
+1. **Catat tahap terakhir yang selesai** di refleksi.
+2. **Lanjut ikuti materi Sesi berikutnya** secara konseptual — jangan menahan diri di tahap yang stuck.
+3. **Kejar tahap yang tertinggal di break atau malam hari**.
+4. **Tahap minimum supaya portfolio layak share**: sampai **Tahap 8** (4 sections + form fungsional). Tahap 9–10 (responsive + polish) boleh menyusul.
 
 ---
 
 ## Output Akhir Hari 1 (akhir Tahap 10)
 
-Folder `devnotes/` Anda berisi:
+Folder `portfolio/` Anda berisi:
 
 ```
-devnotes/
-├── README.md
-├── index.html                ← feed publik + draft
-├── new.html                  ← form editor
-├── notes/
-│   └── [id].html             ← detail (juga edit & hapus untuk owner)
+portfolio/
+├── README.md                 ← cara menjalankan + cara update data
+├── index.html                ← single-page: hero + skills + projects + contact
 ├── assets/
-│   ├── styles.css
-│   └── app.js                ← MOCK_NOTES + DevNotesStorage + render utils
-└── submissions/<nama>/       ← bukti screenshot & refleksi
+│   ├── styles.css            ← CSS modern: Flexbox/Grid + variables + media query
+│   ├── app.js                ← render functions + form handler + nav scroll
+│   ├── data.js               ← PROFILE, SKILLS, PROJECTS arrays
+│   ├── profile.jpg           ← foto Anda (atau placeholder)
+│   └── projects/
+│       └── *.png             ← thumbnail project
+└── submissions/<nama>/       ← 5 screenshot Cursor + refleksi.md
 ```
 
-Aplikasi ini akan Anda **migrasi ke Next.js + Supabase + Vercel** di Hari 2. Folder yang Anda hasilkan di Hari 1 adalah **starting point** untuk Hari 2 Sesi 7 (Refactoring).
+(Bonus) Deploy ke **GitHub Pages / Netlify / Vercel** — gratis, < 5 menit. Sharable URL untuk LinkedIn / CV.
+
+---
+
+## Catatan Penting
+
+- Portfolio ini **milik Anda**. Anda bebas lanjutkan, modify, atau pakai sungguhan untuk apply kerja / freelance.
+- Hari 2 dan 3 **tidak melanjutkan** project portfolio ini — Anda akan mulai project baru (DevNotes — full-stack app dengan BE Supabase). Detail di [`../project-brd.md`](../project-brd.md).
+- Project portfolio Anda layak ditampilkan **sebagai project pertama di Section Projects sendiri** — ironis tapi efektif sebagai showcase.

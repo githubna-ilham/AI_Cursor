@@ -72,7 +72,7 @@ Antarmuka pertama yang muncul. **Bukan tempat menulis kode** — ini launcher un
 - **Editor Window ↗** (pojok kanan atas) — link untuk berpindah ke mode editor klasik. **Ini yang Anda butuhkan untuk latihan**.
 - **Prompt box** di tengah — bisa langsung tulis instruksi untuk Agent tanpa membuka editor.
 
-> Selama pelatihan DevNotes, Anda **hampir tidak menyentuh** Hub view. Klik **"Editor Window ↗"** untuk pindah.
+> Selama pelatihan ini, Anda **hampir tidak menyentuh** Hub view. Klik **"Editor Window ↗"** untuk pindah ke mode klasik.
 
 ### State 2 — Editor Welcome (belum ada project terbuka)
 
@@ -80,13 +80,13 @@ Antarmuka pertama yang muncul. **Bukan tempat menulis kode** — ini launcher un
 
 Window editor terbuka, tapi belum ada folder/project yang di-load. 3 tombol utama:
 
-- **Open project** — pilih folder lokal (mis. folder `devnotes/` yang Anda siapkan di pendahuluan).
+- **Open project** — pilih folder lokal (mis. folder `portfolio/` yang akan Anda siapkan di Latihan 01).
 - **Clone repo** — clone dari URL git langsung.
 - **Connect via SSH** — buka folder di mesin remote via SSH.
 
 Di bawah ada **Recent projects** — daftar project yang pernah Anda buka.
 
-Untuk mulai DevNotes: klik **Open project** → pilih `~/devnotes-workshop/devnotes/` (atau folder tempat Anda menyiapkan).
+Untuk mulai project Hari 1: klik **Open project** → pilih folder `portfolio/` yang Anda buat di Latihan 01.
 
 ### State 3 — Editor Penuh (project ter-load)
 
