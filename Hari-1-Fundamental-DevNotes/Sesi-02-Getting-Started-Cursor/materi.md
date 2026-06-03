@@ -76,11 +76,43 @@ sequenceDiagram
     UI-->>Dev: render inline / chat
 ```
 
-Yang harus dipahami peserta:
+#### Alur singkat (apa yang terjadi saat Anda tekan Enter)
 
-- Codebase di-**index** lokal lalu retrieval-augmented dikirim ke provider.
-- Konteks yang dikirim **terbatas** (token budget). Karenanya kemampuan **memilih konteks** = skill kritis (Sesi 3).
-- Provider model bersifat **eksternal**. Privacy mode mencegah penyimpanan/training.
+1. **Anda** mengetik prompt + `@file utils.ts` di chat.
+2. **Cursor UI** mencari potongan kode paling relevan dari project (lewat Codebase Index).
+3. **Index** mengembalikan *top-k snippets* (mis. 5–10 potongan).
+4. **Cursor UI** merangkai paket: `prompt + snippets + cursor rules` → kirim ke server model.
+5. **Model Provider** memproses dan mengembalikan jawaban (diff atau text).
+6. **Cursor UI** menampilkan ke Anda — inline diff (Cmd+K) atau bubble chat.
+
+#### Analogi: asisten di luar gedung
+
+Bayangkan Cursor seperti asisten yang bekerja di luar gedung:
+
+- Anda kasih instruksi (**prompt**).
+- Sekretaris (Cursor UI) cari fotokopi dokumen relevan dari arsip (**index lokal**).
+- Sekretaris kirim ke asisten luar (**model provider**) lewat kurir (**network**).
+- Asisten balas dengan draft (**jawaban LLM**).
+- Sekretaris terima dan serahkan ke Anda.
+
+Yang penting: **Anda tidak pernah kirim seluruh isi arsip** — selalu pilihan dokumen relevan. Itulah *retrieval-augmented*.
+
+#### Tiga konsep kunci
+
+**1. Codebase Index (lokal).** Saat pertama membuka folder, Cursor men-*scan* semua file, memecahnya jadi chunks, lalu menghitung *embedding* (representasi numerik). Index ini disimpan di laptop Anda. Project kecil seperti `devnotes/` selesai di-index < 30 detik; project besar bisa beberapa menit.
+
+**2. Retrieval-Augmented (konteks ter-batas).** LLM punya **token budget**. Tidak mungkin seluruh codebase dikirim sekaligus. Cursor hanya kirim *top-k snippets* paling relevan, ditentukan oleh: kemiripan embedding + file yang Anda sebut via `@-mention` + file yang sedang dibuka. **Karena itulah skill memilih konteks = skill kritis** — fokus Sesi 3.
+
+**3. Model Provider eksternal.** LLM tidak jalan di laptop Anda; dikirim ke server Anthropic/OpenAI/Google. Implikasinya: ada latency network, dan kode Anda meninggalkan laptop. **Privacy mode** mencegah provider menyimpan kode untuk training.
+
+#### Implikasi praktis untuk Anda
+
+| Saat ini terjadi…                    | Kemungkinan besar penyebabnya…                | Mitigasi cepat                                                       |
+| ------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------- |
+| Jawaban AI **terasa generik / salah arah** | Konteks yang dikirim tidak tepat              | Tambah `@-mention` file kunci atau exemplar yang ingin Anda tiru     |
+| Cursor **lambat** merespons          | Network ke provider lambat / model berat      | Cek koneksi, ganti ke model lebih ringan (Auto / Sonnet), tutup chat panjang |
+| Khawatir kode sensitif terkirim      | Default mode bisa simpan untuk improvement    | Aktifkan **Privacy mode** + tambahkan `.cursorignore` untuk file rahasia |
+| Chat panjang mulai "ngawur"          | Token budget penuh, snippet penting kepotong  | Reset chat, mulai sesi baru dengan @-mention yang lebih spesifik     |
 
 ### 1.4 Model — Memilih yang Tepat
 
