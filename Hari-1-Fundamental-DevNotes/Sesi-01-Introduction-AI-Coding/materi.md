@@ -75,13 +75,16 @@ flowchart TD
     C --> D[Test]
     D --> E[Deploy]
     E --> F[Operate]
-    F --> A
+    F -->|insight & bug report<br/>jadi requirement baru| A
 
-    B -. AI summarize spec .-> B
-    C -. AI generate code .-> C
-    D -. AI generate tests .-> D
-    E -. AI write CI/CD .-> E
-    F -. AI triage logs .-> F
+    AI(["AI Assistant"])
+    AI -. summarize spec<br/>& user story .-> B
+    AI -. generate code<br/>& boilerplate .-> C
+    AI -. generate test<br/>& edge cases .-> D
+    AI -. tulis CI/CD<br/>& IaC .-> E
+    AI -. triage log<br/>& root cause .-> F
+
+    style AI fill:#fff3e0,stroke:#f57c00,stroke-width:2px
 ```
 
 Lima peran konkret AI yang akan Anda praktikkan sepanjang pelatihan:
