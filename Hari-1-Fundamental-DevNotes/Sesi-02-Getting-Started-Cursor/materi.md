@@ -9,7 +9,7 @@
 
 Setelah sesi ini peserta mampu:
 
-1. **Menjelaskan** posisi Cursor sebagai *AI-native fork of VS Code* dan menyebut minimal 4 kapabilitas inti yang tidak ada di IDE biasa.
+1. **Menjelaskan** posisi Cursor sebagai *AI-native code editor* yang dibangun di atas basis VS Code, serta menyebut minimal 4 kapabilitas inti yang tidak ada di IDE biasa.
 2. **Menginstall** Cursor pada OS masing-masing (macOS / Windows / Linux), login, dan memilih model default.
 3. **Menavigasi** 5 area utama UI: Editor, Chat, Composer, Inline Edit (Cmd/Ctrl+K), dan Cursor Tab.
 4. **Mengintegrasikan** Cursor dengan workflow eksisting: Git, terminal, extension VS Code, dan project lokal.
@@ -21,7 +21,7 @@ Setelah sesi ini peserta mampu:
 
 ### 1.1 Apa itu Cursor?
 
-Cursor adalah **fork dari VS Code** yang dirancang ulang dengan AI sebagai komponen inti, bukan sebagai plugin. Implikasi praktis:
+Cursor adalah **code editor yang dibangun di atas basis VS Code**, lalu dirancang ulang dengan AI sebagai komponen inti — bukan sekadar plugin yang ditempel. Implikasi praktis:
 
 - Hampir semua **extension VS Code kompatibel** (Marketplace OpenVSX + ekspor manual).
 - Keybinding dan tema VS Code bisa diimpor langsung di first-run.
