@@ -18,7 +18,9 @@ Setelah membaca materi ini, Anda akan mampu:
 
 ## 1. Konsep Inti
 
-### 1.1 Spectrum Code Generation
+### 1.1 Spektrum Code Generation
+
+"Code generation" itu bukan satu hal — ada **tingkatan ukuran kode** yang Anda minta AI buatkan, dari yang kecil (1 baris) sampai yang besar (1 service utuh). Setiap tingkatan punya **mode Cursor yang optimal**, **tingkat risiko**, dan **effort review yang dibutuhkan** berbeda.
 
 ```mermaid
 flowchart LR
@@ -30,15 +32,33 @@ flowchart LR
     style E fill:#fdd
 ```
 
-| Level | Risiko | Mode Cursor Optimal | Review effort |
-|-------|--------|---------------------|---------------|
-| Snippet | Rendah | Tab | Detik |
-| Function | Rendah-sedang | Cmd/Ctrl+K | Menit |
-| Module | Sedang | Chat / K | 10+ menit |
-| Feature | Tinggi | Composer | 30+ menit |
-| Service | Sangat tinggi | Composer (bertahap) + manual arch | Jam |
+Warna di diagram: **biru muda** = risiko rendah, **merah muda** = risiko tinggi. Semakin besar unit kerja, semakin besar pula peluang AI salah arah karena harus menjaga konsistensi antar banyak bagian.
 
-Aturan: **semakin tinggi level, semakin penting spesifikasi & review**.
+#### Penjelasan tiap level
+
+| Level        | Apa itu (contoh DevNotes)                                                                  | Mode Cursor Optimal              | Risiko        | Review effort |
+| ------------ | ------------------------------------------------------------------------------------------ | -------------------------------- | ------------- | ------------- |
+| **Snippet**  | 1 baris atau blok kecil — mis. `const TZ = 'Asia/Jakarta';` atau ternary inline             | **Tab** (autocomplete)           | Rendah        | Detik         |
+| **Function** | 1 unit logika utuh — mis. `formatRelativeTime(iso)` atau `validateTitle(s)`                 | **Cmd/Ctrl+K** (inline edit)     | Rendah–sedang | Menit         |
+| **Module**   | Kumpulan fungsi terkait — mis. modul storage `DevNotesStorage` (get/save/delete/slug)       | **Chat** atau Cmd/Ctrl+K bertahap | Sedang       | 10+ menit     |
+| **Feature**  | Vertical slice end-to-end — mis. form New Note (HTML + JS + integrasi storage + redirect)   | **Composer / Agent**             | Tinggi        | 30+ menit     |
+| **Service**  | Sistem dengan boundary jelas — mis. seluruh BE Hari 2 (Supabase + auth + RLS + API routes)  | Composer **bertahap** + desain manual | Sangat tinggi | Jam        |
+
+#### Tiga pola yang muncul di tabel
+
+**1. Semakin besar unit → semakin tinggi risiko.** Snippet sulit salah secara fatal (mis. autocomplete `console.log`). Service mudah salah secara fatal (mis. RLS policy bocor → semua user lihat data orang lain).
+
+**2. Mode Cursor disesuaikan dengan ukuran.** Tab untuk yang reflex, Cmd+K untuk yang fokus, Chat untuk yang butuh diskusi, Composer untuk yang sentuh banyak file. Pakai Composer untuk snippet = overkill; pakai Tab untuk feature = di luar kemampuan.
+
+**3. Review effort tumbuh non-linear.** Function 20-baris cukup 2 menit review. Feature 200-baris di 4 file butuh 30+ menit review. **Bukan karena baris-nya 10× lebih banyak, tapi interaksi antar bagian-nya** yang perlu divalidasi.
+
+#### Implikasi untuk Anda
+
+- **Mulai dari yang kecil**. Untuk fitur baru, pecah dulu jadi module → function → snippet sebelum minta AI generate. Jangan langsung Composer "buat semua".
+- **Pasangkan mode dengan unit yang benar**. Snippet pakai Tab; jangan paksakan Cmd+K untuk 1 baris.
+- **Investasi review proporsional**. Untuk feature/service, alokasikan waktu review yang setara dengan waktu generate. AI 5 menit + review 30 menit lebih aman daripada AI 5 menit + review 1 menit.
+
+> **Aturan ringkas**: *semakin tinggi level di spektrum, semakin penting spesifikasi (sebelum) & review (sesudah).*
 
 ### 1.2 Dari User Story ke Prompt
 
