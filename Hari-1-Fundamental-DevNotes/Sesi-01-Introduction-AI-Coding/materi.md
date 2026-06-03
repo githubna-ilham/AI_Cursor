@@ -50,7 +50,7 @@ Pergeseran utama bukan pada *kapasitas mengetik*, tapi pada **abstraksi unit ker
 | Manual       | Karakter / token    | Mengingat sintaks          |
 | Autocomplete | Identifier / line   | Memilih dari kandidat      |
 | AI inline    | Function / block    | Memvalidasi logika         |
-| AI agentic   | Feature / task      | Menulis spec & review diff |
+| AI berbasis agent | Feature / task | Menulis spec & review diff |
 
 ### 1.3 AI-Assisted vs Traditional Coding
 

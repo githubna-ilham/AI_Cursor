@@ -31,7 +31,7 @@ Cursor adalah **code editor yang dibangun di atas basis VS Code**, lalu dirancan
 | Inline suggestion        | ✓ (Copilot)             | ✓ (Tab) — multi-line + cross-file     |
 | Inline edit (instruct)   | Parsial (Copilot Chat)  | ✓ (Cmd/Ctrl+K) native                 |
 | Chat dengan codebase     | Limited                 | ✓ (@-mentions, indexed)               |
-| Multi-file edit (agentic)| Parsial                 | ✓ (Composer / Agent)                  |
+| Edit banyak file otomatis | Parsial                 | ✓ (Agent)                            |
 | Switch model             | Tidak                   | ✓ (Claude, GPT, Gemini, dll.)         |
 | Privacy mode             | Per-org                 | Per-user & per-project                |
 | Project rules            | Parsial                 | ✓ (`.cursor/rules/*.mdc`)             |
@@ -46,7 +46,7 @@ flowchart LR
         K[Cmd/Ctrl+K<br/>inline edit]
         C[Chat<br/>Q&A + context]
         A[Composer / Agent<br/>multi-file task]
-        R[Rules<br/>guardrails]
+        R[Rules<br/>aturan]
     end
     T -->|cepat| K -->|presisi| C -->|eksploratif| A -->|otomasi| R
 ```
@@ -57,7 +57,7 @@ flowchart LR
 | **Cmd/Ctrl+K**                   | Highlight kode + shortcut             | Refactor terlokalisasi, generate snippet              |
 | **Chat** (Cmd/Ctrl+L)            | Buka panel                            | Tanya jawab tentang codebase, eksplorasi              |
 | **Composer / Agent** (Cmd/Ctrl+I)| Buka composer                         | Bikin/edit beberapa file, jalankan terminal           |
-| **Rules**                        | Otomatis dari file `.cursor/rules/`   | Pasang guardrail style, arsitektur, security          |
+| **Rules**                        | Otomatis dari file `.cursor/rules/`   | Pasang aturan style, arsitektur, keamanan             |
 
 ### 1.3 Arsitektur Kerja (model & context)
 
@@ -108,7 +108,7 @@ Yang penting: **Anda tidak pernah kirim seluruh isi arsip** — selalu pilihan d
 
 | Saat ini terjadi…                          | Kemungkinan besar penyebabnya…                | Mitigasi cepat                                                                |
 | ------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------------------------- |
-| Jawaban AI **terasa generik / salah arah** | Konteks yang dikirim tidak tepat              | Tambah `@-mention` file kunci atau exemplar yang ingin Anda tiru              |
+| Jawaban AI **terasa generik / salah arah** | Konteks yang dikirim tidak tepat              | Tambah `@-mention` file kunci atau contoh acuan yang ingin Anda tiru          |
 | Cursor **lambat** merespons                | Network ke provider lambat / model berat      | Cek koneksi, ganti ke model lebih ringan (Auto / Sonnet), tutup chat panjang  |
 | Khawatir kode sensitif terkirim            | Default mode bisa simpan untuk improvement    | Aktifkan **Privacy mode** + tambahkan `.cursorignore` untuk file rahasia      |
 | Chat panjang mulai "ngawur"                | Token budget penuh, snippet penting kepotong  | Reset chat, mulai sesi baru dengan @-mention yang lebih spesifik              |

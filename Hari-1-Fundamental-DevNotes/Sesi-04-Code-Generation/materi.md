@@ -26,7 +26,7 @@ Setelah membaca materi ini, Anda akan mampu:
 flowchart LR
     A[Snippet<br/>1 baris/blok] --> B[Function<br/>1 unit logika]
     B --> C[Module<br/>kumpulan unit]
-    C --> D[Feature<br/>vertical slice]
+    C --> D[Feature<br/>fitur utuh]
     D --> E[Service<br/>boundary]
     style A fill:#dff
     style E fill:#fdd
@@ -41,7 +41,7 @@ Warna di diagram: **biru muda** = risiko rendah, **merah muda** = risiko tinggi.
 | **Snippet**  | 1 baris atau blok kecil — mis. `const STORAGE_KEY = 'portfolio:messages';`                   | **Tab** (autocomplete)           | Rendah        | Detik         |
 | **Function** | 1 unit logika utuh — mis. `validateEmail(s)` atau `smoothScrollTo(id)`                       | **Cmd/Ctrl+K** (inline edit)     | Rendah–sedang | Menit         |
 | **Module**   | Kumpulan fungsi terkait — mis. modul form validation (validate per field + submit handler)   | **Chat** atau Cmd/Ctrl+K bertahap | Sedang       | 10+ menit     |
-| **Feature**  | Vertical slice end-to-end — mis. section Contact (form + validasi + submit + toast + storage) | **Agent**                        | Tinggi        | 30+ menit     |
+| **Feature**  | Fitur utuh end-to-end (UI sampai data) — mis. section Contact (form + validasi + submit + toast + storage) | **Agent**                        | Tinggi        | 30+ menit     |
 | **Service**  | Sistem dengan boundary jelas — mis. seluruh BE DevNotes Hari 2 (Supabase + auth + RLS)       | Agent **bertahap** + desain manual | Sangat tinggi | Jam        |
 
 #### Tiga pola yang muncul di tabel
@@ -162,7 +162,7 @@ Tambahkan unit test 4 case (happy, empty, all unpaid, tanggal batas).
 AI **tidak otomatis** mengikuti style repo Anda. Pastikan dengan:
 
 - `@folder` referensi ke folder dengan style yang ingin di-mirror.
-- `@file` ke file *exemplar* — contoh "begini cara kami menulis service".
+- `@file` ke file *contoh acuan* — contoh "begini cara kami menulis service".
 - Project rules (`.cursor/rules/*.mdc`) yang menjelaskan konvensi (akan dipakai Hari 2).
 - Selalu **jalankan linter/formatter** setelah generate.
 
@@ -185,7 +185,7 @@ Checklist minimal sebelum commit:
 - **Accept-all Composer** tanpa baca diff.
 - **Build feature di-1-prompt** padahal estimasi 1 hari kerja.
 - **Skip test** karena "AI sudah pasti benar".
-- **Asumsi style** tanpa exemplar.
+- **Asumsi style** tanpa contoh acuan.
 - **Tidak menjalankan code** setelah generate (kompilasi/lint/test).
 - **Commit dengan pesan default AI** tanpa review.
 
