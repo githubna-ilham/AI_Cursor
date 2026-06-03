@@ -78,24 +78,15 @@ Lakukan checklist di bawah ini **sebelum** hari pertama dimulai. Estimasi total:
 4. Buka Cursor → login dengan email Anda (akan muncul kode verifikasi via email).
 5. Detail lengkap & troubleshooting: [`Hari-1-Fundamental-DevNotes/Sesi-02-Getting-Started-Cursor/instalasi-checklist.md`](./Hari-1-Fundamental-DevNotes/Sesi-02-Getting-Started-Cursor/instalasi-checklist.md).
 
-### 3.2 Akun Cursor Pro+ Disediakan Fasilitator
+### 3.2 Pahami Plan & Quota Cursor
 
-Untuk pelatihan ini, **2 akun Cursor Pro+ disediakan oleh Multimatics** untuk dipakai bersama-sama oleh 5 peserta per sesi. Anda **tidak perlu** daftar/bayar Cursor sendiri.
+Cursor membatasi pemakaian model premium per bulan. Untuk pelatihan 3 hari intensif:
 
-**Yang Anda terima di awal sesi**:
+- **Free tier** biasanya **habis di pertengahan Hari 1**. Tidak direkomendasikan.
+- **Pro Trial 14 hari** gratis — daftar maksimal H-14 sebelum hari pertama supaya trial masih aktif selama pelatihan.
+- **Pro berbayar ($20/bulan)** — paling aman kalau Anda berencana lanjut pakai Cursor pasca-pelatihan.
 
-- Email + password 1 akun Pro+ (atau magic link).
-- Pembagian: ~2–3 peserta per akun, ditentukan fasilitator.
-
-**Aturan pakai akun bersama**:
-
-1. **Jangan ubah pengaturan akun** (password, email, payment, profile). Setting Cursor lokal (font, keymap) boleh diubah — itu per-mesin.
-2. **Jangan instal extension yang berat** atau ubah `cursor rules` global. Pakai rules per-project (`.cursorrules` di folder `devnotes/` Anda sendiri).
-3. **Logout dari Cursor saat sesi selesai** supaya peserta sesi berikutnya bisa login.
-4. **Tidak boleh share kredensial keluar dari peserta pelatihan**.
-5. Kalau Cursor tiba-tiba **rate-limit / logout** di tengah sesi: lapor fasilitator, sementara switch ke **Auto model** (tidak konsumsi kuota premium).
-
-**Untuk pemakaian pasca-pelatihan**: kalau Anda mau lanjut pakai Cursor di pekerjaan, daftar akun pribadi (Pro Trial 14 hari gratis, atau Pro $20/bulan). Detail plan di <https://cursor.com/pricing> dan section "Plan & Quota Awareness" di [`instalasi-checklist.md`](./Hari-1-Fundamental-DevNotes/Sesi-02-Getting-Started-Cursor/instalasi-checklist.md).
+Detail lengkap setiap plan di section "Plan & Quota Awareness" di [`instalasi-checklist.md`](./Hari-1-Fundamental-DevNotes/Sesi-02-Getting-Started-Cursor/instalasi-checklist.md) dan halaman resmi <https://cursor.com/pricing>.
 
 ### 3.3 Verifikasi Git
 

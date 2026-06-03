@@ -131,7 +131,7 @@ Checklist lengkap ada di [`instalasi-checklist.md`](./instalasi-checklist.md). K
 1. Download dari [cursor.com](https://cursor.com).
 2. Install seperti aplikasi biasa (macOS: drag ke Applications; Windows: installer; Linux: AppImage/deb).
 3. First run → import VS Code settings/extensions (opsional, direkomendasikan kalau Anda sudah pakai VS Code).
-4. Login dengan kredensial yang disediakan fasilitator (akun Pro+ bersama).
+4. Login dengan kredensial akun Cursor Anda (Pro Trial / Pro / akun yang Anda gunakan).
 5. Pilih model default → **Auto** untuk awal.
 6. Aktifkan **Privacy Mode** kalau Anda akan membuka repo yang sensitif.
 7. Pastikan Git terinstall + identitas global ter-set (sudah Anda lakukan di pendahuluan).
@@ -164,7 +164,7 @@ Shortcut yang akan sering Anda pakai di Hari 1:
 - **Git**: Cursor pakai Git client VS Code; commit message bisa di-generate via tombol "Generate Commit Message".
 - **Terminal**: built-in terminal; output bisa Anda kirim ke Chat dengan shortcut atau "Add to Chat".
 - **Extension**: install lewat marketplace yang terintegrasi. Kompatibel dengan Copilot, ESLint, Prettier, Docker, dll.
-- **Sync settings**: via Settings Sync (mirip VS Code) atau export `settings.json`. Catatan: kalau Anda pakai akun Pro+ bersama, hindari aktifkan Sync supaya setting tidak tercampur dengan peserta lain.
+- **Sync settings**: via Settings Sync (mirip VS Code) atau export `settings.json`.
 - **Project rules**: file di `.cursor/rules/*.mdc` (markdown + frontmatter). Akan Anda pakai mulai Hari 2.
 
 ### 1.8 Privacy & Keamanan (intro)
