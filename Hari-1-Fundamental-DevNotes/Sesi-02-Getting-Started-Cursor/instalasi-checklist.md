@@ -57,6 +57,73 @@ Gunakan checklist ini **sebelum** Sesi 2 dimulai bila memungkinkan, atau pandu p
 
 ---
 
+## 3b. Mengenal Antarmuka Cursor 2.x
+
+Sejak Cursor 2.x (akhir 2025), saat pertama membuka aplikasi Anda akan melihat **3 state antarmuka** yang berbeda. Pahami perpindahan antar-state ini supaya tidak bingung saat mulai latihan.
+
+### State 1 — Hub View (default saat pertama buka)
+
+![Cursor Hub view — agent launcher](../../images/cursor-01-hub-view.png)
+
+Antarmuka pertama yang muncul. **Bukan tempat menulis kode** — ini launcher untuk Agent & project. Yang penting di sini:
+
+- **New Agent** (⌘N) — mulai sesi Agent baru.
+- **Repositories** — daftar project yang baru-baru ini Anda kerjakan (di screenshot: POS, mm_cursor).
+- **Editor Window ↗** (pojok kanan atas) — link untuk berpindah ke mode editor klasik. **Ini yang Anda butuhkan untuk latihan**.
+- **Prompt box** di tengah — bisa langsung tulis instruksi untuk Agent tanpa membuka editor.
+
+> Selama pelatihan DevNotes, Anda **hampir tidak menyentuh** Hub view. Klik **"Editor Window ↗"** untuk pindah.
+
+### State 2 — Editor Welcome (belum ada project terbuka)
+
+![Cursor Editor — welcome screen](../../images/cursor-02-editor-welcome.png)
+
+Window editor terbuka, tapi belum ada folder/project yang di-load. 3 tombol utama:
+
+- **Open project** — pilih folder lokal (mis. folder `devnotes/` yang Anda siapkan di pendahuluan).
+- **Clone repo** — clone dari URL git langsung.
+- **Connect via SSH** — buka folder di mesin remote via SSH.
+
+Di bawah ada **Recent projects** — daftar project yang pernah Anda buka.
+
+Untuk mulai DevNotes: klik **Open project** → pilih `~/devnotes-workshop/devnotes/` (atau folder tempat Anda menyiapkan).
+
+### State 3 — Editor Penuh (project ter-load)
+
+![Cursor Editor — project terbuka, mode klasik](../../images/cursor-03-editor-full.png)
+
+Mode klasik mirip VS Code. **Di sinilah seluruh latihan dikerjakan**.
+
+| Area | Fungsi |
+| ---- | ------ |
+| **Activity Bar** (paling kiri) | Explorer, Search (`⌘P`), Source Control (git), Extensions |
+| **Sidebar** | File tree project (di screenshot: "CURSOR"). Di bawah ada OUTLINE & TIMELINE |
+| **Editor area** (tengah) | Area menulis & membaca kode. Kosong saat belum buka file — tampak logo + cheatsheet shortcut |
+| **AI Panel** (kanan) | Chat / Composer / Agent — input prompt + pilih model (mis. "Composer 2.5 Fast") |
+| **Status bar** (bawah) | Nama project, jumlah error/warning, indikator Cursor Tab |
+| **Agents Window ↗** (kanan atas) | Kembali ke Hub view (State 1) |
+
+### Cara cepat berpindah antar-state
+
+| Dari | Ke | Cara |
+| ---- | -- | ---- |
+| Hub | Editor (welcome / penuh) | Klik **"Editor Window ↗"** di pojok kanan atas Hub |
+| Editor (welcome) | Editor (penuh) | Klik **Open project** / **Clone repo** / pilih dari Recent |
+| Editor (penuh) | Hub | Klik **"Agents Window ↗"** di pojok kanan atas Editor |
+| Mana pun | Editor cepat | `⌘O` (mac) / `Ctrl+O` (Win/Linux) — Open Folder langsung |
+
+### Membuat Editor menjadi default saat buka Cursor
+
+Kalau Anda lebih nyaman langsung masuk ke editor klasik tiap buka Cursor (skip Hub):
+
+1. Buka Cursor Settings (`⌘,` di mac / `Ctrl+,` di Win/Linux).
+2. Cari setting **"Default startup view"** / **"Open editor on launch"** (nama bisa beda per versi).
+3. Set ke **Editor**.
+
+Alternatif tanpa setting: tutup window Hub setelah Editor terbuka — Cursor akan mengingat last-state dan langsung buka Editor di sesi berikutnya.
+
+---
+
 ## 3a. Plan & Quota Awareness (PENTING — baca sebelum hari pelatihan)
 
 Cursor membatasi penggunaan AI lewat **request count**, bukan token. Cek halaman resmi <https://cursor.com/pricing> untuk angka terbaru (sering berubah). Gambaran umum:
