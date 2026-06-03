@@ -1,5 +1,8 @@
 # Latihan 01 — Tour Cursor + Scaffold DevNotes (Home Statis)
 
+> 🗺️ **Tahap 1–2 dari 10** di [Perjalanan Project DevNotes](../../perjalanan-project.md)
+> Sebelumnya: — | Setelah ini: Tahap 3 (Mock data diperluas) di Sesi 3
+
 **Durasi**: 45 menit
 **Tipe**: Hands-on individual
 **Sesi**: Sesi 2 — Getting Started with Cursor

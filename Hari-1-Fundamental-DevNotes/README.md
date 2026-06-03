@@ -41,12 +41,14 @@ flowchart LR
     D --> E[Recap &<br/>Persiapan Hari 2]
 ```
 
-| Sesi | Topik                              | Output Utama (kontribusi ke project DevNotes)                                 |
-| ---- | ---------------------------------- | ----------------------------------------------------------------------------- |
-| 1    | Introduction to AI-Assisted Coding | Pemahaman lanskap + diskusi adaptasi DevNotes ke konteks peserta              |
-| 2    | Getting Started with Cursor        | Repo `devnotes/` ter-scaffold + `index.html` (feed publik dummy) — FR-01      |
-| 3    | Prompting & Context Management     | `notes/[id].html` (halaman detail dengan markdown render) — FR-02             |
-| 4    | Code Generation Fundamentals       | `new.html` + localStorage CRUD (create/edit/delete) — FR-04, FR-06 (lokal)    |
+| Sesi | Topik                              | Tahap Project | Output utama yang Anda hasilkan                                              |
+| ---- | ---------------------------------- | ------------- | ----------------------------------------------------------------------------- |
+| 1    | Introduction to AI-Assisted Coding | —             | Pemahaman lanskap, belum ada praktik Cursor                                   |
+| 2    | Getting Started with Cursor        | **Tahap 1–2** | Repo `devnotes/` ter-scaffold + `index.html` (feed publik dummy)              |
+| 3    | Prompting & Context Management     | **Tahap 3–6** | `notes/[id].html` (halaman detail dengan markdown render)                     |
+| 4    | Code Generation Fundamentals       | **Tahap 7–10**| `new.html` + localStorage CRUD (create/edit/delete)                           |
+
+> 📋 Detail 10 tahap, urutan kerja, dan checkpoint per tahap ada di [`perjalanan-project.md`](./perjalanan-project.md). **Baca file itu sebelum mulai latihan apa pun di Hari 1.**
 
 ---
 
@@ -69,21 +71,22 @@ flowchart LR
 ## Struktur Folder
 
 ```
-Hari-1-Fundamental/
+Hari-1-Fundamental-DevNotes/
 ├── README.md                                  <- file ini
+├── perjalanan-project.md                      <- master narrative 10 tahap (BACA DULU)
 ├── Sesi-01-Introduction-AI-Coding/
 │   └── materi.md
 ├── Sesi-02-Getting-Started-Cursor/
 │   ├── materi.md
 │   ├── instalasi-checklist.md
-│   └── latihan-01-tour-cursor/README.md
+│   └── latihan-01-tour-cursor/README.md       <- Tahap 1–2
 ├── Sesi-03-Prompting-Context/
 │   ├── materi.md
 │   ├── prompting-cheatsheet.md
-│   └── latihan-02-prompting-drill/README.md
+│   └── latihan-02-prompting-drill/README.md   <- Tahap 3–6
 └── Sesi-04-Code-Generation/
     ├── materi.md
-    └── latihan-03-build-feature/README.md
+    └── latihan-03-build-feature/README.md     <- Tahap 7–10
 ```
 
 ---

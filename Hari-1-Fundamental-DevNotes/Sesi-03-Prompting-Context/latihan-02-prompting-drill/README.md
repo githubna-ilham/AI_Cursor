@@ -1,5 +1,8 @@
 # Latihan 02 — Prompting Drill: Halaman Detail DevNotes
 
+> 🗺️ **Tahap 3–6 dari 10** di [Perjalanan Project DevNotes](../../perjalanan-project.md)
+> Sebelumnya: Tahap 1–2 (Scaffold + Tour Cursor) di Sesi 2 | Setelah ini: Tahap 7 (Storage layer) di Sesi 4
+
 **Durasi**: 45 menit (5 skenario × ~8 menit + peer review)
 **Tipe**: Hands-on individual + peer review
 **Sesi**: Sesi 3 — Prompting & Context Management

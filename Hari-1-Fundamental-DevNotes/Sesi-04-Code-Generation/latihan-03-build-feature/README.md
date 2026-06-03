@@ -1,5 +1,8 @@
 # Latihan 03 — Build Feature: Form New Note + localStorage CRUD
 
+> 🗺️ **Tahap 7–10 dari 10** di [Perjalanan Project DevNotes](../../perjalanan-project.md)
+> Sebelumnya: Tahap 3–6 (Detail page + 404) di Sesi 3 | Setelah ini: Akhir Hari 1 — siap migrasi ke Next.js + Supabase di Hari 2
+
 **Durasi**: 60 menit
 **Tipe**: Hands-on individual (boleh diskusi tetangga)
 **Sesi**: Sesi 4 — Code Generation Fundamentals
