@@ -1,19 +1,18 @@
 # Sesi 3 — Prompting & Context Management
 
-**Durasi**: 90 menit
-**Format**: Konsep (25') + Demo prompting (15') + Lab 02 (35') + Review hasil (15')
+Setelah Sesi 2 mengenalkan **alat** Cursor, sesi ini fokus pada **bahasa** untuk berbicara dengannya. Kualitas output AI bukan ditentukan model, tapi prompt + konteks + rules yang Anda susun. Anda akan praktikkan langsung di Latihan 02 dengan membangun halaman detail DevNotes.
 
 ---
 
-## Learning Outcomes
+## Yang Akan Anda Pahami
 
-Setelah sesi ini peserta mampu:
+Setelah membaca materi ini, Anda akan mampu:
 
 1. **Menjelaskan** mengapa kualitas output AI di Cursor adalah **fungsi dari prompt + konteks + rules**, bukan hanya prompt.
 2. **Menerapkan** 3 pola prompting (role-based, context-based, constraint-based) pada minimal 5 contoh skenario kerja.
 3. **Menggunakan** @-mentions (`@file`, `@folder`, `@code`, `@docs`, `@web`, `@git`) untuk mengontrol konteks secara presisi.
 4. **Mengelola** *context budget* dengan strategi pruning, scoping, dan reusable snippets.
-5. **Mengevaluasi** prompt sendiri menggunakan checklist kualitas dan iterasi *prompt → diff → prompt'*.
+5. **Mengevaluasi** prompt Anda sendiri menggunakan checklist kualitas dan iterasi *prompt → diff → prompt'*.
 
 ---
 
@@ -164,42 +163,17 @@ Sebelum tekan Enter, cek:
 
 ---
 
-## 2. Demo Live
+## 2. Lanjut ke Latihan
 
-**Skenario**: "Dari prompt jelek ke prompt produksi dalam 4 iterasi."
+Setelah membaca materi ini, lanjut ke **[Latihan 02 — Prompting Drill: Halaman Detail DevNotes](./latihan-02-prompting-drill/README.md)**. Di sana Anda akan:
 
-1. **Iterasi 0 (vague)**: di Chat ketik *"buatkan fungsi cache"*. Tunjukkan jawaban generik.
-2. **Iterasi 1 (+role)**: *"Sebagai senior backend, buatkan fungsi cache untuk service ini."* Sedikit lebih baik.
-3. **Iterasi 2 (+context)**: tambah `@file user.service.ts @folder src/lib/`. AI mulai pakai pola repo.
-4. **Iterasi 3 (+constraint)**: tambah *"Pakai Map in-memory, TTL 5 menit, threadsafe, tanpa library baru, lulus test di @file cache.test.ts."*
-5. **Bandingkan side-by-side** kualitas output Iterasi 0 vs 3.
-
-Pesan kunci: **prompt yang baik adalah investasi, bukan biaya**.
+- Menyelesaikan 5 skenario prompting yang outputnya **semua berkontribusi** ke halaman detail catatan DevNotes (lookup by `?id=`, render markdown, link dari home, 404 handling).
+- Menerapkan 3 lapis (Role + Context + Constraint) dan @-mentions yang Anda baru pelajari.
+- Menilai prompt Anda sendiri dengan rubrik 5 dimensi.
 
 ---
 
-## 3. Hands-on Latihan
-
-**Latihan 02 — Prompting Drill** (35 menit).
-Lokasi: `./latihan-02-prompting-drill/README.md`.
-
-Briefing: peserta diberi 5 skenario, harus menulis prompt produksi dan mengeksekusinya di Cursor, lalu menilai sendiri dengan rubrik.
-
----
-
-## 4. Wrap-up & Q&A
-
-Pertanyaan refleksi:
-
-1. Prompt mana di Lab 02 yang paling **gagal** dan apa akar masalahnya — prompt, konteks, atau model?
-2. @-mention mana yang **paling Anda underuse** sebelum hari ini?
-3. Constraint apa yang akan Anda **pasang permanen** sebagai user rules?
-4. Bagaimana Anda akan menyimpan & berbagi prompt template di tim?
-5. Kapan Anda akan **berhenti** mengiterasi dan memilih menulis manual?
-
----
-
-## 5. Bacaan Lanjutan
+## 3. Bacaan Lanjutan
 
 - Cursor — *Chat & Composer*: <https://cursor.com/docs/chat>
 - Cursor — *@-symbols / context*: <https://cursor.com/docs/context/@-symbols>

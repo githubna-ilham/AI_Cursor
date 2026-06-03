@@ -1,13 +1,12 @@
 # Sesi 4 — Code Generation Fundamentals
 
-**Durasi**: 90 menit
-**Format**: Konsep (20') + Demo end-to-end (15') + Lab 03 (45') + Demo & retrospektif (10')
+Setelah menguasai cara berbicara dengan Cursor di Sesi 3, sekarang waktunya merangkai banyak prompt menjadi **fitur fungsional**. Di sesi ini Anda akan menutup Hari 1 dengan menambahkan form catatan baru + CRUD lokal ke DevNotes — fitur yang akan Anda lanjutkan dan migrasi ke Supabase di Hari 2.
 
 ---
 
-## Learning Outcomes
+## Yang Akan Anda Pahami
 
-Setelah sesi ini peserta mampu:
+Setelah membaca materi ini, Anda akan mampu:
 
 1. **Menerjemahkan** user story / requirement menjadi prompt produksi untuk Cursor secara terstruktur.
 2. **Menghasilkan** fungsi, class, dan modul yang konsisten dengan style codebase eksisting.
@@ -162,53 +161,20 @@ Karakter loop: **commit kecil, sering, dengan test**. Hindari mega-commit "featu
 
 ---
 
-## 2. Demo Live
+## 2. Lanjut ke Latihan
 
-**Skenario**: "User story → fitur CRUD `Note` end-to-end."
+Setelah membaca materi ini, lanjut ke **[Latihan 03 — Build Feature: Form New Note + localStorage CRUD](./latihan-03-build-feature/README.md)**. Di sana Anda akan:
 
-User story:
-> Sebagai user, saya ingin **menambah, melihat daftar, mengubah, dan menghapus catatan** (title, body, createdAt) agar saya bisa mencatat ide harian.
+- Menambahkan halaman `new.html` (form editor catatan) dan persistensi `localStorage` ke project DevNotes.
+- Menerapkan loop *prompt → review diff → test → commit* sebanyak ≥ 4 iterasi commit bermakna.
+- Memakai semua 4 mode interaksi Cursor (Tab, Cmd/Ctrl+K, Chat, Composer) minimal sekali.
+- Memvalidasi hasilnya dengan checklist kualitas + Lighthouse accessibility ≥ 90.
 
-Demo step:
-
-1. **Pecah task** di whiteboard: schema/migration, repository, service, controller/UI, test.
-2. **Bikin schema** dengan Cmd/Ctrl+K di file model. <!-- STACK-PLACEHOLDER -->
-3. **Generate repository** dengan Chat + exemplar `@file` repository lain.
-4. **Generate service** dengan Composer, scope ke folder service saja.
-5. **Generate controller/route** dengan Cmd/Ctrl+K, sebutkan acceptance criteria.
-6. **Generate test** dengan Chat — pisahkan happy path & error path.
-7. **Jalankan test** di terminal; tunjukkan minimal 1 kegagalan & cara fix.
-
-Pesan kunci: **6 langkah kecil, masing-masing reviewable, masing-masing testable**.
+Output akhir Hari 1: aplikasi DevNotes statis yang sudah punya feed, detail, dan CRUD lengkap berbasis browser — siap dimigrasi ke Next.js + Supabase di Hari 2.
 
 ---
 
-## 3. Hands-on Latihan
-
-**Latihan 03 — Build a Small Feature** (45 menit).
-Lokasi: `./latihan-03-build-feature/README.md`.
-
-Briefing:
-- Peserta diberi user story (sesuaikan stack peserta) — fitur CRUD ringan.
-- Wajib pakai semua 4 mode interaksi minimal sekali.
-- Wajib commit kecil minimal 4 commit.
-- Output: fitur jalan + test minimal hijau + refleksi.
-
----
-
-## 4. Wrap-up & Q&A
-
-Pertanyaan refleksi:
-
-1. Bagian fitur mana yang paling **mudah** di-generate? Paling **sulit**? Mengapa?
-2. Berapa **rasio waktu** menulis prompt : membaca diff : menulis manual? Apakah seperti ekspektasi awal?
-3. Bug atau hallucination apa yang sempat Anda temukan? Bagaimana mendeteksinya?
-4. Commit mana yang akan Anda **tolak** kalau jadi reviewer di tim?
-5. Apa 1 hal yang akan Anda **lakukan berbeda** besok pagi di pekerjaan sebenarnya?
-
----
-
-## 5. Bacaan Lanjutan
+## 3. Bacaan Lanjutan
 
 - Cursor — *Composer / Agent*: <https://cursor.com/docs/agent>
 - Cursor — *Code completion*: <https://cursor.com/docs/tab>
