@@ -74,6 +74,87 @@ flowchart TD
     T --> DEB[Debugger + logging + AI sbg secondary]
 ```
 
+Tidak semua bug sebaiknya dilempar ke AI. Diagram di atas membantu Anda memutuskan **kapan AI efektif, kapan AI hanya alat bantu, dan kapan AI sebaiknya disingkirkan dulu**. Keputusannya dibagi dua pertanyaan berurutan.
+
+#### Apa itu "deterministik"?
+
+**Deterministik** = input yang sama + kondisi yang sama → hasilnya **selalu sama** (termasuk hasil yang salah). Bug-nya bisa Anda "putar ulang" kapan saja.
+
+**Non-deterministik** = input sama, tapi hasilnya bisa beda-beda. Kadang benar, kadang salah, tanpa pola jelas.
+
+Analogi:
+
+- **Deterministik** seperti mesin fotokopi rusak — setiap kali fotokopi kertas yang sama, garis hitam selalu muncul di posisi yang sama. Bisa diulang sesuka hati.
+- **Non-deterministik** seperti lampu yang kadang mati sendiri — Anda tidak tahu kapan akan terjadi lagi, sulit dipancing.
+
+Contoh bug deterministik (selalu salah dengan cara sama):
+
+```javascript
+function sum(items) {
+  let total = 0;
+  for (let i = 0; i < items.length - 1; i++) {  // off-by-one
+    total += items[i].price;
+  }
+  return total;
+}
+// sum([{price:10},{price:20}]) selalu return 10, tidak pernah 30.
+```
+
+Contoh bug non-deterministik (kadang benar, kadang salah):
+
+```javascript
+let counter = 0;
+function increment() {
+  let temp = counter;     // Request A baca 5, Request B juga baca 5
+  counter = temp + 1;     // Keduanya tulis 6 (harusnya 7) — race condition
+}
+// 100 request bersamaan: kadang counter=100, kadang 97, kadang 98.
+```
+
+Ciri-ciri bug non-deterministik yang sering Anda dengar:
+
+- "Aneh, tadi error, sekarang nggak"
+- "Cuma muncul di production, local nggak pernah"
+- "Cuma error kalau traffic tinggi"
+- "Susah di-reproduce"
+
+Sumber umum: race condition, memory leak, network timeout, nilai random/UUID, masalah tanggal/waktu.
+
+**Tes cepat**: "Kalau saya jalankan ulang dengan input persis sama sekarang juga, bug-nya muncul lagi?" — Selalu muncul → deterministik. Kadang muncul → non-deterministik.
+
+#### Pertanyaan 1: Bug-nya deterministik?
+
+- ✅ **Ya** → lanjut ke pertanyaan 2.
+- ❌ **Tidak** → langsung ke jalur **Timing/Race/Distributed** (lihat di bawah).
+
+#### Pertanyaan 2 (kalau deterministik): Bug-nya lokal di 1 fungsi?
+
+Lokal = penyebab dan gejala ada di file/fungsi yang sama (atau sangat dekat).
+
+- ✅ **Ya, lokal** → **AI sangat efektif**. Cukup paste fungsi + EARTH context, AI biasanya menemukan penyebab dalam 1–2 prompt.
+  *Contoh: off-by-one di loop pagination, salah operator, typo nama field.*
+
+- ❌ **Tidak lokal** (lintas file/lintas modul) → **AI + manual tracing**. AI tetap berguna untuk hipotesis, tapi Anda perlu trace manual (grep, breakpoint, log) untuk validasi karena AI sering "kehilangan jejak" di codebase besar.
+  *Contoh: data ter-mutate di service A, gejala muncul di service B; bug akibat config env var.*
+
+#### Jalur ketiga: Timing/Race/Distributed
+
+Strateginya: **Debugger + logging + AI sebagai secondary**.
+
+Tools utama Anda: debugger (gdb/dlv/Chrome DevTools), profiler (untuk memory leak), atau tracing (OpenTelemetry, Jaeger). AI dipakai **setelah** Anda punya bukti konkret — misal: "ini stack trace dari thread yang deadlock, jelaskan invariant yang dilanggar."
+
+Kalau langsung tanya AI "kenapa kadang race?", jawabannya akan generik dan sering ngawur, karena AI tidak punya akses ke runtime state.
+
+#### Ringkasan strategi
+
+| Tipe bug | Strategi | Peran AI |
+|----------|----------|----------|
+| Deterministik + lokal | Paste fungsi + EARTH | **Primary** — menemukan cepat |
+| Deterministik + cross-file | EARTH + grep/trace manual | **Co-pilot** — kasih hipotesis, Anda validasi |
+| Non-deterministik | Debugger / profiler / tracing | **Secondary** — interpretasi bukti yang sudah Anda kumpulkan |
+
+**Aturan praktis**: sebelum prompt AI, tanya diri sendiri "bug ini di kotak mana di diagram?". Kalau jatuh di "Debugger + logging", jangan buru-buru lempar ke AI — kumpulkan bukti dulu.
+
 ### 3. Membaca Stack Trace Bersama AI
 
 Pola prompt:
