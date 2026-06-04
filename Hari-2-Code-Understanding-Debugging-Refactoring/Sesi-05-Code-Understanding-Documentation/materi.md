@@ -101,7 +101,7 @@ Pola ini menurunkan hallucination hingga signifikan karena AI terdorong untuk gr
 
 ## Demo Live (15 menit)
 
-Skenario: instruktur clone repo open-source berukuran sedang (mis. `expressjs/express`, `pallets/flask`, `gin-gonic/gin`, atau sesuai stack peserta — lihat speaker notes).
+Skenario: Anda akan clone repo open-source berukuran sedang (mis. `expressjs/express`, `pallets/flask`, `gin-gonic/gin`, atau sesuai stack Anda — lihat speaker notes).
 
 Langkah:
 
@@ -115,7 +115,7 @@ Langkah:
 
 Lihat folder [`latihan-04-eksplorasi-codebase/`](./latihan-04-eksplorasi-codebase/).
 
-Briefing singkat: peserta dipasangkan, memilih satu open-source repo (atau repo internal yang disediakan), dan dalam 45 menit menghasilkan:
+Briefing singkat: Anda akan berpasangan, memilih satu open-source repo (atau repo internal yang disediakan), dan dalam 45 menit menghasilkan:
 
 - Peta modul (tabel)
 - Sequence diagram flow utama

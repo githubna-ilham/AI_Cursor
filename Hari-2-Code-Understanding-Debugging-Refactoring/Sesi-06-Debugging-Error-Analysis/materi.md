@@ -30,6 +30,34 @@ Berbeda dengan manusia, AI tidak punya "intuisi" tentang environment Anda. Promp
 
 Pola singkat: **EARTH** — Expected, Actual, Reproduction, Trace, Hypothesis.
 
+#### Kenapa keenam elemen ini penting?
+
+Bayangkan analogi ini: kalau Anda lapor bug ke rekan developer di sebelah Anda, dia bisa melihat layar, tahu project apa, kenal codebase. Cukup bilang "totalnya salah" — dia paham konteks. **AI tidak punya itu.** AI seperti konsultan freelance yang baru pertama kali Anda kontak via chat: tanpa konteks lengkap, ia akan menebak — dan tebakannya sering jadi hallucination.
+
+Tiap elemen menutup satu celah tebakan:
+
+- **Expected behaviour** — supaya AI tahu mana yang Anda anggap "benar". Tanpa ini, AI mungkin mengira behaviour sekarang sudah sesuai.
+- **Actual behaviour** — bedakan spesifik dari expected. Hindari "salah" generik; tulis *salahnya seperti apa*.
+- **Reproducible input** — data persis yang memicu bug, supaya AI bisa "menjalankan" skenario di kepalanya tanpa menebak input.
+- **Stack trace / log** — sumber kebenaran paling kuat. Stack trace menunjuk baris persis tempat error meledak; tanpa ini AI menebak file yang bermasalah.
+- **Environment** — bug yang sama bisa beda penyebab di Node 18 vs 20, atau Postgres 14 vs 15. Tanpa info versi, AI mungkin kasih solusi untuk versi yang salah.
+- **Yang sudah dicoba** — supaya AI tidak menyarankan solusi yang sudah Anda buang. Hemat waktu, dan AI fokus ke hipotesis yang belum diuji.
+
+**Contoh prompt lengkap (pola EARTH):**
+
+```
+[Expected] Endpoint /cart total = sum(items.price)
+[Actual]   Total = sum kecuali item terakhir
+[Input]    POST /cart {items:[{price:10},{price:20}]} → return 10, harusnya 30
+[Log]      Tidak ada error, hanya hasil salah
+[Env]      Node 20.x, Express 4, Postgres 15
+[Sudah dicoba] Validasi input OK, nilai masuk ke fungsi sum() benar
+
+Beri 3 hipotesis penyebab dengan tingkat keyakinan + cara verifikasinya.
+```
+
+Hasil prompt seperti ini jauh lebih akurat dibanding "kenapa total cart saya salah?".
+
 ### 2. Klasifikasi Bug & Strategi Debug
 
 ```mermaid
@@ -100,7 +128,7 @@ Selalu akhiri prompt diagnosis dengan:
 
 > Beri tingkat keyakinan (rendah/sedang/tinggi) untuk tiap hipotesis dan jelaskan apa yang membuat Anda yakin.
 
-Latih peserta untuk **lebih curiga ketika AI sangat yakin**, karena over-confidence sering menyertai hallucination.
+Anda perlu **lebih curiga ketika AI sangat yakin**, karena over-confidence sering menyertai hallucination.
 
 ### 8. Kapan TIDAK Menggunakan AI
 
@@ -111,7 +139,7 @@ Latih peserta untuk **lebih curiga ketika AI sangat yakin**, karena over-confide
 
 ## Demo Live (15 menit)
 
-Skenario: instruktur menyiapkan 1 bug deterministik off-by-one pada fungsi pagination.
+Skenario: Anda akan diberikan 1 bug deterministik off-by-one pada fungsi pagination.
 
 Langkah:
 
@@ -125,7 +153,7 @@ Langkah:
 
 Lihat [`latihan-05-debugging-studi-kasus/`](./latihan-05-debugging-studi-kasus/).
 
-3 skenario disediakan: off-by-one, race condition, null reference. Peserta wajib menyelesaikan minimal 2 dari 3.
+3 skenario disediakan: off-by-one, race condition, null reference. Anda wajib menyelesaikan minimal 2 dari 3.
 
 ## Wrap-up & Q&A
 

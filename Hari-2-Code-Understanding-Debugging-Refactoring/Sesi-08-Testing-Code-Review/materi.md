@@ -148,7 +148,7 @@ Skenario: PR fiktif menambah endpoint `POST /refund` dengan 3 file changed, 1 te
 Langkah:
 
 1. **AI scan pertama** — prompt review checklist, dapatkan list temuan.
-2. **Filter** — instruktur tunjukkan 1 false positive (AI salah baca dependency), diskusi kenapa.
+2. **Filter** — Anda akan melihat 1 false positive (AI salah baca dependency), lalu diskusikan kenapa.
 3. **Generate missing tests** — minta AI buat 5 test edge case yang belum ada.
 4. **Validasi 2 test** — apply, jalankan, lihat green/red.
 5. **Susun komentar PR** — konversi temuan jadi 3 komentar konstruktif.
