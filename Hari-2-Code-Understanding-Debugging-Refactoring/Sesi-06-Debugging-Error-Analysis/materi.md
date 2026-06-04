@@ -19,16 +19,20 @@ Setelah sesi ini peserta mampu:
 
 Berbeda dengan manusia, AI tidak punya "intuisi" tentang environment Anda. Prompt debugging yang efektif WAJIB memuat:
 
-| Elemen | Contoh |
-|--------|--------|
-| Expected behaviour | "Endpoint mengembalikan total = sum(items.price)" |
-| Actual behaviour | "Mengembalikan total = sum(items.price) - price item terakhir" |
-| Reproducible input | `POST /cart { items: [{price:10},{price:20}] }` |
-| Stack trace / log | (paste lengkap) |
-| Environment | Node 20.x, Postgres 15, Linux |
-| Yang sudah dicoba | "Sudah cek validasi input, OK" |
+| Fase | Elemen | Contoh |
+|------|--------|--------|
+| Input ke AI | **E**xpected behaviour | "Endpoint mengembalikan total = sum(items.price)" |
+| Input ke AI | **A**ctual behaviour | "Mengembalikan total = sum(items.price) - price item terakhir" |
+| Input ke AI | **R**eproducible input | `POST /cart { items: [{price:10},{price:20}] }` |
+| Input ke AI | **T**race / log | (paste stack trace lengkap) |
+| Input ke AI | Environment | Node 20.x, Postgres 15, Linux |
+| Input ke AI | Yang sudah dicoba | "Sudah cek validasi input, OK" |
+| Output dari AI | **H**ypothesis | 3 dugaan penyebab + tingkat keyakinan + cara verifikasi |
 
-Pola singkat: **EARTH** — Expected, Actual, Reproduction, Trace, Hypothesis.
+Pola singkat: **EARTH** — dipakai dalam 2 fase:
+
+- **E-A-R-T (+ Environment + Tried)** = konteks yang Anda **kirim** ke AI.
+- **H (Hypothesis)** = output yang Anda **minta** AI hasilkan, bukan yang Anda tulis sendiri di prompt.
 
 #### Kenapa keenam elemen ini penting?
 
