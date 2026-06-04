@@ -26,6 +26,78 @@ Refactor: mengubah struktur internal **tanpa mengubah behaviour eksternal**. Rew
 | Reversible | Ya, per langkah | Sulit |
 | Cocok untuk AI | Sangat | Hanya bila spec lengkap |
 
+#### Analogi: rumah Anda
+
+- **Refactor = renovasi.** Anda atur ulang furniture, cat ulang dinding, ganti gagang pintu. Rumah tetap rumah yang sama: jumlah kamar, posisi pintu, fungsi tiap ruangan tidak berubah. Penghuni tetap bisa tinggal seperti biasa.
+- **Rewrite = bongkar total.** Anda robohkan rumah lama, bangun rumah baru dari nol. Mungkin lebih indah, tapi penghuni harus mengungsi, dan ada risiko detail penting yang dulu Anda suka hilang tanpa Anda sadari.
+
+#### Contoh kode
+
+Kondisi awal — fungsi hitung diskon yang berantakan:
+
+```javascript
+function hitungHarga(produk, member) {
+  let harga = produk.harga;
+  if (member === true) {
+    if (produk.kategori === "elektronik") {
+      harga = harga - (harga * 0.1);
+    } else {
+      harga = harga - (harga * 0.05);
+    }
+  }
+  return harga;
+}
+```
+
+**Refactor — sama behaviour, lebih rapi:**
+
+```javascript
+const DISKON_MEMBER = {
+  elektronik: 0.1,
+  default: 0.05,
+};
+
+function hitungHarga(produk, member) {
+  if (!member) return produk.harga;
+  const diskon = DISKON_MEMBER[produk.kategori] ?? DISKON_MEMBER.default;
+  return produk.harga * (1 - diskon);
+}
+```
+
+- Struktur lebih bersih (lookup table + early return), mudah ditambah kategori baru.
+- Tapi behaviour eksternal **identik**: `hitungHarga({harga:100, kategori:"elektronik"}, true)` tetap 90, kategori lain tetap 95. Test lama harus tetap hijau tanpa diubah.
+
+**Rewrite (tanpa sadar) — terlihat lebih bersih, tapi behaviour berubah:**
+
+```javascript
+function hitungHarga(produk, member) {
+  const diskonMember = member ? 0.1 : 0;
+  return produk.harga * (1 - diskonMember);
+}
+```
+
+- Sekilas lebih elegan, tapi member yang beli kategori non-elektronik (mis. baju): dulu return 95, sekarang return 90. **Logika kategori hilang total.**
+- Kalau tidak ada test, perubahan ini lolos ke production → kerugian harga ke pelanggan.
+
+#### Aturan praktis
+
+| Kalau Anda... | Itu... |
+|---|---|
+| Ganti nama variabel `x` → `priceAfterTax` | Refactor |
+| Pecah fungsi 50 baris jadi 3 fungsi kecil | Refactor (kalau output sama) |
+| Ganti `if-else` panjang jadi lookup table | Refactor (kalau hasil mapping sama) |
+| Hilangkan 1 cabang `if` karena "kayaknya nggak perlu" | **Rewrite** (behaviour berubah) |
+| Tulis ulang dari nol dengan library baru | **Rewrite** |
+| Tambah fitur sambil "merapikan" | **Rewrite** (campur dua hal) |
+
+**Tes 1 kalimat**: kalau Anda jalankan test suite yang ada (atau cek manual dengan input lama), hasilnya **persis sama** sebelum dan sesudah? Ya → refactor. Tidak / tidak yakin → rewrite (atau refactor yang gagal).
+
+#### Kenapa AI sering "kebablasan" ke rewrite
+
+Kalau Anda minta AI "rapikan kode ini", AI sering mengganti algoritma sekalian, menghilangkan edge case yang dianggap aneh (padahal disengaja), atau menambah validasi yang sebenarnya behaviour change. Karena itu prompt refactor yang aman selalu memuat batasan eksplisit:
+
+> Refactor kode ini **tanpa mengubah behaviour eksternal**. Pertahankan semua edge case. Jangan tambah/hapus cabang logika.
+
 ### 2. Code Smell Checklist
 
 ```mermaid
