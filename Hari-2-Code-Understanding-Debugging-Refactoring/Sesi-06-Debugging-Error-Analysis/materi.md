@@ -207,6 +207,30 @@ flowchart LR
     F -.gagal.-> I
 ```
 
+Ini alur kerja standar saat debug pakai AI. Setiap langkah punya tujuan spesifik dan **tidak boleh dilewat** — terutama langkah 1 (Reproduce) dan 4 (Verify). Kalau Anda lompat langsung ke "Hypothesize" tanpa Reproduce, Anda mendebug bug yang tidak Anda pahami.
+
+**Langkah 1 — Reproduce.** Pastikan Anda bisa memicu bug kapan saja dengan langkah yang sama. Tanpa ini, Anda tidak punya cara membuktikan apakah fix-nya berhasil. Output: langkah persis (input/klik/request) + output salah yang konsisten muncul. Untuk bug non-deterministik, langkah ini bisa makan waktu paling lama — mungkin perlu logging tambahan atau load test.
+
+**Langkah 2 — Isolate scope.** Persempit "luas pencarian" sebelum tanya AI. AI bekerja jauh lebih baik dengan *5 baris kode relevan* daripada *5 file lengkap*. Caranya: hapus/comment kode yang tidak relevan sampai bug masih muncul, identifikasi file/fungsi yang dicurigai, dan dari stack trace cari frame paling dalam yang ada di kode Anda (bukan library). Hasil: "bug-nya kemungkinan besar di antara baris 40–70 di `cart.js`".
+
+**Langkah 3 — Hypothesize w/ AI.** Minta AI kasih 3 dugaan penyebab, bukan fix. Pakai pola **EARTH** dari konsep #1: kirim Expected + Actual + Reproduction + Trace (dari langkah 1) + kode hasil isolasi (dari langkah 2). Minta: *"Jangan beri solusi dulu. Beri 3 hipotesis penyebab + tingkat keyakinan + cara verifikasi."* Jangan minta fix di sini — fix datang di langkah 5.
+
+**Langkah 4 — Verify hypothesis.** Pilih hipotesis paling mungkin dan **buktikan** sebelum patch. Cara verifikasi (pilih yang tercepat): tambah `console.log`/`print` di titik kunci, set breakpoint di debugger, atau tulis **unit test yang mereproduksi bug** — kalau test merah dengan pesan sesuai hipotesis, Anda benar. Ini langkah paling sering dilewat → akhirnya patch hal yang salah. *Tanpa verifikasi, Anda hanya menebak dengan lebih meyakinkan.*
+
+**Langkah 5 — Fix + regression test.** Bug-nya tidak hanya hilang, tapi tidak akan kembali. Dua bagian: (1) **fix** yang behaviour-preserving — hanya ubah behaviour yang salah, jangan refactor sekalian; (2) **regression test** yang akan gagal kalau bug ini muncul lagi. Biasanya = unit test dari langkah 4, sekarang harus jadi hijau setelah fix. Tanpa regression test, bug yang sama bisa muncul lagi 3 bulan kemudian dari developer lain.
+
+**Garis putus "gagal" → kembali ke langkah 2.** Kalau di langkah 4 semua hipotesis salah, atau di langkah 5 fix-nya tidak menghilangkan bug → **jangan ulang dari nol**. Cukup balik ke langkah 2 dan persempit scope lagi. Langkah 1 (Reproduce) tidak perlu diulang — Anda sudah punya cara memicu bug.
+
+#### Risiko kalau melompat langkah
+
+| Lompat dari | Ke | Risiko |
+|---|---|---|
+| Skip langkah 1–2 | Langsung ke 3 | AI menebak di ruang gelap, hipotesis ngawur |
+| Skip langkah 4 | Langsung dari 3 ke 5 | Patch hal yang salah, bug tetap ada |
+| Skip langkah 5 (regression test) | — | Bug yang sama kembali beberapa bulan kemudian |
+
+Aturan: **tiap langkah harus selesai sebelum lanjut**. Lebih baik lambat dan benar daripada cepat tapi cuma menambal symptom.
+
 ### 7. Kepercayaan Diri AI: Kalibrasi
 
 Selalu akhiri prompt diagnosis dengan:
