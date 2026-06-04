@@ -123,6 +123,97 @@ mindmap
 
 AI sangat baik mendeteksi: Long Method, Duplicate Code, Dead Code. AI sering miss: Feature Envy, Divergent Change (karena butuh konteks evolusi).
 
+#### Apa itu "code smell"?
+
+Code smell = **tanda di kode yang menunjukkan ada masalah desain, belum tentu bug**. Mirip bau aneh di kulkas — belum tentu busuk, tapi patut diperiksa. Daftar di mindmap berasal dari buku klasik *Refactoring* (Martin Fowler), dikelompokkan jadi 5 kategori berdasarkan jenis masalahnya. Tujuan checklist: Anda punya **kosakata bersama** untuk berdiskusi dengan AI atau rekan tim — alih-alih bilang "kodenya kayaknya jelek", Anda bilang "fungsi ini Long Method" dan langsung dipahami.
+
+#### Penjelasan 5 kategori
+
+**1. Bloater — kode yang membengkak**
+
+Sesuatu yang terlalu besar untuk dipahami.
+
+| Smell | Apa artinya | Contoh |
+|---|---|---|
+| Long Method | Fungsi terlalu panjang (umumnya > 50 baris) | `processOrder()` 200 baris |
+| Large Class | Satu class punya terlalu banyak tanggung jawab | `UserService` dengan 30 method |
+| Long Parameter List | Argumen fungsi terlalu banyak | `createUser(nama, email, alamat, kota, kodepos, telp, ...)` |
+
+*Tanda di kode*: Anda harus scroll lama untuk membaca 1 fungsi/class.
+
+**2. OO Abuser — salah pakai konsep OOP**
+
+Pakai object-oriented tapi tidak sesuai prinsipnya.
+
+| Smell | Apa artinya | Contoh |
+|---|---|---|
+| Switch Statements | `switch`/`if-else` panjang untuk cek tipe | `if (type=="admin") {...} else if (type=="guest") {...}` — harusnya polymorphism |
+| Refused Bequest | Subclass tidak pakai method warisan parent | `class Penguin extends Bird` tapi tidak pakai `fly()` |
+
+*Tanda di kode*: pakai `extends` tapi banyak method di-override jadi kosong / throw error.
+
+**3. Change Preventer — kode yang sulit diubah**
+
+Perubahan kecil memaksa Anda menyentuh banyak tempat.
+
+| Smell | Apa artinya | Contoh |
+|---|---|---|
+| Divergent Change | 1 class harus diubah untuk banyak alasan berbeda | `Report` diubah saat ganti format PDF, saat ganti query DB, dan saat ganti subject email |
+| Shotgun Surgery | 1 perubahan kecil → ubah banyak file | Tambah field "phone" → ubah 12 file di User, Form, Validation, Export |
+
+*Tanda di kode*: PR Anda selalu menyentuh 10+ file padahal fitur-nya kecil.
+
+**4. Dispensable — kode yang harusnya tidak ada**
+
+Sesuatu yang bisa dihapus tanpa kehilangan apa pun.
+
+| Smell | Apa artinya | Contoh |
+|---|---|---|
+| Dead Code | Kode yang tidak pernah dipanggil | Fungsi `oldCalculateTax()` tanpa caller |
+| Duplicate Code | Kode sama persis di banyak tempat | Validasi email muncul di 5 fungsi berbeda |
+
+*Tanda di kode*: Anda hapus fungsi → test tetap hijau. Atau Anda copy-paste 4 baris dari file lain.
+
+**5. Coupler — komponen yang terlalu lengket**
+
+Bagian kode terlalu saling tergantung.
+
+| Smell | Apa artinya | Contoh |
+|---|---|---|
+| Feature Envy | Method class A lebih sering pakai data class B daripada data sendiri | `Order.calculateTotal()` ambil semua data dari `Cart.items` — seharusnya jadi method `Cart` |
+| Inappropriate Intimacy | 2 class saling tahu detail internal masing-masing | `UserController` akses `db.connection.pool` langsung |
+
+*Tanda di kode*: ganti satu class bikin class lain rusak.
+
+#### Ringkasan kemampuan deteksi AI
+
+| Kategori | Inti masalah | AI bisa deteksi? |
+|---|---|---|
+| Bloater | Terlalu besar | ✅ Ya |
+| OO Abuser | Salah pakai OOP | ⚠️ Sebagian |
+| Change Preventer | Sulit diubah | ❌ Butuh history |
+| Dispensable | Harusnya tidak ada | ✅ Ya |
+| Coupler | Terlalu erat | ⚠️ Butuh konteks |
+
+Untuk smell tipe **AI-miss** (Change Preventer + sebagian Coupler), pakai `git log` + diskusi tim sebagai sumber utama, bukan AI.
+
+#### Prompt audit yang efektif
+
+```
+Audit file ini dan identifikasi code smell dari kategori berikut:
+Bloater, OO Abuser, Dispensable, Coupler.
+
+Untuk tiap smell yang ditemukan, beri:
+- Nama smell (mis. "Long Method")
+- Lokasi (line range)
+- Alasan kenapa ini smell
+- Saran refactor (extract method, lookup table, dll)
+
+Jangan langsung refactor — saya yang memutuskan.
+```
+
+Perhatikan: "Change Preventer" sengaja tidak dimasukkan ke prompt karena butuh konteks evolusi yang AI tidak punya.
+
 ### 3. Characterization Test (Michael Feathers)
 
 Untuk kode tanpa test, **jangan refactor langsung**. Pola:
