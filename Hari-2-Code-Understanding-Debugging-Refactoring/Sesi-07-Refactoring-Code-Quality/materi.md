@@ -133,11 +133,17 @@ Code smell = **tanda di kode yang menunjukkan ada masalah desain, belum tentu bu
 
 Sesuatu yang terlalu besar untuk dipahami.
 
-| Smell | Apa artinya | Contoh |
-|---|---|---|
-| Long Method | Fungsi terlalu panjang (umumnya > 50 baris) | `processOrder()` 200 baris |
-| Large Class | Satu class punya terlalu banyak tanggung jawab | `UserService` dengan 30 method |
-| Long Parameter List | Argumen fungsi terlalu banyak | `createUser(nama, email, alamat, kota, kodepos, telp, ...)` |
+| Smell | Idealnya | Tanda smell | Contoh |
+|---|---|---|---|
+| Long Method | ≤ 20 baris (sweet spot 5–15) | > 50 baris | `processOrder()` 200 baris |
+| Large Class | ≤ 10 method publik, 1 tanggung jawab | > 20 method atau > 300 baris | `UserService` dengan 30 method |
+| Long Parameter List | ≤ 3 parameter | ≥ 4 parameter (apalagi tipe sama berturut-turut) | `createUser(nama, email, alamat, kota, kodepos, telp, ...)` |
+
+*Catatan angka di atas adalah pedoman umum, bukan aturan kaku.* Patokan ringkas:
+
+- **Fungsi**: kalau Anda tidak bisa lihat seluruh isi fungsi dalam 1 layar tanpa scroll → terlalu panjang.
+- **Class**: kalau Anda kesulitan menjelaskan tanggung jawab class dalam 1 kalimat → terlalu besar.
+- **Parameter**: kalau urutan argumen mulai membingungkan saat memanggil → terlalu banyak (solusi: bungkus jadi 1 object, mis. `createUser({nama, email, alamat, ...})`).
 
 *Tanda di kode*: Anda harus scroll lama untuk membaca 1 fungsi/class.
 
