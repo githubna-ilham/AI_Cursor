@@ -1,4 +1,4 @@
-# Lab 08 — Git Workflow & CI/CD dengan Cursor
+# Lab 08 — Git Workflow dengan Cursor
 
 **Durasi**: 30 menit
 **Format**: Individual, dengan peer review berpasangan di langkah akhir
@@ -8,7 +8,7 @@
 
 ## Tujuan Lab
 
-Peserta mampu menjalankan siklus penuh: *implement → commit → PR → CI → review* dengan akselerasi Cursor di setiap tahap, tanpa kehilangan kualitas konvensional.
+Anda mampu menjalankan siklus penuh: *implement → commit → PR → review* dengan akselerasi Cursor di setiap tahap, tanpa kehilangan kualitas konvensional.
 
 ## Skenario
 
@@ -66,20 +66,7 @@ Buka chat Cursor dengan context `@Branches main..HEAD`:
 
 Salin ke GitHub PR, **edit minimal 1 paragraf** dengan informasi yang hanya Anda tahu (mis. kaitan dengan ticket lain).
 
-### Langkah 5 — Tambahkan CI Workflow (6 menit)
-
-Buat file `.github/workflows/ci.yml`. Gunakan Cursor:
-
-> "Generate GitHub Actions workflow untuk repo Node 20 dengan Postgres service container, jalankan `npm ci`, `npm run lint`, dan `npm test` di pull_request ke main. Gunakan cache untuk node_modules dan versi action terbaru."
-
-Verifikasi:
-- Versi `actions/checkout` dan `actions/setup-node` adalah `@v4` (atau terbaru).
-- Service Postgres punya healthcheck.
-- Environment variable database disuntik via `env:` block, bukan hardcode.
-
-Commit, push, lihat pipeline jalan.
-
-### Langkah 6 — Peer Review (5 menit)
+### Langkah 5 — Peer Review (11 menit)
 
 Tukar PR dengan rekan sebelah. Di sisi reviewer, jalankan prompt:
 
@@ -95,7 +82,6 @@ Tulis hasil review (boleh disempurnakan manual) sebagai komentar PR.
 - [ ] Endpoint berfungsi (manual test dengan curl/Postman).
 - [ ] Commit message Conventional Commits, sudah diedit minimal 1 baris.
 - [ ] PR description lengkap dengan 4 section.
-- [ ] CI workflow ada dan hijau.
 - [ ] Memberi review pada PR rekan + menerima review balik.
 
 ## Refleksi (tulis 3 kalimat)
@@ -112,5 +98,4 @@ Tulis hasil review (boleh disempurnakan manual) sebagai komentar PR.
 |---------|----------------|
 | Cursor tidak melihat diff staged | Pastikan file sudah `git add`, refresh Source Control panel |
 | Commit message generic ("update files") | Prompt belum mention scope/type; tambahkan eksplisit |
-| CI gagal karena port Postgres | Tambahkan `--health-cmd` dan tunggu service ready |
 | PR description menyebut file yang tidak diubah | Konteks `@Branches` salah pakai range; pakai `main..HEAD` |

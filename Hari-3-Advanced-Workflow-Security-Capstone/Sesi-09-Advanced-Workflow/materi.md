@@ -1,4 +1,4 @@
-# Sesi 09 — Advanced Workflow: Git, CI/CD & Kolaborasi Tim AI-Assisted
+# Sesi 09 — Advanced Workflow: Git & Kolaborasi Tim AI-Assisted
 
 **Durasi**: 90 menit
 **Sesi ke**: 09 dari 12
@@ -12,8 +12,7 @@ Setelah sesi ini, peserta mampu:
 
 1. **Menggunakan Cursor untuk menghasilkan commit message, PR description, dan changelog** yang konsisten dengan konvensi tim (Conventional Commits, Keep a Changelog).
 2. **Memanfaatkan Cursor di alur code review** — meminta AI menjelaskan diff, mengidentifikasi smell, dan mengusulkan perbaikan sebelum diajukan ke reviewer manusia.
-3. **Mengintegrasikan Cursor dengan pipeline CI/CD** umum (GitHub Actions, GitLab CI) sebagai akselerator penulisan workflow YAML, troubleshooting log build, dan generate test stage.
-4. **Mendesain konvensi kolaborasi tim AI-assisted** — pembagian peran, aturan attribution, dan sinkronisasi konteks (rules file, project notes) lintas anggota.
+3. **Mendesain konvensi kolaborasi tim AI-assisted** — pembagian peran, aturan attribution, dan sinkronisasi konteks (rules file, project notes) lintas anggota.
 
 ---
 
@@ -21,15 +20,14 @@ Setelah sesi ini, peserta mampu:
 
 ### 2.1 Posisi Cursor dalam Developer Loop
 
-Cursor bukan pengganti git, CI/CD, atau code reviewer — Cursor adalah *accelerator* di setiap titik handoff antar tahap. Memahami posisi ini menentukan ROI integrasi.
+Cursor bukan pengganti git atau code reviewer — Cursor adalah *accelerator* di setiap titik handoff antar tahap. Memahami posisi ini menentukan ROI integrasi.
 
 ```mermaid
 flowchart LR
     A[Local Coding] -->|AI: refactor, test gen| B[Commit]
     B -->|AI: commit msg, branch name| C[Push]
     C -->|AI: PR description, summary| D[Code Review]
-    D -->|AI: explain diff, suggest fix| E[CI/CD]
-    E -->|AI: debug log, fix workflow| F[Deploy]
+    D -->|AI: explain diff, suggest fix| F[Merge/Deploy]
     F -->|AI: post-mortem, changelog| A
 ```
 
@@ -66,39 +64,7 @@ Empat pertanyaan wajib untuk Cursor sebelum approve PR orang lain:
 3. *"Cek apakah ada secret, credential, atau URL internal yang ter-commit."*
 4. *"Sarankan test case tambahan untuk edge case yang belum diuji."*
 
-### 2.5 CI/CD Overview
-
-Cursor membantu di tiga titik utama pipeline:
-
-| Titik | Contoh Kebutuhan | Hasil yang Diharapkan |
-|-------|------------------|------------------------|
-| **Authoring** | Tulis workflow GitHub Actions untuk Node + Postgres | YAML siap pakai dengan caching dependency |
-| **Debugging** | Tempel log error `npm ci` yang gagal | Hipotesis penyebab + perbaikan baris spesifik |
-| **Optimization** | Pipeline lambat 14 menit | Saran paralelisasi job, matrix strategy, cache reuse |
-
-<!-- STACK-PLACEHOLDER: Sesuaikan contoh pipeline di bawah dengan stack pilihan kelas (GitHub Actions / GitLab CI / Jenkins) -->
-
-Contoh kerangka `.github/workflows/ci.yml` minimum:
-
-```yaml
-name: CI
-on:
-  pull_request:
-    branches: [main]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm test
-```
-
-### 2.6 Kolaborasi Tim AI-Assisted
+### 2.5 Kolaborasi Tim AI-Assisted
 
 Tiga prinsip yang harus disepakati tim:
 
@@ -106,7 +72,7 @@ Tiga prinsip yang harus disepakati tim:
 2. **Attribution yang jujur** — kode hasil generate boleh masuk repo, tetapi commit author tetap manusia yang bertanggung jawab atas review.
 3. **Shared prompt library** — simpan prompt yang terbukti efektif di `docs/prompts/` agar onboarding anggota baru cepat.
 
-### 2.7 Matriks Pembagian Peran
+### 2.6 Matriks Pembagian Peran
 
 | Peran | Tugas Utama | Penggunaan Cursor |
 |-------|-------------|-------------------|
@@ -138,17 +104,13 @@ Tiga prinsip yang harus disepakati tim:
 - Buka diff PR rekan.
 - Prompt: `Identifikasi 3 risiko regresi tertinggi dari perubahan ini dan jelaskan alasannya.`
 
-**Langkah 5 — Debug CI yang gagal**
-- Tempel log error `Job test failed: Cannot find module 'pg'` ke chat.
-- Prompt: `Hipotesis penyebab dan langkah perbaikan paling kecil dampaknya. Jangan ubah versi library tanpa alasan kuat.`
-
 ---
 
 ## 4. Hands-on Latihan
 
-**Lokasi latihan**: [`./latihan-08-git-cicd-workflow/`](./latihan-08-git-cicd-workflow/README.md)
+**Lokasi latihan**: [`./latihan-08-git-workflow/`](./latihan-08-git-workflow/README.md)
 
-**Briefing singkat**: Peserta bekerja pada repo demo `cursor-orders-api`. Tugas: (1) buat feature branch, (2) implement endpoint sederhana, (3) generate commit + PR description via Cursor, (4) tambahkan workflow CI minimal, (5) simulasikan code review dengan rekan sebelah.
+**Briefing singkat**: Anda bekerja pada repo demo `cursor-orders-api`. Tugas: (1) buat feature branch, (2) implement endpoint sederhana, (3) generate commit + PR description via Cursor, (4) simulasikan code review dengan rekan sebelah.
 
 **Durasi latihan**: 30 menit.
 
@@ -171,6 +133,5 @@ Pertanyaan diskusi:
 - *Conventional Commits 1.0.0* — https://www.conventionalcommits.org/
 - *Keep a Changelog* — https://keepachangelog.com/
 - GitHub — *About pull request reviews*.
-- Atlassian — *DevOps CI/CD pipeline best practices*.
 - Cursor Docs — *Rules for AI*, *Codebase Indexing*, *Composer*.
 - Buku: *Accelerate* (Forsgren, Humble, Kim) — bab DORA metrics sebagai baseline pengukuran ROI AI tooling.

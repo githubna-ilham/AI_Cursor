@@ -9,13 +9,13 @@
 
 ## Ringkasan Hari 3
 
-Hari ketiga adalah puncak pelatihan. Peserta akan menyatukan seluruh keterampilan yang telah dipelajari ke dalam alur kerja tingkat lanjut yang siap dipakai di tim enterprise — mulai dari integrasi Cursor dengan Git dan pipeline CI/CD, perlindungan source code dan data sensitif, hingga praktik optimasi performa berbasis AI. Hari ditutup dengan **Capstone Project** kolaboratif di mana peserta mendemonstrasikan kemampuan end-to-end menggunakan Cursor pada studi kasus mendekati realita kerja.
+Hari ketiga adalah puncak pelatihan. Anda akan menyatukan seluruh keterampilan yang telah dipelajari ke dalam alur kerja tingkat lanjut yang siap dipakai di tim enterprise — mulai dari integrasi Cursor dengan Git dan code review, perlindungan source code dan data sensitif, hingga praktik optimasi performa berbasis AI. Hari ditutup dengan **Capstone Project** kolaboratif di mana Anda mendemonstrasikan kemampuan end-to-end menggunakan Cursor pada studi kasus mendekati realita kerja.
 
 ## Learning Outcomes Hari 3
 
 Setelah menyelesaikan Hari 3, peserta diharapkan mampu:
 
-1. **Mengintegrasikan Cursor** ke alur Git, code review, dan pipeline CI/CD tim.
+1. **Mengintegrasikan Cursor** ke alur Git dan code review tim.
 2. **Mengidentifikasi & memitigasi risiko keamanan** dalam penggunaan AI coding assistant pada lingkungan enterprise.
 3. **Menerapkan praktik optimasi performa** dan reliability menggunakan AI sebagai akselerator analisis.
 4. **Mengeksekusi capstone project** end-to-end (generate, refactor, debug, test, dokumentasi) dengan pendampingan AI.
@@ -27,7 +27,7 @@ Setelah menyelesaikan Hari 3, peserta diharapkan mampu:
 
 | Sesi | Topik | Durasi | Format |
 |------|-------|--------|--------|
-| 09 | Advanced Workflow — Git, CI/CD, Kolaborasi Tim | 90 menit | Materi + Lab |
+| 09 | Advanced Workflow — Git & Kolaborasi Tim | 90 menit | Materi + Lab |
 | 10 | Security, Ethics & Governance | 90 menit | Materi + Studi Kasus |
 | 11 | Best Practices & Performance Optimization | 90 menit | Materi + Demo |
 | 12 | Capstone Project & Presentasi | 180 menit | Hands-on tim |
@@ -55,7 +55,7 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 ├── README.md                                  (file ini)
 ├── Sesi-09-Advanced-Workflow/
 │   ├── materi.md
-│   └── latihan-08-git-cicd-workflow/
+│   └── latihan-08-git-workflow/
 │       └── README.md
 ├── Sesi-10-Security-Ethics-Governance/
 │   ├── materi.md
