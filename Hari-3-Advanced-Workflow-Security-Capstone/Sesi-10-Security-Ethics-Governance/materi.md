@@ -38,6 +38,37 @@ flowchart TB
     P --> P1[Instruksi tersembunyi di komentar/file]
 ```
 
+#### Cara Membaca Peta
+
+Peta ini mengelompokkan **semua risiko AI coding assistant** ke dalam **5 kategori utama** (cabang level-1) dengan **contoh konkret** di cabang level-2. Tujuannya: saat insiden terjadi, Anda bisa langsung tunjuk kategorinya — itu menentukan **tim mana yang menangani** dan **kontrol mana yang gagal**.
+
+| Sumber risiko | Yang dijaga | Arah aliran |
+|---------------|-------------|-------------|
+| **Data Leakage** | Data perusahaan / pelanggan | **Keluar** dari sistem Anda ke provider AI |
+| **IP & Source Exposure** | Aset intelektual / source code | **Keluar** ke pihak ketiga (training/log) |
+| **Hallucinated Code** | Integritas dependency & API | **Masuk** ke kode Anda (saran AI yang salah) |
+| **License Contamination** | Kepatuhan lisensi | **Masuk** (snippet hasil training AI) |
+| **Prompt Injection** | Kendali atas AI | **Manipulasi** AI lewat input tersembunyi |
+
+> 📌 **Pola pikir kunci**: 3 risiko pertama (Data, IP, Hallucinated) sering muncul karena **kelalaian internal**. 2 terakhir (License, Prompt Injection) muncul karena **input dari luar** yang tidak kita kontrol. Treatment-nya beda — Section 2.4 & 2.5 bahas detailnya.
+
+#### Kenapa Dipetakan Begini?
+
+- **Mempermudah triase.** "Code yang AI sarankan tidak jalan" → kategori H (Hallucinated). "Customer ID muncul di error log Cursor" → kategori D (Data Leakage). Tanpa peta, semua jadi "AI bermasalah".
+- **Memetakan ke kontrol existing.** Tiap kategori punya kontrol mitigasi yang sudah dikenal industri (lihat tabel di Section 2.2 & 2.4). Anda tidak perlu reinvent — tinggal pasang.
+- **Mencegah blind spot.** Banyak organisasi hanya fokus di Data Leakage (paling visible) dan lupa Hallucinated Code (paling sering) atau Prompt Injection (paling baru, paling tidak disiapkan).
+
+#### Yang Paling Sering vs Paling Berbahaya
+
+| Frekuensi | Severity terburuk | Kategori |
+|-----------|-------------------|----------|
+| 🔥 Sering harian | Sedang (bug, waktu terbuang) | **Hallucinated Code** |
+| Sering mingguan | Tinggi (kebocoran credential) | **Data Leakage** |
+| Sesekali | **Sangat tinggi** (tuntutan hukum, perpaja IP) | **IP Exposure**, **License** |
+| Jarang tapi naik | Tinggi (AI dipakai untuk eksfiltrasi) | **Prompt Injection** |
+
+Aturan: investasikan kontrol di kuadran kanan-atas (severity tinggi) lebih dulu, meski frekuensinya rendah. Recovery cost-nya yang menentukan, bukan probabilitas.
+
 ### 2.2 Lima Kategori Risiko — Penjelasan Singkat
 
 | # | Risiko | Contoh Nyata | Dampak |

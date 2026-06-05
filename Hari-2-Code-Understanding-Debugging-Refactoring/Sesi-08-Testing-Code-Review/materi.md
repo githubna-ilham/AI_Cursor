@@ -184,6 +184,56 @@ Untuk tiap input, jelaskan kenapa. Lalu tulis test-nya.
 
 Pola counter-example sangat efektif untuk menemukan edge case yang manusia lupa.
 
+#### Apa Itu "Counter-Example"?
+
+**Counter-example** = contoh tandingan, yaitu input yang membuktikan suatu asumsi salah. Bedanya dengan pola AAA Explicit: di sini Anda *memaksa* AI berpikir sebagai **penyerang**, bukan pembela.
+
+| Mindset | Pertanyaan yang ditanyakan AI | Hasil test |
+|---------|-------------------------------|------------|
+| Defensif (default AI) | "Apa yang harus jalan?" | Happy path, edge dasar |
+| Counter-example | "Bagaimana cara membuat ini rusak?" | Edge case sulit, asumsi tersembunyi |
+
+#### Contoh Konkret
+
+Misal fungsi yang diuji:
+
+```ts
+function parseUserAge(input: string): number {
+  return parseInt(input, 10);
+}
+```
+
+Prompt counter-example dikirim. Jawaban AI yang berguna:
+
+| Input | Kenapa memecahkan |
+|-------|-------------------|
+| `"25abc"` | `parseInt` mengembalikan `25`, padahal input invalid → harusnya tolak |
+| `""` (string kosong) | Mengembalikan `NaN` diam-diam, bukan error |
+| `"-5"` | Mengembalikan `-5`, padahal umur negatif tidak masuk akal |
+| `"1e308"` | Mengembalikan angka sangat besar → bisa pecah di DB |
+| `" 25 "` (ada spasi) | Lulus, tapi caller mungkin mengira input sudah divalidasi |
+
+→ Bug ditemukan **sebelum** test ditulis. Test-nya tinggal mengunci.
+
+#### Kapan Pakai?
+
+- **Setelah** menulis test happy path → untuk mencari yang tertinggal.
+- Saat refactor kode legacy yang bukan Anda yang buat.
+- Untuk fungsi yang menerima input dari luar (user, API, file) — di situ asumsi paling banyak.
+- Saat merasa "test ini terlalu hijau, pasti ada yang luput".
+
+#### Kenapa Efektif?
+
+1. **AI bagus jadi devil's advocate.** Diminta menyerang, AI ingat pola bug umum (off-by-one, encoding, overflow) yang manusia mudah lupa.
+2. **Menemukan asumsi tersembunyi.** Bug terburuk biasanya "kami kira input selalu trimmed" — counter-example memaksa asumsi itu keluar.
+3. **Hemat waktu.** 30 detik prompt = 5 edge case yang biasanya butuh 30 menit dipikir sendiri.
+
+#### Anti-pola
+
+- **Terima daftar AI mentah-mentah.** Beberapa "counter-example" tidak relevan (mis. input 10000 karakter untuk fungsi umur). Filter dulu.
+- **Lupa tulis test-nya.** Daftar saja tidak melindungi kode — harus jadi test yang berjalan di CI.
+- **Hanya pakai pola ini.** AAA Explicit + Counter-Example saling melengkapi: AAA untuk cakupan dasar, Counter-Example untuk yang tersembunyi.
+
 ### 5. False Positive AI
 
 AI sering meng-generate test yang:
