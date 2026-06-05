@@ -28,16 +28,60 @@ Setelah sesi ini peserta mampu:
 
 AI bisa menghasilkan SEMUA jenis test ini. Tugas Anda: filter & pandu.
 
-### 2. Test Pyramid (Ulang)
+### 2. Test Pyramid
 
 ![Test Pyramid: Unit (banyak, murah, cepat) → Integration → E2E (sedikit, mahal, lambat)](../../images/test-pyramid.png)
 
-Dua sumbu yang harus dibaca dari piramida:
+#### Apa yang dibaca dari gambar
 
-- **Ke atas** (Unit → Integration → E2E): **slower, more expensive** — test makin lambat dan makin mahal di-maintain.
-- **Ke bawah** (E2E → Integration → Unit): **faster, cheaper** — test makin cepat dan murah.
+Dua sumbu yang harus dibaca:
 
-Karena itu **bentuknya piramida, bukan persegi**: porsi terbesar harus di lapis Unit. Anti-pola umum: *ice-cream cone* (banyak E2E, sedikit unit) → suite lambat, flaky, mahal di CI.
+- **Ke atas** (Unit → Integration → E2E): **slower, more expensive** — test makin lambat, makin mahal di-maintain, makin sering flaky.
+- **Ke bawah** (E2E → Integration → Unit): **faster, cheaper** — test makin cepat, makin murah, makin stabil.
+
+Karena itu **bentuknya piramida, bukan persegi**: porsi terbesar harus di lapis Unit.
+
+#### Tiga Lapis: Apa, Cepat-Mahalnya, Contoh
+
+| Lapis | Apa yang di-test | Kecepatan | Biaya maintain | Contoh di project DevNotes |
+|-------|------------------|-----------|----------------|-----------------------------|
+| **Unit** | Satu fungsi/method terisolasi, dependency di-mock | ms — puluhan ms | Murah, jarang pecah | `validateNoteInput()`, `formatTimestamp()`, helper response |
+| **Integration** | Dua+ modul berinteraksi nyata (mis. handler ↔ DB ↔ Supabase client) | ratusan ms — detik | Sedang | `POST /api/notes` → tulis ke Supabase test, baca lagi |
+| **E2E** | Aplikasi jalan utuh, dari browser/request publik sampai DB asli | detik — puluhan detik | Mahal, sering flaky | Login magic link → buat note → muncul di list |
+
+#### Rasio Sehat (rule of thumb)
+
+| Lapis | Porsi suite | Kenapa segitu |
+|-------|-------------|---------------|
+| Unit | ~70% | Cepat → developer mau jalankan tiap save |
+| Integration | ~20% | Mahal tapi nangkap bug "antar modul" |
+| E2E | ~10% | Mahal & flaky → hanya untuk *critical user journey* |
+
+Bukan dogma. Project kecil bisa Unit 90% / E2E 10%. Yang penting: **piramida, bukan terbalik**.
+
+#### Tiga Anti-Pola yang Sering Muncul (apalagi dengan AI)
+
+1. **Ice-cream cone** — banyak E2E, sedikit unit. Suite jalan 20 menit, satu tombol berubah → 30 test merah. AI yang diminta "test fitur ini" sering jatuh ke sini karena E2E "kelihatan lebih meyakinkan".
+2. **Hourglass** — banyak unit + banyak E2E, integration kosong. Bug bocor di sambungan antar modul (mis. handler kirim shape data salah ke DB) yang unit test tidak nangkap dan E2E baru ketahuan saat demo.
+3. **Cupcake** — semua test ditulis sebagai unit tapi mock-nya sampai ke DB & HTTP. Lulus semua, tapi tidak verify apa-apa nyata. Anti-pola favorit AI yang malas.
+
+#### Peran AI per Lapis
+
+| Lapis | AI bagus untuk… | AI lemah untuk… |
+|-------|-----------------|------------------|
+| Unit | Generate test AAA dari signature fungsi, brainstorm edge case, property test | — |
+| Integration | Skenario "alur" (urutan call), data seed | Setup infra (test container, fixture DB), teardown bersih |
+| E2E | Skenario user journey dalam bahasa Gherkin/plain | Selector stabil, wait strategy, debug flaky test |
+
+Aturan praktis: **makin tinggi lapis, makin banyak AI butuh review manusia**. Di unit, AI bisa hampir mandiri. Di E2E, AI hanya partner brainstorm — eksekusi tetap manusia.
+
+#### Kapan Pakai Lapis Mana?
+
+- Logika murni (kalkulasi, validasi, format) → **Unit**.
+- Kontrak antar modul (handler ↔ service ↔ DB) → **Integration**.
+- Alur kritis yang kalau pecah pengguna komplain (login, checkout, submit form utama) → **E2E**.
+
+Pertanyaan filter sebelum tulis test: *"Kalau test ini pecah, apa yang sebenarnya rusak?"* Kalau jawabannya "satu fungsi" → Unit. "Kontrak modul" → Integration. "Pengalaman user" → E2E.
 
 AI paling produktif di lapis **unit**. Untuk integration & E2E, AI berguna untuk skenario, kurang untuk infra.
 
