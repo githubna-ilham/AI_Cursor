@@ -30,13 +30,14 @@ AI bisa menghasilkan SEMUA jenis test ini. Tugas Anda: filter & pandu.
 
 ### 2. Test Pyramid (Ulang)
 
-```mermaid
-flowchart TB
-    E2E[E2E Tests<br/>sedikit, mahal, lambat]
-    INT[Integration Tests<br/>sedang]
-    UNIT[Unit Tests<br/>banyak, murah, cepat]
-    UNIT --> INT --> E2E
-```
+![Test Pyramid: Unit (banyak, murah, cepat) → Integration → E2E (sedikit, mahal, lambat)](../../images/test-pyramid.png)
+
+Dua sumbu yang harus dibaca dari piramida:
+
+- **Ke atas** (Unit → Integration → E2E): **slower, more expensive** — test makin lambat dan makin mahal di-maintain.
+- **Ke bawah** (E2E → Integration → Unit): **faster, cheaper** — test makin cepat dan murah.
+
+Karena itu **bentuknya piramida, bukan persegi**: porsi terbesar harus di lapis Unit. Anti-pola umum: *ice-cream cone* (banyak E2E, sedikit unit) → suite lambat, flaky, mahal di CI.
 
 AI paling produktif di lapis **unit**. Untuk integration & E2E, AI berguna untuk skenario, kurang untuk infra.
 
