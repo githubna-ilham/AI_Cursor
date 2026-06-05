@@ -271,6 +271,47 @@ flowchart LR
 
 Aturan: 1 langkah refactor = 1 commit. AI memudahkan tapi godaan "refactor besar sekali jalan" harus ditahan.
 
+#### Anatomi 7 Langkah
+
+| # | Langkah | Yang dilakukan | Peran AI |
+|---|---------|----------------|----------|
+| **A** | Identify smell | Tunjuk *satu* smell yang mau dibereskan (mis. method 80 baris) | Prompt: "Urutkan code smell di file ini dari paling berdampak" |
+| **B** | Characterization test | Tulis test yang **mengunci behaviour saat ini** — apa adanya, bug pun ikut dikunci | AI generate test dari membaca kode |
+| **C** | Test green? | Pastikan test pass dulu di kondisi awal. Kalau merah, **bukan refactor yang salah — test-nya yang belum benar** | — |
+| **D** | Mini refactor step | **Satu** transformasi kecil (Extract Function, Rename, dst.). Bukan rewrite | AI sarankan diff; Anda review baris per baris |
+| **E** | Run tests | Jalankan semua test setelah perubahan | — |
+| **F** | Smell hilang? | Kalau belum hilang, ulangi langkah D (refactor lanjutan) | — |
+| **G** | Revert | Kalau test merah, **revert dulu**, jangan tambal. Cari versi lebih kecil dari langkah D | — |
+| **H** | Commit | 1 langkah refactor = 1 commit. Pesan: `refactor: extract validateInput from createNote` | — |
+
+#### Tiga Prinsip Kunci
+
+1. **Test sebelum refactor, bukan sesudah.** Tanpa characterization test, kita tidak punya "jaring pengaman" — AI bisa diam-diam mengubah behaviour dan kita tidak tahu.
+2. **Mini-step, bukan big-bang.** Godaan terbesar dengan AI: "sekalian rapikan semua". Itu cara cepat menghasilkan PR yang tidak bisa di-review dan tidak bisa di-revert kalau ada bug.
+3. **Revert > tambal.** Kalau test merah, jangan minta AI "perbaiki errornya". Kembali ke commit hijau terakhir, pecah langkah jadi lebih kecil.
+
+#### Kenapa loop, bukan garis lurus?
+
+Ada **dua decision point** (`C` dan `F`) yang sering memaksa balik:
+
+- **C → B**: test ternyata belum mengunci behaviour penting → tambah test dulu.
+- **F → D**: smell belum sepenuhnya hilang setelah 1 step → lanjut step berikutnya (tapi tetap mini).
+- **E (Red) → G → D**: refactor pecah → revert, pecah lagi jadi lebih kecil.
+
+Tanpa loop ini, refactor jadi *"hope-driven development"* — apply saran AI, harap tidak ada yang rusak.
+
+#### Kontras dengan Workflow Tanpa AI
+
+| Tanpa AI | Dengan AI (tidak disiplin) | Dengan AI + workflow ini |
+|----------|----------------------------|---------------------------|
+| Lambat tapi terkontrol | Cepat tapi rapuh (rewrite tersembunyi, behaviour berubah) | Cepat **dan** terkontrol |
+
+#### Hubungan dengan section lain
+
+- Section **4** (transformasi aman vs riskan) → memberi tahu **D mana yang aman dilakukan AI sendiri**.
+- Section **6** (`.cursorrules`) → menjaga AI tidak melanggar style saat step D.
+- Section **8** (anti-pattern) → tepatnya pelanggaran workflow ini: "Bersihkan kode ini" = lompat langsung ke D tanpa A–C.
+
 ### 6. Menjaga Coding Standard
 
 AI default sering menghasilkan style yang inconsistent dengan codebase. Strategi:
