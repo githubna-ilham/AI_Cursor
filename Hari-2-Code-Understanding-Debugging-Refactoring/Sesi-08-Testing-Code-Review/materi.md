@@ -90,7 +90,71 @@ Pertanyaan filter sebelum tulis test: *"Kalau test ini pecah, apa yang sebenarny
 
 AI paling produktif di lapis **unit**. Untuk integration & E2E, AI berguna untuk skenario, kurang untuk infra.
 
-### 3. Pola Prompt Test Generation
+### 3. Pola AAA (Arrange–Act–Assert)
+
+Pola **AAA** adalah cara membagi isi satu test jadi **3 blok berurutan**. Tujuannya: setiap test mudah dibaca dalam 5 detik karena strukturnya selalu sama.
+
+#### Tiga Blok
+
+| Blok | Artinya | Yang dilakukan |
+|------|---------|----------------|
+| **Arrange** | Siapkan | Bikin data, setup state awal, siapkan mock/dependency |
+| **Act** | Lakukan | Panggil **satu** fungsi yang sedang dites |
+| **Assert** | Cek | Verifikasi hasilnya sesuai harapan |
+
+#### Contoh Konkret (DevNotes)
+
+```ts
+test('createNote should reject when title is empty', () => {
+  // Arrange — siapkan input
+  const input = { title: '', content: 'Belajar testing' };
+  const fakeDb = { insert: jest.fn() };
+
+  // Act — jalankan fungsi yang dites
+  const result = createNote(input, fakeDb);
+
+  // Assert — cek hasilnya
+  expect(result.ok).toBe(false);
+  expect(result.error).toBe('TITLE_REQUIRED');
+  expect(fakeDb.insert).not.toHaveBeenCalled();
+});
+```
+
+Tanpa AAA, test yang sama bisa jadi spaghetti yang sulit dibaca:
+
+```ts
+test('test1', () => {
+  expect(createNote({ title: '', content: 'x' }, { insert: jest.fn() }).ok).toBe(false);
+});
+```
+
+#### Kenapa AAA Penting?
+
+1. **Mudah dibaca** — reviewer langsung tahu "ini setup, ini aksi, ini ekspektasi".
+2. **Mudah debug saat merah** — kalau test gagal, langsung kelihatan di blok mana masalahnya.
+3. **Mendorong test fokus** — 1 test = 1 Act. Kalau mau panggil 2 fungsi di Act, itu sinyal **harus dipecah jadi 2 test**.
+4. **Cocok untuk AI** — kalau prompt minta format AAA eksplisit, output AI jauh lebih konsisten (lihat section 4).
+
+#### Aturan Praktis
+
+- **1 Act per test.** Kalau ada 2 panggilan fungsi di Act, pecah jadi 2 test.
+- **Arrange seperlunya.** Setup berlebihan = test rapuh. Kalau Arrange > 10 baris, pikir ulang: butuh helper/factory.
+- **Assert minimal tapi bermakna.** Cek hal yang benar-benar penting, bukan semua field.
+- **Komentar `// Arrange`, `// Act`, `// Assert`** boleh ditulis eksplisit di awal (terutama untuk peserta baru) — nanti hilang sendiri saat sudah jadi kebiasaan.
+
+#### Varian: GWT (Given–When–Then)
+
+Konsep yang sama, beda nama:
+
+| AAA | GWT | Sering dipakai di |
+|-----|-----|-------------------|
+| Arrange | **Given** (kondisi awal) | Unit test |
+| Act | **When** (kejadian) | BDD, Cucumber, integration test |
+| Assert | **Then** (hasil) | E2E dengan bahasa bisnis |
+
+Pilih yang konsisten di project Anda. AAA lebih populer di unit test JS/TS; GWT lebih sering di test BDD.
+
+### 4. Pola Prompt Test Generation
 
 **Pola "AAA Explicit"**:
 
@@ -118,7 +182,7 @@ Untuk tiap input, jelaskan kenapa. Lalu tulis test-nya.
 
 Pola counter-example sangat efektif untuk menemukan edge case yang manusia lupa.
 
-### 4. False Positive AI
+### 5. False Positive AI
 
 AI sering meng-generate test yang:
 
@@ -130,7 +194,7 @@ AI sering meng-generate test yang:
 
 Wajib review tiap test sebelum commit.
 
-### 5. AI Code Review: Apa yang AI Baik & Buruk
+### 6. AI Code Review: Apa yang AI Baik & Buruk
 
 | Baik | Buruk |
 |------|-------|
@@ -141,7 +205,7 @@ Wajib review tiap test sebelum commit.
 | Security pattern (SQL injection, XSS) | Threat model holistik |
 | Generate test missing | Prioritas vs deadline |
 
-### 6. Workflow Code Review Berbantuan AI
+### 7. Workflow Code Review Berbantuan AI
 
 ```mermaid
 flowchart LR
@@ -158,7 +222,7 @@ flowchart LR
 
 Aturan: AI **tidak boleh** auto-comment di PR tanpa filter manusia. False positive merusak trust author.
 
-### 7. Checklist Code Review (Template)
+### 8. Checklist Code Review (Template)
 
 - [ ] Behaviour change terdeskripsikan di PR description?
 - [ ] Test baru / update test mencerminkan behaviour change?
@@ -173,7 +237,7 @@ Aturan: AI **tidak boleh** auto-comment di PR tanpa filter manusia. False positi
 
 Tiap baris dapat di-delegasikan ke AI sebagai prompt awal, lalu manusia verifikasi.
 
-### 8. Technical Debt: AI sebagai Detektor
+### 9. Technical Debt: AI sebagai Detektor
 
 Prompt:
 
@@ -185,7 +249,7 @@ sedang ditambahkan atau dikurangi. Untuk tiap debt:
 - Apakah dapat ditangani di PR ini atau wajib ticket terpisah
 ```
 
-### 9. Etika & Komunikasi Review
+### 10. Etika & Komunikasi Review
 
 - Komentar AI yang di-relay manusia: tandai sumbernya ("AI flagged this, I confirmed it valid").
 - Jangan paste komentar AI mentah-mentah.
