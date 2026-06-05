@@ -151,6 +151,51 @@ flowchart LR
     E --> A
 ```
 
+#### Apa Itu Governance Framework?
+
+**Governance framework** = kerangka *siklus* aktivitas yang memastikan penggunaan AI coding assistant di organisasi tetap **aman, patuh, dan terukur** seiring waktu. Bukan dokumen sekali tulis, tapi **loop** yang berputar terus.
+
+Disebut **singkat** karena hanya 5 tahap inti — sengaja dipangkas supaya tim kecil pun bisa mulai tanpa overhead. Framework besar (NIST AI RMF, ISO/IEC 42001) bisa dipakai nanti saat organisasi sudah matang.
+
+#### Tahap-tahap dan Penanggung Jawab
+
+| Tahap | Apa yang dilakukan | Output konkret | Owner |
+|-------|--------------------|----------------|-------|
+| **1. Policy** | Tulis aturan main: tools yang disetujui, klasifikasi data, do/don't (Section 2.8) | Dokumen "AI Usage Policy v1" yang disetujui pimpinan | CISO + Legal |
+| **2. Training** | Bekali tim memahami policy + cara aman pakai AI (mirror materi Sesi 10) | Sesi onboarding 1–2 jam, kuis kelulusan | People Ops + Engineering Lead |
+| **3. Provisioning Lisensi** | Sediakan akun resmi (mode yang sesuai klasifikasi data), SSO, hak akses | Daftar lisensi terdaftar, akses ter-link ke SSO | IT / Procurement |
+| **4. Monitoring & Audit** | Cek log pemakaian, scan secret leak, telusuri pelanggaran | Dashboard pemakaian, laporan insiden bulanan | Security Ops |
+| **5. Review Berkala** | Evaluasi: policy masih relevan? tools baru muncul? insiden baru? | Notulen review tiap 6 bulan + update policy | CISO + Engineering Lead |
+
+Setelah Review (5), output-nya **kembali memicu update Policy** (1) — itulah kenapa diagramnya loop, bukan garis lurus.
+
+#### Kenapa Harus Loop, Bukan Sekali Jalan?
+
+- **Tools cepat berubah.** Cursor rilis fitur baru tiap bulan; Copilot, Codeium, dsb. Policy yang ditulis tahun lalu mungkin sudah tidak cocok.
+- **Threat landscape berkembang.** Prompt injection baru muncul 2023; sekarang sudah jadi vektor serius. Tanpa review, policy tertinggal.
+- **Tim berubah.** Karyawan baru tidak otomatis tahu policy — training harus berulang, bukan event sekali.
+- **Insiden = bahan belajar.** Tiap insiden internal/industri (lihat `studi-kasus-kebocoran-data.md`) harus disuntik ke siklus berikutnya.
+
+#### Kalau Salah Satu Tahap Putus
+
+| Tahap yang lemah | Akibat |
+|-------------------|--------|
+| Policy tidak ada | Tim improvisasi sendiri → keputusan tidak konsisten, sulit audit |
+| Training dilewati | Policy ada tapi tidak dipahami → pelanggaran tidak disengaja |
+| Provisioning bocor | Tim pakai akun pribadi/free tier → data perusahaan ke tier non-enterprise |
+| Monitoring nihil | Tidak tahu ada insiden sampai ramai di media |
+| Review tidak jalan | Framework jadi "shelfware" — ada di drive, tidak relevan dengan kenyataan |
+
+#### Roadmap Minimal 90 Hari (untuk organisasi yang baru mulai)
+
+| Bulan | Fokus | Deliverable |
+|-------|-------|-------------|
+| **1** | Policy v0.1 + pilih tools resmi | Draft policy 5 halaman + daftar tools disetujui |
+| **2** | Training pilot ke 1 tim + provisioning SSO | 1 sesi training + 10 lisensi enterprise aktif |
+| **3** | Monitoring dasar (gitleaks di CI) + audit pertama | Dashboard insiden + revisi policy v0.2 |
+
+Setelah 90 hari, organisasi punya **versi minimum** dari semua 5 tahap — siap di-iterate setiap 6 bulan.
+
 <!-- STACK-PLACEHOLDER: Sesuaikan contoh `.cursorignore` dengan stack mayoritas peserta (Node, Python, Go, Java) -->
 
 Contoh `.cursorignore` baseline:
