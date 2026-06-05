@@ -43,11 +43,11 @@ Karena itu **bentuknya piramida, bukan persegi**: porsi terbesar harus di lapis 
 
 #### Tiga Lapis: Apa, Cepat-Mahalnya, Contoh
 
-| Lapis | Yang dicek | Seberapa cepat jalan | Repotnya kalau berubah | Contoh di project DevNotes |
-|-------|------------|----------------------|------------------------|-----------------------------|
-| **Unit** | Satu fungsi kecil saja. Bagian luar (database, API) dipalsukan supaya fungsi diuji sendirian. | Sangat cepat (sepersekian detik) | Hampir tidak pernah rewel — jarang ikut rusak kalau bagian lain berubah | `validateNoteInput()`, `formatTimestamp()`, helper response |
-| **Integration** | Beberapa bagian dipakai bareng-bareng (mis. handler API benar-benar menulis ke database test) | Sedang (beberapa detik) | Lumayan — kadang harus update saat schema/endpoint berubah | `POST /api/notes` → tulis ke Supabase test → baca lagi, pastikan datanya benar |
-| **E2E** | Aplikasi lengkap dipakai seperti user beneran: buka browser → klik → submit → cek hasilnya di database asli | Lambat (puluhan detik per test) | Sering rewel ("flaky"): kadang lulus, kadang gagal tanpa kode berubah — biasanya karena timing/jaringan/animasi | Login magic link → buat note → cek note muncul di halaman list |
+| Lapis | Yang dicek | Seberapa cepat jalan | Contoh di project DevNotes |
+|-------|------------|----------------------|-----------------------------|
+| **Unit** | Satu fungsi kecil saja. Bagian luar (database, API) dipalsukan supaya fungsi diuji sendirian. | Sangat cepat (sepersekian detik) | `validateNoteInput()`, `formatTimestamp()`, helper response |
+| **Integration** | Beberapa bagian dipakai bareng-bareng (mis. handler API benar-benar menulis ke database test) | Sedang (beberapa detik) | `POST /api/notes` → tulis ke Supabase test → baca lagi, pastikan datanya benar |
+| **E2E** | Aplikasi lengkap dipakai seperti user beneran: buka browser → klik → submit → cek hasilnya di database asli | Lambat (puluhan detik per test) | Login magic link → buat note → cek note muncul di halaman list |
 
 > 📖 **Istilah cepat:**
 > - **Flaky** = test yang hasilnya tidak konsisten. Hari ini lulus, besok gagal, padahal kodenya sama. Penyebab tersering: nunggu sesuatu yang belum siap (animasi, request jaringan, data).
