@@ -115,9 +115,19 @@ Mode paling sederhana: AI melihat konteks file aktif dan menyarankan beberapa ba
 function smoothScrollTo(id) {
 ```
 
-2.2. Tab akan menyarankan implementasi (biasanya pakai `document.getElementById` + `scrollIntoView({ behavior: 'smooth' })`).
-2.3. **Baca dulu** saran sebelum terima. Tekan `Tab` untuk accept, atau `Esc` untuk tolak.
-2.4. (Fungsi ini akan dipanggil di Tahap 9 saat bikin nav sticky — belum perlu dipanggil sekarang.)
+2.2. Tab akan menyarankan implementasi — biasanya:
+
+```js
+const el = document.getElementById(id);
+if (el) el.scrollIntoView({ behavior: 'smooth' });
+```
+
+2.3. **Baca dulu** saran sebelum terima, lalu:
+   - `Tab` untuk accept
+   - `Esc` untuk tolak
+
+2.4. Belum perlu memanggil `smoothScrollTo()` sekarang — fungsi ini akan dipakai di **Tahap 9** saat bikin nav sticky.
+
 2.5. Screenshot saran Tab yang muncul → `02-tab.png`.
 
 ### 3. Mode Cmd/Ctrl+K — Inline Edit (8')
