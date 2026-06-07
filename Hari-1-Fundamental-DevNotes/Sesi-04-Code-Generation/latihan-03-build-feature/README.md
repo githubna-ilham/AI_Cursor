@@ -60,7 +60,9 @@ Peserta menyelesaikan portfolio personal end-to-end dengan praktik commit kecil,
 ### 0. Persiapan (3')
 
 0.1. Buat branch baru: `git checkout -b feat/contact-and-polish`.
+
 0.2. Pastikan portfolio masih jalan: buka `index.html`, scroll dari Hero ke Projects.
+
 0.3. Buka DevTools → Application → Local Storage. Pastikan key `portfolio:messages` belum ada (atau kosongkan).
 
 ### Tahap 7. Contact Form + Validasi (15') — Mode Agent
@@ -89,11 +91,13 @@ Jangan submit handler dulu — itu Tahap 8.
 ```
 
 7.3. Review per-file. Test manual di browser: isi form invalid → error muncul, isi valid → tombol enabled.
+
 7.4. **Commit**: `feat: add contact form with inline validation (Tahap 7)`.
 
 ### Tahap 8. Submit ke localStorage + Toast (15') — Mode Cmd/Ctrl+K
 
 8.1. Buka `assets/app.js`, cari area dekat fungsi validasi form.
+
 8.2. Highlight area, tekan `Cmd+K`:
 
 ```
@@ -110,12 +114,15 @@ Constraint: pakai try/catch untuk JSON operations, error → console.error + toa
 ```
 
 8.3. Test: submit form valid → cek DevTools → Local Storage → `portfolio:messages` muncul.
+
 8.4. Buat CSS untuk `.toast` di styles.css (fixed bottom-right, padding, shadow, transisi). Bisa pakai Cmd+K juga.
+
 8.5. **Commit**: `feat: submit contact form to localStorage with toast (Tahap 8)`.
 
 ### Tahap 9. Nav Sticky + Responsive (15') — Mode Agent
 
 9.1. Buka panel Agent.
+
 9.2. Prompt:
 
 ```
@@ -137,18 +144,24 @@ List dulu file yang akan diubah sebelum apply.
 ```
 
 9.3. Test di DevTools responsive mode: desktop OK, lalu ganti ke iPhone 14 — hamburger muncul, drawer jalan.
+
 9.4. **Commit**: `feat: add sticky nav + mobile hamburger (Tahap 9)`.
 
 ### Tahap 10. Polish + Lighthouse Audit (15') — Mode Chat + Cmd+K
 
 10.1. Buka Chrome DevTools → tab **Lighthouse** → pilih kategori Performance + Accessibility + Best Practices → Generate report (desktop).
+
 10.2. Catat skor awal.
+
 10.3. Untuk tiap kategori dengan skor < target:
    - Buka Chat, paste daftar isu yang muncul.
    - Tanya: *"Bantu saya fix 3 isu accessibility prioritas teratas berikut: [paste]"*.
    - Apply fix lewat Cmd+K per file (alt text, label, kontras, focus visible, dll).
+
 10.4. (Opsional) Tambah dark mode toggle: tombol di nav yang toggle class `.dark` di `<body>`, simpan preferensi di localStorage `portfolio:theme`.
+
 10.5. Run Lighthouse ulang. Pastikan target tercapai.
+
 10.6. **Commit**: `chore: polish + lighthouse fixes (Tahap 10)` dan kalau ada dark mode: `feat: dark mode toggle`.
 
 ### 11. Refleksi (5')

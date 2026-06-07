@@ -87,8 +87,11 @@ CSS variables wajib di `:root`:
 ### 1. Setup Repo (5')
 
 1.1. Buat folder: `mkdir portfolio && cd portfolio && git init`.
+
 1.2. Buka di Cursor: **File → Open Folder**.
+
 1.3. Tunggu indexing selesai (< 30 detik untuk repo kosong).
+
 1.4. Buat 3 file kosong manual (lewat File Explorer Cursor):
 
 ```
@@ -144,6 +147,7 @@ Lebih kuat dari Tab: Anda highlight kode, lalu beri instruksi natural language u
 ```
 
 3.2. Highlight blok `:root { ... }`.
+
 3.3. Tekan `Cmd+K` / `Ctrl+K`. Ketik:
 
 ```
@@ -170,8 +174,11 @@ Override --color-bg dan --color-text saja, sisanya biarkan.
 Sekarang ada konten di project. Mode **Ask** untuk **tanya jawab tanpa langsung mengubah file**.
 
 4.1. Buka panel sidebar (`Cmd+L` / `Ctrl+L`).
+
 4.2. Di **dropdown mode** (bagian bawah panel), pilih `Ask`.
+
 4.3. Ketik `@` → pilih `Folder` → arahkan ke folder `portfolio/`.
+
 4.4. Prompt:
 
 ```
@@ -180,6 +187,7 @@ Variabel CSS apa saja yang sudah disiapkan dan untuk apa?
 ```
 
 4.5. Baca jawaban. Tanya follow-up: *"Kalau saya mau ganti warna primary jadi #2563eb, cukup ubah di mana saja?"*
+
 4.6. Screenshot percakapan → `04-chat.png`.
 
 > 💡 Perhatikan: di mode **Ask**, AI **tidak otomatis** ubah file. Kalau jawabannya mau di-apply, tekan tombol "Apply" di tiap snippet kode atau copy-paste manual. Ini bedanya dengan mode **Agent** di langkah berikutnya.
@@ -202,15 +210,21 @@ Tidak perlu framework. Tidak perlu inline CSS/JS.
 ```
 
 5.3. **Review tiap perubahan** yang akan dibuat. Reject hal yang tidak Anda mengerti — minta penjelasan ulang via Chat.
+
 5.4. Accept perubahan.
+
 5.5. Buka `index.html` di browser. Harusnya muncul halaman dengan nav di atas, 4 section kosong, footer di bawah, warna sesuai variables dari langkah 3.
+
 5.6. Test dark mode: System Settings macOS atau DevTools → Rendering → `prefers-color-scheme: dark`. Warna harus berubah.
+
 5.7. Screenshot panel Agent + halaman di browser → `05-agent.png`.
 
 ### 6. Commit & Submit (5')
 
 6.1. `git add . && git commit -m "feat: scaffold portfolio skeleton + CSS variables (Tahap 1-2)"`.
+
 6.2. (Opsional) Buat repo di GitHub dan push.
+
 6.3. Tulis `submissions/<nama>/refleksi.md` (3–5 kalimat):
    - Mode mana paling intuitif?
    - Mode mana paling mengagetkan output-nya?
