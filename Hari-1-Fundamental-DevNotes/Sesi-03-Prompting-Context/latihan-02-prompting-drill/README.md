@@ -56,6 +56,32 @@ Isi `<section id="hero">` dengan: foto profil, nama, headline (role / 1 kalimat)
 - Constraint: pakai CSS variables yang sudah ada di `:root`, tidak boleh inline style.
 - Acceptance: tombol CTA pakai `<a href="#contact">` dan `<a href="#projects">` — scroll ke section terkait.
 
+**Contoh prompt** (ganti placeholder `<...>` dengan data Anda):
+
+```
+Isi <section id="hero"> di @file index.html dengan layout 2 kolom:
+
+Kolom kiri (text):
+- Headline H1: "Halo, saya <Nama Anda>"
+- Sub-headline H2: "<Role Anda, mis. Backend Engineer berbasis di Jakarta>"
+- Bio 2 paragraf: <paragraf 1: latar belakang singkat>. <paragraf 2: minat & nilai>
+- 2 tombol CTA berdampingan:
+  - "Lihat Project" → <a href="#projects">, style primary
+  - "Hubungi Saya" → <a href="#contact">, style outline
+
+Kolom kanan (image):
+- <img> profil pakai https://i.pravatar.cc/400 (placeholder)
+- Bentuk lingkaran, ukuran ~280px
+
+Constraints:
+- Pakai CSS variables yang ada di :root (--color-primary, --spacing-lg, dst).
+  Tambah rules di @file assets/styles.css, jangan inline style.
+- Mobile (max-width 768px): kolom jadi 1, image di atas, text di bawah.
+- Hero min-height 90vh, content vertically centered.
+
+Tidak perlu animasi rumit. Tidak perlu library.
+```
+
 **Hint mode**: Agent atau Cmd+K di `index.html`.
 
 ### Tahap 4 — Section Skills
@@ -66,6 +92,35 @@ Isi `<section id="skills">` dengan grid icon + label dari minimal 6 skill. Pakai
 - Sebutkan **6+ skill spesifik** yang Anda kuasai.
 - Constraint: grid responsive (2 kolom di mobile, 4 kolom di desktop), tanpa library CSS.
 - Acceptance: tiap skill ada icon + nama, ter-arrange rapi tanpa overflow.
+
+**Contoh prompt** (ganti list skill dengan punya Anda):
+
+```
+Isi <section id="skills"> di @file index.html dengan grid skill.
+
+Heading: "Tech Stack" (H2).
+
+Skills (gunakan list saya, jangan diganti):
+- JavaScript (emoji 🟨)
+- TypeScript (emoji 🔷)
+- React (emoji ⚛️)
+- Node.js (emoji 🟢)
+- PostgreSQL (emoji 🐘)
+- Docker (emoji 🐳)
+- Git (emoji 🌳)
+- Figma (emoji 🎨)
+
+Markup: tiap skill jadi <div class="skill-card"> berisi emoji
+(span ukuran besar) + nama skill (p).
+
+Constraints di @file assets/styles.css:
+- Grid responsive pakai grid-template-columns: repeat(auto-fit, minmax(140px, 1fr))
+  → otomatis 4 kolom di desktop, 2 di mobile, tanpa media query manual
+- Gap pakai --spacing-md
+- Tiap card: padding --spacing-md, background sedikit lebih terang dari --color-bg,
+  border-radius 8px, hover scale 1.05 transition 150ms
+- Emoji font-size 2.5rem, di tengah
+```
 
 **Hint mode**: Cmd+K di section skills.
 
@@ -80,6 +135,45 @@ Bikin file baru `assets/data.js` berisi array `PROJECTS` (minimal 3 project, sch
 - Constraint: render lewat JS (fetch dari `window.PROJECTS`), tidak hardcoded `<article>` di HTML.
 - Acceptance: tambah/ubah project = ubah `data.js`, tidak sentuh HTML.
 
+**Contoh prompt** (ganti 3 project dengan project Anda):
+
+```
+Buat fitur Projects yang ter-render dari data array (bukan hardcoded).
+Konteks: @file index.html, @file assets/app.js.
+
+1. Buat file baru assets/data.js:
+   window.PROJECTS = [
+     {
+       id: 'p1',
+       title: '<Judul Project 1, mis. Sistem Antrian Klinik>',
+       description: '<Deskripsi singkat 1 kalimat>',
+       thumbnail: 'https://picsum.photos/seed/p1/600/400',
+       tags: ['React', 'Supabase', 'Tailwind'],
+       demo: 'https://demo.example.com',
+       repo: 'https://github.com/anda/repo1',
+     },
+     { id: 'p2', ... project Anda kedua ... },
+     { id: 'p3', ... project Anda ketiga ... },
+   ];
+
+2. Tambah <script src="assets/data.js"></script> di index.html SEBELUM
+   <script src="assets/app.js"></script>. Section #projects biarkan
+   kosong (akan diisi runtime).
+
+3. Di assets/app.js, tambah fungsi renderProjects():
+   - Baca window.PROJECTS
+   - Untuk tiap project, buat <article class="project-card"> berisi
+     <img>, <h3>, <p>, <ul class="tags">, dan 2 tombol link demo & repo
+   - Append ke <section id="projects">
+   - Panggil saat DOMContentLoaded
+
+Constraints:
+- Tidak boleh hardcode <article> project di index.html
+- Tambah/ubah project = cukup ubah PROJECTS di data.js
+- Tambah CSS di styles.css: .project-card grid layout, thumbnail
+  aspect-ratio 3/2 object-cover, tags inline-block dengan padding kecil
+```
+
 **Hint mode**: Agent dengan scope `index.html` + `assets/data.js` + `assets/app.js`.
 
 ### Tahap 6 — Project Detail / Hover State
@@ -90,6 +184,40 @@ Tambah interaksi pada kartu project: hover effect (transisi visual) + klik kartu
 - Sebutkan: hover = scale ringan + shadow + transisi 200ms. Klik = modal centered + backdrop blur.
 - Constraint: modal pakai `<dialog>` element (native HTML), tidak pakai library.
 - Acceptance: tutup modal pakai `Esc` atau klik backdrop. Body scroll lock saat modal terbuka.
+
+**Contoh prompt**:
+
+```
+Tambah interaksi pada kartu project di portfolio.
+Konteks: @file index.html, @file assets/app.js, @file assets/styles.css.
+
+1. Update model project di assets/data.js: tambah field
+   `longDescription` (string, 2-3 paragraf untuk modal detail).
+   Saya akan isi sendiri konten paragrafnya.
+
+2. Hover state pada .project-card di styles.css:
+   - transition: transform 200ms ease, box-shadow 200ms ease
+   - hover: transform scale(1.03), box-shadow shadow halus
+   - cursor: pointer
+
+3. Modal pakai elemen native <dialog> (BUKAN div + overlay manual):
+   - Append 1 <dialog id="project-modal"> di akhir <body> di index.html
+   - Isi modal: tombol close (×), thumbnail besar, judul, longDescription,
+     tags, dan 2 tombol link demo + repo
+   - Modal centered, max-width 720px, backdrop blur 4px
+   - Tutup: tombol close, klik backdrop, atau tekan Esc
+
+4. Di app.js:
+   - Klik .project-card → cari project dari window.PROJECTS pakai data-id
+   - Inject konten project ke modal, panggil modal.showModal()
+   - Tombol close & klik backdrop (event.target === dialog) → modal.close()
+   - Body scroll lock saat modal terbuka (overflow: hidden), reset saat tutup
+
+Constraints:
+- Native <dialog>, tidak pakai library modal
+- Esc auto-handled oleh <dialog>, jangan duplicate listener
+- Test: buka modal → background tidak ikut scroll
+```
 
 **Hint mode**: Agent dengan multi-file edit (CSS untuk hover, JS untuk modal logic, HTML untuk `<dialog>`).
 
