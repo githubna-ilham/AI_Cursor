@@ -4,6 +4,12 @@ Selamat datang di pelatihan **AI Cursor — 3 Hari Fundamental sampai Project En
 
 ---
 
+## Tentang Materi Ini
+
+Materi **AI Cursor — AI-Powered Coding & Developer Productivity** dirancang untuk mengajarkan cara menggunakan Cursor sebagai pasangan kerja AI di siklus penuh pengembangan perangkat lunak — mulai dari eksplorasi codebase, pemahaman kode, generate fitur, debugging, refactoring, testing, sampai kolaborasi tim lewat Git dan code review. Setelah menyelesaikan semua modul, Anda akan mampu mengintegrasikan AI ke alur kerja harian sebagai developer — mempercepat tugas yang biasanya memakan berjam-jam menjadi hitungan menit, sekaligus membangun dua artefak nyata (website portfolio personal dan aplikasi full-stack DevNotes) yang siap dipakai dan di-deploy.
+
+---
+
 ## 1. Pengantar
 
 Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak nyata** selama 3 hari:
