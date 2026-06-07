@@ -223,23 +223,6 @@ Constraints:
 
 ---
 
-## Rubrik Penilaian Diri
-
-Setiap tahap dinilai 0–4 di **5 dimensi**:
-
-| Dimensi              | 0          | 1                 | 2             | 3                | 4                              |
-| -------------------- | ---------- | ----------------- | ------------- | ---------------- | ------------------------------ |
-| Kejelasan tujuan     | Tidak ada  | Vague             | Ada tapi multi | 1 kalimat jelas  | + alasan bisnis (ref BRD)      |
-| Konteks (@-mention)  | Tidak ada  | 1, kurang tepat   | 1 tepat       | 2 tepat          | 3+ tepat & efisien             |
-| Constraint           | Tidak ada  | Generik           | 1 kritikal    | 2–3 kritikal     | + ranked priority              |
-| Acceptance           | Tidak ada  | "harus jalan"     | Subjektif     | Terukur          | Terukur + contoh perilaku      |
-| Output sesuai        | Tidak      | Sebagian          | Mostly        | Sesuai           | Sesuai + tanpa hallucination   |
-
-**Lolos tahap**: total ≥ 12/20.
-**Lolos latihan**: minimal 3/4 tahap lolos **DAN** keempat section terlihat di browser dengan data nyata Anda.
-
----
-
 ## Submit
 
 Folder `portfolio/submissions/<nama>/` berisi:

@@ -177,22 +177,6 @@ Tulis di `submissions/<nama>/latihan-03-refleksi.md`:
 
 ---
 
-## Kriteria Selesai (Rubrik)
-
-| Kriteria                                                       | Bobot | Cukup       | Baik           | Sangat Baik                                |
-| -------------------------------------------------------------- | ----- | ----------- | -------------- | ------------------------------------------ |
-| Semua acceptance criteria 4 tahap terpenuhi                    | 30%   | 2 tahap     | 3 tahap        | 4 tahap (full)                             |
-| Persistensi localStorage stabil (no data loss saat refresh)    | 10%   | Sebagian    | Stabil         | Stabil + handle JSON.parse error           |
-| Responsive jalan di mobile viewport                            | 15%   | Layout pecah | OK ada bug minor | Smooth & polished                         |
-| Lighthouse target tercapai (Perf 85, A11y 90, BP 90)           | 20%   | 1 metrik    | 2 metrik       | 3 metrik tercapai                          |
-| 4 mode interaksi Cursor terpakai                               | 10%   | 1–2         | 3              | 4 (Tab + K + Chat + Agent)                 |
-| Commit kecil reviewable                                        | 10%   | 1 commit    | 2–3 commit     | ≥4 commit bermakna dengan ref Tahap         |
-| Refleksi tulisan                                               | 5%    | < 3 poin    | 3 poin         | + insight spesifik                         |
-
-Lolos: ≥ **70%**.
-
----
-
 ## Tips
 
 - **Mulai kecil**: form → validasi → submit → toast. Jangan kerjakan semua sekaligus.
