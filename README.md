@@ -38,7 +38,7 @@ Detail lengkap di [`pendahuluan.md`](./pendahuluan.md#2-prasyarat).
 - Terbiasa coding di minimal satu bahasa pemrograman.
 - Familiar dengan Git basic dan terminal/CLI.
 - Laptop ≥ 8 GB RAM, koneksi internet stabil.
-- Sudah mengisi **[Pretest](pretest/PRETEST-AI-Cursor.md)** sebelum hari pertama.
+- Sudah mengisi **Pretest** (form akan dishare fasilitator sebelum hari pertama).
 
 ---
 
@@ -75,8 +75,6 @@ AI_CURSOR/
 ├── README.md                                          # file ini
 ├── pendahuluan.md                                     # ← MULAI DARI SINI
 ├── project-brd.md                                     # spek aplikasi DevNotes
-├── pretest/                                           # kuesioner profiling peserta
-├── posttest/                                          # evaluasi akhir
 ├── resources/                                         # cheatsheet, .cursorrules, dll.
 ├── Hari-1-Fundamental-DevNotes/                       # Sesi 1–4
 ├── Hari-2-Code-Understanding-Debugging-Refactoring/   # Sesi 5–8

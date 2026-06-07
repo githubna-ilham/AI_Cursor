@@ -11,3 +11,7 @@ __pycache__/
 node_modules/
 .venv/
 venv/
+
+# Materi internal fasilitator (jangan ikut share ke peserta)
+/pretest/
+/posttest/
