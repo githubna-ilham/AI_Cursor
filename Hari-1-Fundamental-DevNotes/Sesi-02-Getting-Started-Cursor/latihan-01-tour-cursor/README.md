@@ -135,9 +135,17 @@ section.scrollIntoView({ behavior: 'smooth' });
 
 2.5. Screenshot saran Tab yang muncul → `02-tab.png`.
 
-### 3. Mode Cmd/Ctrl+K — Inline Edit (8')
+### 3. Mode Cmd/Ctrl+K — Inline Edit (10')
 
-Lebih kuat dari Tab: Anda highlight kode, lalu beri instruksi natural language untuk modifikasi.
+Lebih kuat dari Tab: Anda highlight kode, lalu beri instruksi natural language untuk modifikasi. Anda akan pakai Cmd+K **tiga kali** di langkah ini:
+
+1. Definisikan **CSS variables** di `:root`.
+2. Buat **rule** yang **memakai** variables itu di elemen body/nav/footer.
+3. Tambah **dark mode** override.
+
+> 💡 Tahap ini sengaja dipecah supaya peserta sadar: *variables saja tidak cukup* — harus ada rule yang `var(--xxx)` baru warnanya kelihatan di browser.
+
+#### 3a. Definisikan Variables
 
 3.1. Buka `assets/styles.css`. Tulis manual blok kosong:
 
@@ -160,14 +168,42 @@ dan spacing (--spacing-sm/md/lg). Pilih palette clean dark mode.
    - `Enter` untuk terima
    - `Esc` untuk tolak
 
-3.5. Lanjut tambah dark mode. Highlight `:root` lagi → `Cmd+K` → ketik:
+> ⚠️ **Cek di browser sekarang**: refresh `index.html`. Halaman **masih putih default** — itu **benar**, bukan bug. Variables hanya mendefinisikan token, belum apply ke elemen. Itulah kenapa kita lanjut ke 3b.
+
+#### 3b. Buat Rule yang Memakai Variables
+
+3.5. Di file yang sama, taruh cursor di bawah blok `:root { ... }`. Tekan `Cmd+K` lagi. Ketik:
 
 ```
-Tambah variant dark mode di @media (prefers-color-scheme: dark).
-Override --color-bg dan --color-text saja, sisanya biarkan.
+Tambah rules yang memakai variables di atas:
+- body: background --color-bg, color --color-text, font-family --font-base,
+  margin 0
+- nav: flex row, gap --spacing-md, padding --spacing-md
+- nav a: color --color-primary, text-decoration none, font-weight 600
+- nav a:hover: opacity 0.8
+- main section: min-height 60vh, padding --spacing-lg
+- footer: padding --spacing-lg, color --color-muted,
+  border-top 1px solid --color-muted
+- h1, h2, h3: font-family --font-heading
 ```
 
-3.6. Screenshot diff (sebelum accept) → `03-inline-edit.png`.
+3.6. Refresh `index.html`. Sekarang background dark, text putih, link nav berwarna primary tanpa underline. Ini bukti variables sudah "dipakai".
+
+#### 3c. Tambah Dark Mode Override
+
+3.7. Highlight blok `:root` lagi → `Cmd+K` → ketik:
+
+```
+Tambah variant @media (prefers-color-scheme: light) yang override
+--color-bg jadi #ffffff dan --color-text jadi #1a1a2e. Variabel lain
+biarkan.
+```
+
+> ℹ️ Kita sengaja override **light mode** karena baseline kita sudah dark. Kalau baseline Anda light, balik logikanya: pakai `(prefers-color-scheme: dark)`.
+
+3.8. Test: System Settings → ganti appearance, atau DevTools → Rendering → emulate `prefers-color-scheme`. Background harus berubah.
+
+3.9. Screenshot diff salah satu langkah (sebelum accept) → `03-inline-edit.png`.
 
 ### 4. Mode Ask — Tanya Codebase (7')
 
@@ -213,7 +249,7 @@ Tidak perlu framework. Tidak perlu inline CSS/JS.
 
 5.4. Accept perubahan.
 
-5.5. Buka `index.html` di browser. Harusnya muncul halaman dengan nav di atas, 4 section kosong, footer di bawah, warna sesuai variables dari langkah 3.
+5.5. Buka `index.html` di browser. Harusnya muncul halaman dengan nav di atas, 4 section kosong (masing-masing setinggi 60vh), footer di bawah, warna mengikuti rules dari langkah 3b.
 
 5.6. Test dark mode: System Settings macOS atau DevTools → Rendering → `prefers-color-scheme: dark`. Warna harus berubah.
 
