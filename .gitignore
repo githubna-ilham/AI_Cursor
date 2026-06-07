@@ -15,3 +15,4 @@ venv/
 # Materi internal fasilitator (jangan ikut share ke peserta)
 /pretest/
 /posttest/
+**/SPEC-FASILITATOR.md
