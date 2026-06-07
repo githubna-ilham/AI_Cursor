@@ -1,7 +1,7 @@
 # Latihan 03 — Build Feature: Contact Form + Polish Portfolio
 
 > 🗺️ **Tahap 7–10 dari 10** di [Perjalanan Project Hari 1](../../perjalanan-project.md)
-> Sebelumnya: Tahap 3–6 (4 sections terisi) di Sesi 3 | Setelah ini: Akhir Hari 1 — portfolio siap di-deploy & dipakai
+> Sebelumnya: Tahap 3–6 (3 section terisi + modal interaktif) di Sesi 3 | Setelah ini: Akhir Hari 1 — portfolio siap di-deploy & dipakai
 
 **Durasi**: 75 menit
 **Tipe**: Hands-on individual (boleh diskusi tetangga)
@@ -41,7 +41,8 @@ Peserta menyelesaikan portfolio personal end-to-end dengan praktik commit kecil,
 
 ## Prasyarat
 
-- Lulus Latihan 01 & 02: portfolio sudah punya skeleton + 4 sections terisi (Hero, Skills, Projects).
+- Lulus Latihan 01 & 02: portfolio sudah punya skeleton + 3 section terisi (Hero, Skills, Projects) + modal `<dialog>` untuk project detail. Section Contact masih kosong — itulah entry point Tahap 7.
+- File yang akan dimodifikasi di latihan ini sudah ada: `index.html`, `assets/styles.css`, `assets/app.js`, `assets/data.js` (dari latihan-02 Tahap 5).
 - Git config siap untuk commit.
 - Browser dengan DevTools (Chrome direkomendasikan untuk Lighthouse).
 
