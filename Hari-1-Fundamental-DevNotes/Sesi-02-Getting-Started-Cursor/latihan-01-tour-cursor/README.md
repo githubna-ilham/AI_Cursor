@@ -5,7 +5,7 @@
 
 **Durasi**: 45 menit
 **Tipe**: Hands-on individual
-**Output**: Repo `portfolio/` lokal berisi `index.html` (skeleton semantic), `assets/styles.css` (variabel CSS dasar), commit pertama, dan 5 screenshot bukti penggunaan 4 mode Cursor.
+**Output**: Repo `portfolio/` lokal berisi `index.html` (skeleton semantic), `assets/styles.css` (variabel CSS dasar), `assets/app.js` (fungsi `smoothScrollTo`), commit pertama, dan 5 screenshot bukti penggunaan 4 mode Cursor.
 
 ---
 
@@ -31,6 +31,21 @@ Latihan ini menyelesaikan **FR-01 (parsial)** — fondasi struktur halaman portf
 
 ---
 
+## Empat Mode Cursor — Pengantar Singkat
+
+Sebelum langkah praktik, pahami dulu **kapan masing-masing mode dipakai**. Urutan latihan ini sengaja dari yang paling **sederhana & lokal** ke yang paling **kompleks & agentik**:
+
+| # | Mode | Cara aktifkan | Cocok untuk | Risiko utama |
+|---|------|---------------|-------------|--------------|
+| 1 | **Tab** | Ketik kode → tombol `Tab` | Autocomplete 1–10 baris berdasarkan konteks file aktif | Saran "kelihatan benar" tapi pakai API yang tidak ada |
+| 2 | **Cmd/Ctrl + K** (Inline Edit) | Highlight kode → `Cmd/Ctrl+K` | Modifikasi blok kode yang sudah ada (ubah, tambah, refactor kecil) | Mengubah lebih banyak dari yang Anda kira — wajib baca diff |
+| 3 | **Chat** (`Cmd/Ctrl + L`) | Panel kanan, pakai `@` untuk attach context | Tanya jawab tentang codebase, brainstorming, tanpa langsung mengubah file | Jawaban tidak otomatis ter-apply — Anda harus pindah-tempel manual |
+| 4 | **Agent** (`Cmd/Ctrl + I`) | Panel kanan, "Composer" / "Agent" mode | Tugas multi-file: scaffold, refactor lintas file, bikin fitur dari spec | Bisa bikin/ubah banyak file sekaligus — paling sulit di-review |
+
+**Aturan praktis**: pakai mode yang **paling kecil** yang masih bisa menyelesaikan tugas. Kalau Tab cukup, tidak perlu Chat. Kalau Inline Edit cukup, tidak perlu Agent. Mode lebih agentik = lebih cepat, tapi lebih sulit dikontrol.
+
+---
+
 ## Output yang Diharapkan
 
 Struktur akhir folder peserta:
@@ -38,10 +53,10 @@ Struktur akhir folder peserta:
 ```
 portfolio/
 ├── README.md
-├── index.html              ← skeleton semantic (header, nav, main dengan placeholder section, footer)
+├── index.html              ← skeleton semantic (header, nav, main dengan 4 section, footer)
 ├── assets/
-│   ├── styles.css          ← reset minimal + CSS variables (warna, font, spacing)
-│   └── app.js              ← kosong / placeholder untuk Tahap berikutnya
+│   ├── styles.css          ← CSS variables (warna, font, spacing) + dark mode
+│   └── app.js              ← fungsi smoothScrollTo (akan dipakai di Tahap 9)
 └── submissions/<nama>/
     ├── 01-indexed.png
     ├── 02-tab.png
@@ -72,55 +87,25 @@ CSS variables wajib di `:root`:
 1.1. Buat folder: `mkdir portfolio && cd portfolio && git init`.
 1.2. Buka di Cursor: **File → Open Folder**.
 1.3. Tunggu indexing selesai (< 30 detik untuk repo kosong).
-1.4. Screenshot status bar yang menunjukkan project terindex → `submissions/<nama>/01-indexed.png`.
-
-### 2. Mode Agent — Scaffold Multi-file (10')
-
-2.1. Buka panel Agent dengan `Cmd+I` / `Ctrl+I`.
-2.2. Prompt:
+1.4. Buat 3 file kosong manual (lewat File Explorer Cursor):
 
 ```
-Buat scaffold awal website portfolio personal sebagai web statis HTML/CSS/JS vanilla:
-- index.html dengan struktur semantic: <header> berisi <nav> dengan link anchor
-  (#hero, #skills, #projects, #contact), <main> dengan 4 <section> KOSONG
-  yang masing-masing punya id sesuai anchor di atas, dan <footer> dengan
-  copyright + social link placeholder.
-- assets/styles.css dengan CSS reset minimal + CSS custom properties (variables)
-  di :root untuk warna (--color-primary, --color-bg, --color-text, --color-muted),
-  typography (--font-base, --font-heading), dan spacing (--spacing-sm/md/lg).
-  Pilih palette yang clean (mis. dark mode atau minimalist light).
-- assets/app.js KOSONG dulu (cuma 1 baris komentar "// portfolio script").
-- README.md singkat (judul, cara menjalankan: buka index.html di browser).
-
-Mengikuti wireframe portfolio di Section 9 BRD: hero + skills + projects +
-contact, single-page scroll-based. Tidak perlu framework, tidak perlu build tool.
+portfolio/
+├── index.html             (kosong)
+└── assets/
+    ├── styles.css         (kosong)
+    └── app.js             (kosong)
 ```
 
-2.3. **Review tiap file** yang akan dibuat. Reject file yang tidak Anda mengerti — minta penjelasan ulang via Chat.
-2.4. Accept perubahan.
-2.5. Buka `index.html` di browser. Harusnya muncul halaman dengan nav di atas, 4 section kosong, footer di bawah.
-2.6. Screenshot panel Agent + halaman di browser → `05-agent.png`.
+1.5. Screenshot status bar yang menunjukkan project terindex → `submissions/<nama>/01-indexed.png`.
 
-### 3. Mode Chat — Tanya Codebase (5')
+> 💡 File sengaja dibuat kosong dulu supaya Anda **merasakan** apa yang masing-masing mode tambahkan ke file.
 
-3.1. Buka Chat (`Cmd+L` / `Ctrl+L`) atau pakai panel kanan yang sama dengan mode "Ask".
-3.2. Ketik `@` → pilih `Folder` → arahkan ke folder `portfolio/`.
-3.3. Prompt: *"Jelaskan struktur project ini dalam 5 bullet. Variabel CSS apa saja yang sudah disiapkan dan untuk apa?"*
-3.4. Baca jawaban. Tanya follow-up: *"Kalau saya mau ganti warna primary jadi #2563eb, cukup ubah di mana saja?"*
-3.5. Screenshot percakapan → `04-chat.png`.
+### 2. Mode Tab — Autocomplete (5')
 
-### 4. Mode Cmd/Ctrl+K — Inline Edit (5')
+Mode paling sederhana: AI melihat konteks file aktif dan menyarankan beberapa baris berikut. Tidak perlu dialog, tidak perlu prompt.
 
-4.1. Buka `assets/styles.css`. Highlight blok `:root { ... }` (variabel CSS).
-4.2. Tekan `Cmd+K` / `Ctrl+K`.
-4.3. Ketik: *"Tambah variant dark mode di `@media (prefers-color-scheme: dark)` — override --color-bg dan --color-text saja, sisanya biarkan."*
-4.4. Tunggu diff muncul. **Baca** seluruh diff. Terima (Enter) atau tolak (Esc).
-4.5. Test: ubah dark mode di System Settings macOS, atau di DevTools → Rendering → Emulate CSS prefers-color-scheme = dark. Refresh browser → warna harus berubah.
-4.6. Screenshot diff (sebelum accept) → `03-inline-edit.png`.
-
-### 5. Mode Tab — Autocomplete (5')
-
-5.1. Buka `assets/app.js`, ketik komentar:
+2.1. Buka `assets/app.js`. Ketik komentar di bawah, lalu tekan Enter:
 
 ```js
 // fungsi smoothScrollTo menerima id section (string tanpa #),
@@ -128,10 +113,75 @@ contact, single-page scroll-based. Tidak perlu framework, tidak perlu build tool
 function smoothScrollTo(id) {
 ```
 
-5.2. Tekan Enter — Tab akan menyarankan implementasi.
-5.3. **Baca dulu**. Terima (Tab), atau edit prefix dulu untuk influence saran.
-5.4. (Belum perlu dipanggil sekarang — fungsi ini akan dipakai di Tahap 9 saat bikin nav sticky.)
-5.5. Screenshot saran Tab yang muncul → `02-tab.png`.
+2.2. Tab akan menyarankan implementasi (biasanya pakai `document.getElementById` + `scrollIntoView({ behavior: 'smooth' })`).
+2.3. **Baca dulu** saran sebelum terima. Tekan `Tab` untuk accept, atau `Esc` untuk tolak.
+2.4. (Fungsi ini akan dipanggil di Tahap 9 saat bikin nav sticky — belum perlu dipanggil sekarang.)
+2.5. Screenshot saran Tab yang muncul → `02-tab.png`.
+
+### 3. Mode Cmd/Ctrl+K — Inline Edit (8')
+
+Lebih kuat dari Tab: Anda highlight kode, lalu beri instruksi natural language untuk modifikasi.
+
+3.1. Buka `assets/styles.css`. Tulis manual blok kosong:
+
+```css
+:root {
+}
+```
+
+3.2. Highlight blok `:root { ... }`.
+3.3. Tekan `Cmd+K` / `Ctrl+K`. Ketik:
+
+```
+Isi dengan CSS variables: warna (--color-primary, --color-bg,
+--color-text, --color-muted), font (--font-base, --font-heading),
+dan spacing (--spacing-sm/md/lg). Pilih palette clean dark mode.
+```
+
+3.4. Tunggu diff muncul. **Baca seluruh diff**. Terima (Enter) atau tolak (Esc).
+3.5. Lanjut: highlight `:root` lagi, `Cmd+K`, ketik: *"Tambah variant dark mode di `@media (prefers-color-scheme: dark)` — override `--color-bg` dan `--color-text` saja."*
+3.6. Screenshot diff (sebelum accept) → `03-inline-edit.png`.
+
+### 4. Mode Chat — Tanya Codebase (7')
+
+Sekarang ada konten di project. Mode Chat untuk **tanya jawab tanpa langsung mengubah file**.
+
+4.1. Buka Chat (`Cmd+L` / `Ctrl+L`).
+4.2. Ketik `@` → pilih `Folder` → arahkan ke folder `portfolio/`.
+4.3. Prompt:
+
+```
+Jelaskan struktur project ini dalam 5 bullet.
+Variabel CSS apa saja yang sudah disiapkan dan untuk apa?
+```
+
+4.4. Baca jawaban. Tanya follow-up: *"Kalau saya mau ganti warna primary jadi #2563eb, cukup ubah di mana saja?"*
+4.5. Screenshot percakapan → `04-chat.png`.
+
+> 💡 Perhatikan: Chat **tidak otomatis** ubah file. Kalau jawabannya mau di-apply, Anda yang copy-paste atau pakai tombol "Apply".
+
+### 5. Mode Agent — Scaffold Multi-file (10')
+
+Mode paling kuat & paling sulit dikontrol: AI bisa **membuat/mengubah banyak file sekaligus** untuk menyelesaikan tugas yang Anda spec.
+
+5.1. Buka panel Agent dengan `Cmd+I` / `Ctrl+I`.
+5.2. Prompt (ringkas, fokus 1 tugas):
+
+```
+Isi index.html dengan struktur semantic single-page portfolio:
+- <header> berisi <nav> dengan 4 link anchor (#hero, #skills, #projects, #contact)
+- <main> dengan 4 <section> kosong (id: hero, skills, projects, contact)
+- <footer> dengan copyright + social link placeholder
+
+Link ke assets/styles.css dan assets/app.js yang sudah ada.
+Tidak perlu framework. Tidak perlu inline CSS/JS.
+```
+
+5.3. **Review tiap perubahan** yang akan dibuat. Reject hal yang tidak Anda mengerti — minta penjelasan ulang via Chat.
+5.4. Accept perubahan.
+5.5. Buka `index.html` di browser. Harusnya muncul halaman dengan nav di atas, 4 section kosong, footer di bawah, warna sesuai variables dari langkah 3.
+5.6. Test dark mode: System Settings macOS atau DevTools → Rendering → `prefers-color-scheme: dark`. Warna harus berubah.
+5.7. Screenshot panel Agent + halaman di browser → `05-agent.png`.
 
 ### 6. Commit & Submit (5')
 
@@ -148,9 +198,9 @@ function smoothScrollTo(id) {
 
 | Kriteria                                            | Bobot | Cukup                 | Baik                            | Sangat Baik                                            |
 | --------------------------------------------------- | ----- | --------------------- | ------------------------------- | ------------------------------------------------------ |
-| Halaman tampil dengan 4 section + nav + footer      | 25%   | Tampil tapi rusak     | Tampil rapi sesuai wireframe    | Sesuai wireframe + dark mode toggle lulus              |
+| Halaman tampil dengan 4 section + nav + footer      | 25%   | Tampil tapi rusak     | Tampil rapi sesuai wireframe    | Sesuai wireframe + dark mode lulus                     |
 | Semua 5 screenshot tersubmit                        | 20%   | 3 file                | 4 file                          | 5 file lengkap                                         |
-| Agent dipakai untuk scaffold awal                   | 15%   | Scaffold manual       | Agent dipakai tanpa review      | Agent dipakai + review per-file + reject 1 hal         |
+| Agent dipakai untuk scaffold HTML                   | 15%   | Scaffold manual       | Agent dipakai tanpa review      | Agent dipakai + review per-file + reject 1 hal         |
 | Tab + Inline Edit menghasilkan kode dipakai         | 15%   | Hanya di-accept       | Di-accept & dipakai             | Di-accept, dipakai, diverifikasi di browser            |
 | Chat memakai @-mention dengan benar                 | 10%   | Tanpa @-mention       | @-mention 1×                    | @-mention + follow-up berkualitas                      |
 | Commit pertama bermakna (pesan jelas, file relevan) | 10%   | Commit ada            | Commit dengan pesan baik        | Commit + ref Tahap di pesan + repo push ke GitHub      |
@@ -162,6 +212,7 @@ Lolos minimum: **70%** total.
 
 ## Tips
 
+- **Mulai dari mode terkecil.** Kalau Tab cukup, jangan langsung Agent. Latihan ini sengaja diatur dari sederhana ke kompleks supaya intuisi "kapan pakai apa" terbentuk.
 - Jangan tergesa-gesa accept Tab/Agent. Baca dulu — terutama selector CSS dan struktur HTML, mudah di-hallucinate.
 - Pakai `Esc` tanpa rasa bersalah. Menolak saran adalah skill.
 - Simpan **palette warna pilihan Anda** dengan baik — akan dipakai konsisten di tahap-tahap berikutnya.
