@@ -194,22 +194,6 @@ Tidak perlu framework. Tidak perlu inline CSS/JS.
 
 ---
 
-## Kriteria Selesai (Rubrik)
-
-| Kriteria                                            | Bobot | Cukup                 | Baik                            | Sangat Baik                                            |
-| --------------------------------------------------- | ----- | --------------------- | ------------------------------- | ------------------------------------------------------ |
-| Halaman tampil dengan 4 section + nav + footer      | 25%   | Tampil tapi rusak     | Tampil rapi sesuai wireframe    | Sesuai wireframe + dark mode lulus                     |
-| Semua 5 screenshot tersubmit                        | 20%   | 3 file                | 4 file                          | 5 file lengkap                                         |
-| Agent dipakai untuk scaffold HTML                   | 15%   | Scaffold manual       | Agent dipakai tanpa review      | Agent dipakai + review per-file + reject 1 hal         |
-| Tab + Inline Edit menghasilkan kode dipakai         | 15%   | Hanya di-accept       | Di-accept & dipakai             | Di-accept, dipakai, diverifikasi di browser            |
-| Chat memakai @-mention dengan benar                 | 10%   | Tanpa @-mention       | @-mention 1×                    | @-mention + follow-up berkualitas                      |
-| Commit pertama bermakna (pesan jelas, file relevan) | 10%   | Commit ada            | Commit dengan pesan baik        | Commit + ref Tahap di pesan + repo push ke GitHub      |
-| Refleksi tulisan                                    | 5%    | < 3 kalimat           | 3–5 kalimat                     | Refleksi spesifik + insight                            |
-
-Lolos minimum: **70%** total.
-
----
-
 ## Tips
 
 - **Mulai dari mode terkecil.** Kalau Tab cukup, jangan langsung Agent. Latihan ini sengaja diatur dari sederhana ke kompleks supaya intuisi "kapan pakai apa" terbentuk.
