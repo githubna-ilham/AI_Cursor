@@ -39,10 +39,12 @@ Sebelum langkah praktik, pahami dulu **kapan masing-masing mode dipakai**. Uruta
 |---|------|---------------|-------------|--------------|
 | 1 | **Tab** | Ketik kode → tombol `Tab` | Autocomplete 1–10 baris berdasarkan konteks file aktif | Saran "kelihatan benar" tapi pakai API yang tidak ada |
 | 2 | **Cmd/Ctrl + K** (Inline Edit) | Highlight kode → `Cmd/Ctrl+K` | Modifikasi blok kode yang sudah ada (ubah, tambah, refactor kecil) | Mengubah lebih banyak dari yang Anda kira — wajib baca diff |
-| 3 | **Chat** (`Cmd/Ctrl + L`) | Panel kanan, pakai `@` untuk attach context | Tanya jawab tentang codebase, brainstorming, tanpa langsung mengubah file | Jawaban tidak otomatis ter-apply — Anda harus pindah-tempel manual |
-| 4 | **Agent** (`Cmd/Ctrl + I`) | Panel kanan, "Composer" / "Agent" mode | Tugas multi-file: scaffold, refactor lintas file, bikin fitur dari spec | Bisa bikin/ubah banyak file sekaligus — paling sulit di-review |
+| 3 | **Ask** (Chat) | Buka panel (`Cmd/Ctrl + L`) → dropdown mode = `Ask`. Pakai `@` untuk attach context | Tanya jawab tentang codebase, brainstorming, tanpa langsung mengubah file | Jawaban tidak otomatis ter-apply — Anda harus tekan "Apply" atau copy-paste |
+| 4 | **Agent** | Panel yang sama → dropdown mode = `Agent` (atau langsung `Cmd/Ctrl + I` untuk buka panel default ke mode Agent) | Tugas multi-file: scaffold, refactor lintas file, bikin fitur dari spec | Bisa bikin/ubah banyak file sekaligus — paling sulit di-review |
 
-**Aturan praktis**: pakai mode yang **paling kecil** yang masih bisa menyelesaikan tugas. Kalau Tab cukup, tidak perlu Chat. Kalau Inline Edit cukup, tidak perlu Agent. Mode lebih agentik = lebih cepat, tapi lebih sulit dikontrol.
+> ℹ️ **Catatan versi**: Cursor versi sekarang menyatukan Chat dan Agent ke **satu panel**, dengan dropdown mode (`Ask` / `Agent` / kadang `Edit`) di bagian bawah. Shortcut `Cmd+L` dan `Cmd+I` hanya menentukan mode default saat panel terbuka. Dulu (Cursor <0.40) kedua mode terpisah panel.
+
+**Aturan praktis**: pakai mode yang **paling kecil** yang masih bisa menyelesaikan tugas. Kalau Tab cukup, tidak perlu Ask. Kalau Inline Edit cukup, tidak perlu Agent. Mode lebih agentik = lebih cepat, tapi lebih sulit dikontrol.
 
 ---
 
@@ -151,29 +153,30 @@ Override --color-bg dan --color-text saja, sisanya biarkan.
 
 3.6. Screenshot diff (sebelum accept) → `03-inline-edit.png`.
 
-### 4. Mode Chat — Tanya Codebase (7')
+### 4. Mode Ask — Tanya Codebase (7')
 
-Sekarang ada konten di project. Mode Chat untuk **tanya jawab tanpa langsung mengubah file**.
+Sekarang ada konten di project. Mode **Ask** untuk **tanya jawab tanpa langsung mengubah file**.
 
-4.1. Buka Chat (`Cmd+L` / `Ctrl+L`).
-4.2. Ketik `@` → pilih `Folder` → arahkan ke folder `portfolio/`.
-4.3. Prompt:
+4.1. Buka panel sidebar (`Cmd+L` / `Ctrl+L`).
+4.2. Di **dropdown mode** (bagian bawah panel), pilih `Ask`.
+4.3. Ketik `@` → pilih `Folder` → arahkan ke folder `portfolio/`.
+4.4. Prompt:
 
 ```
 Jelaskan struktur project ini dalam 5 bullet.
 Variabel CSS apa saja yang sudah disiapkan dan untuk apa?
 ```
 
-4.4. Baca jawaban. Tanya follow-up: *"Kalau saya mau ganti warna primary jadi #2563eb, cukup ubah di mana saja?"*
-4.5. Screenshot percakapan → `04-chat.png`.
+4.5. Baca jawaban. Tanya follow-up: *"Kalau saya mau ganti warna primary jadi #2563eb, cukup ubah di mana saja?"*
+4.6. Screenshot percakapan → `04-chat.png`.
 
-> 💡 Perhatikan: Chat **tidak otomatis** ubah file. Kalau jawabannya mau di-apply, Anda yang copy-paste atau pakai tombol "Apply".
+> 💡 Perhatikan: di mode **Ask**, AI **tidak otomatis** ubah file. Kalau jawabannya mau di-apply, tekan tombol "Apply" di tiap snippet kode atau copy-paste manual. Ini bedanya dengan mode **Agent** di langkah berikutnya.
 
 ### 5. Mode Agent — Scaffold Multi-file (10')
 
 Mode paling kuat & paling sulit dikontrol: AI bisa **membuat/mengubah banyak file sekaligus** untuk menyelesaikan tugas yang Anda spec.
 
-5.1. Buka panel Agent dengan `Cmd+I` / `Ctrl+I`.
+5.1. Di panel yang sama, **ganti dropdown mode** dari `Ask` ke `Agent`. (Atau buka panel default Agent dengan `Cmd+I` / `Ctrl+I`.)
 5.2. Prompt (ringkas, fokus 1 tugas):
 
 ```
