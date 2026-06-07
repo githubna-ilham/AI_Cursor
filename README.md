@@ -78,8 +78,7 @@ AI_CURSOR/
 ├── pretest/                                           # kuesioner profiling peserta
 ├── posttest/                                          # evaluasi akhir
 ├── resources/                                         # cheatsheet, .cursorrules, dll.
-├── Hari-1-Fundamental-DevNotes/                       # Sesi 1–4 (aktif)
-├── Hari-1-Fundamental/                                # Sesi 1–4 (versi lama, cadangan)
+├── Hari-1-Fundamental-DevNotes/                       # Sesi 1–4
 ├── Hari-2-Code-Understanding-Debugging-Refactoring/   # Sesi 5–8
 └── Hari-3-Advanced-Workflow-Security-Capstone/        # Sesi 9–12
 ```
