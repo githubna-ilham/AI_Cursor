@@ -115,12 +115,14 @@ Mode paling sederhana: AI melihat konteks file aktif dan menyarankan beberapa ba
 function smoothScrollTo(id) {
 ```
 
-2.2. Tab akan menyarankan implementasi — biasanya:
+2.2. Tab akan menyarankan implementasi — biasanya seperti ini:
 
 ```js
-const el = document.getElementById(id);
-if (el) el.scrollIntoView({ behavior: 'smooth' });
+const section = document.getElementById(id);
+section.scrollIntoView({ behavior: 'smooth' });
 ```
+
+> ⚠️ Perhatikan: saran Tab di atas **belum cek `null`**. Kalau id tidak ditemukan, `section.scrollIntoView(...)` akan melempar `TypeError`. Untuk portfolio ini risikonya rendah (anchor kita kontrol sendiri), tapi catatan ini bagus untuk reviewer-first mindset — terima saran AI, jangan terima asumsi-nya.
 
 2.3. **Baca dulu** saran sebelum terima, lalu:
    - `Tab` untuk accept
