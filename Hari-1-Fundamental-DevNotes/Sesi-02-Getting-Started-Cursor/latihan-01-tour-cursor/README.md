@@ -138,8 +138,17 @@ Isi dengan CSS variables: warna (--color-primary, --color-bg,
 dan spacing (--spacing-sm/md/lg). Pilih palette clean dark mode.
 ```
 
-3.4. Tunggu diff muncul. **Baca seluruh diff**. Terima (Enter) atau tolak (Esc).
-3.5. Lanjut: highlight `:root` lagi, `Cmd+K`, ketik: *"Tambah variant dark mode di `@media (prefers-color-scheme: dark)` — override `--color-bg` dan `--color-text` saja."*
+3.4. Tunggu diff muncul. **Baca seluruh diff**, lalu:
+   - `Enter` untuk terima
+   - `Esc` untuk tolak
+
+3.5. Lanjut tambah dark mode. Highlight `:root` lagi → `Cmd+K` → ketik:
+
+```
+Tambah variant dark mode di @media (prefers-color-scheme: dark).
+Override --color-bg dan --color-text saja, sisanya biarkan.
+```
+
 3.6. Screenshot diff (sebelum accept) → `03-inline-edit.png`.
 
 ### 4. Mode Chat — Tanya Codebase (7')
