@@ -13,7 +13,7 @@ Anda buka query yang dipakai laporan itu. Query-nya 30 baris, gabungan 4 tabel. 
 ## Yang Akan Anda Pelajari
 
 1. Bedakan **gejala** (symptom) vs **penyebab** (root cause)
-2. Kenali **5 jebakan SQL** yang paling sering bikin bug
+2. Kenali **5 jebakan SQL** yang paling sering memicu bug
 3. Urutan kerja debug yang anti panik
 4. Cara minta AI **diagnose dulu**, bukan langsung fix
 
@@ -28,7 +28,7 @@ Anda buka query yang dipakai laporan itu. Query-nya 30 baris, gabungan 4 tabel. 
 - Tekanan darah tinggi
 - Tumor (jarang, tapi mungkin)
 
-Beda penyebab → beda obat. Kasih obat asal-asalan = bahaya.
+Beda penyebab → beda obat. Memberi obat tanpa diagnosa = berbahaya.
 
 Sama dengan bug SQL. Satu gejala bisa banyak penyebab:
 
@@ -44,9 +44,9 @@ Sama dengan bug SQL. Satu gejala bisa banyak penyebab:
 
 ## 2. Lima Jebakan SQL Paling Sering
 
-Ini "anak nakal" yang sering bikin bug. Hafalkan, supaya saat lihat lagi langsung tahu.
+Lima kasus berikut adalah penyebab bug yang paling sering muncul. Hafalkan polanya, supaya saat ketemu lagi Anda langsung mengenali.
 
-### Jebakan 1: NULL bikin `NOT IN` jadi Aneh
+### Jebakan 1: NULL Membuat `NOT IN` Berperilaku Tidak Wajar
 
 ```sql
 -- Tujuan: cari customer yang belum pernah order
@@ -96,7 +96,7 @@ WHERE (status = 'paid' OR status = 'shipped')
   AND total > 1000000
 ```
 
-### Jebakan 4: JOIN "Meledak" Bikin Angka 2x Lipat
+### Jebakan 4: JOIN "Meledak" Membuat Angka Berlipat Ganda
 
 ```sql
 -- Tujuan: total revenue per customer
@@ -109,7 +109,7 @@ GROUP BY c.id;
 -- Hasil: angka 2x lipat untuk customer dengan order yang punya 2 payment
 ```
 
-**Kenapa salah**: 1 order yang punya 2 payment + 1 shipment → JOIN bikin baris jadi 2 → `SUM(total)` di-count 2x.
+**Kenapa salah**: 1 order yang punya 2 payment + 1 shipment → JOIN menggandakan baris jadi 2 → `SUM(total)` ikut terhitung 2 kali.
 
 **Fix**: jangan JOIN tabel yang tidak Anda butuhkan kolomnya.
 ```sql
@@ -238,10 +238,10 @@ Tanya AI juga bisa untuk **assess risiko**: *"Skenario apa yang bisa trigger bug
 
 ## Demo Live (15 menit)
 
-Buka `sql-playground/queries/sesi-06-debug/01_inflated_revenue.sql`. Bareng fasilitator:
+Buka `sql-playground/queries/sesi-06-debug/01_inflated_revenue.sql`. Bersama fasilitator:
 
 1. Reproduce: jalankan, lihat angka aneh
-2. Isolate: drop 1 JOIN per percobaan, cari mana yang bikin meledak
+2. Isolate: hapus 1 JOIN per percobaan, cari mana yang menyebabkan ledakan baris
 3. Hypothesis ke AI: "kemungkinan JOIN payments duplikat?"
 4. Verify: `SELECT order_id, COUNT(*) FROM payments GROUP BY order_id HAVING COUNT(*) > 1;`
 5. Fix mini: hapus JOIN payments
@@ -260,6 +260,6 @@ Buka `sql-playground/queries/sesi-06-debug/01_inflated_revenue.sql`. Bareng fasi
 - **Symptom ≠ Penyebab**. Diagnose dulu, baru fix.
 - **5 jebakan**: NULL+`NOT IN`, BETWEEN datetime, AND/OR precedence, JOIN explosion, GROUP BY ambiguity.
 - **5 langkah debug**: Reproduce → Isolate → Hypothesis → Fix mini → Verify.
-- **Minta AI diagnose dulu**. Jangan "fix query ini". Itu bikin bug muncul lagi.
+- **Minta AI diagnose dulu**. Jangan "fix query ini". Pendekatan itu sering menyebabkan bug muncul kembali.
 - **EXPLAIN** seperti rontgen query — cek dulu sebelum tanya kenapa lambat.
 - **Tidak semua bug harus fix sekarang**. Pakai risk matrix.

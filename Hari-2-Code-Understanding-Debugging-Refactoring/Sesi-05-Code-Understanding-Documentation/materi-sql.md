@@ -27,9 +27,9 @@ Rata-rata developer profesional:
 - **20% waktu** menulis kode baru
 - **80% waktu** membaca, memahami, dan memodifikasi kode yang sudah ada
 
-Artinya: kalau Anda baru join tim, **kemampuan utama** Anda bukan ngetik query baru. Tapi **memahami** query lama dan ngomong dengan rekan kerja tentang itu.
+Artinya: kalau Anda baru bergabung di tim, **kemampuan utama** Anda bukan menulis query baru. Tapi **memahami** query lama dan berdiskusi dengan rekan kerja tentang itu.
 
-**Analogi**: bayangkan Anda pindah ke kota baru. Skill paling penting bukan bikin jalan baru — tapi tahu cara baca peta + tanya orang lokal.
+**Analogi**: bayangkan Anda pindah ke kota baru. Kemampuan paling penting bukan membangun jalan baru — tapi tahu cara membaca peta dan bertanya pada orang setempat.
 
 ---
 
@@ -141,7 +141,7 @@ Tolong jelaskan query ini dengan format:
 2. **Tabel & kolom yang dipakai** — list singkat
 3. **Logika step-by-step** — FROM, WHERE, GROUP BY, ORDER, dst.
 4. **Asumsi bisnis** — apa yang diasumsikan, mis. "cancelled tidak hitung"
-5. **Edge case** — kondisi yang bikin hasil aneh
+5. **Edge case** — kondisi yang dapat menyebabkan hasil tidak wajar
 6. **Output sample** — 3-5 baris contoh
 ```
 
@@ -153,7 +153,7 @@ Aturan: **selalu kasih format**. Tanpa format, AI bingung mau detail seberapa.
 
 ## 6. Verifikasi: Jangan Percaya, Jalankan
 
-AI sering ngarang (istilah teknis: "hallucination"). Khususnya saat bilang "outputnya begini".
+AI sering memberi jawaban yang tidak akurat — istilah teknisnya **hallucination**. Khususnya saat mengklaim "output query-nya seperti ini".
 
 **Wajib**: setelah AI jelaskan, **jalankan query-nya** di MySQL/DBeaver Anda. Bandingkan:
 
@@ -175,7 +175,7 @@ Akhir Sesi 5, Anda akan punya 3 hal:
 |-------|------------|-------------|
 | **Docstring per query** | 4-5 baris penjelasan di atas query | Developer yang buka file ini besok |
 | **ER Diagram** | Gambar tabel + relasinya | Developer baru join project |
-| **Architecture Note** | 1 halaman: "project ini tentang apa, polanya gimana" | Tech lead, calon developer baru |
+| **Architecture Note** | 1 halaman: "project ini tentang apa, polanya bagaimana" | Tech lead, calon developer baru |
 
 Dokumentasi yang baik = developer berikutnya **menghemat 2 jam** yang Anda habiskan hari ini.
 
@@ -189,13 +189,13 @@ Dokumentasi yang baik = developer berikutnya **menghemat 2 jam** yang Anda habis
 | "Jelaskan query ini" (vague) | Pakai format 6-poin |
 | Terima jawaban AI mentah | Verifikasi dengan jalankan query |
 | Copy-paste jawaban AI ke docstring | Tulis ulang dengan kata-kata Anda sendiri |
-| Skip ER diagram karena "sudah paham" | Tetap bikin — orang lain belum paham |
+| Lewati ER diagram karena "sudah paham" | Tetap buat — orang lain belum paham |
 
 ---
 
 ## Demo Live (15 menit)
 
-Buka `sql-playground/queries/sesi-05-explore/03_cohort_retention.sql`. Bareng fasilitator:
+Buka `sql-playground/queries/sesi-05-explore/03_cohort_retention.sql`. Bersama fasilitator:
 
 1. Baca 2 menit
 2. Tanya AI pakai format 6-poin
@@ -217,5 +217,5 @@ Buka `sql-playground/queries/sesi-05-explore/03_cohort_retention.sql`. Bareng fa
 - Kenali 5 pola umum (Top-N, group-by, funnel, bug data, pohon).
 - AI bagus jelasin **apa**, bukan **kenapa**. Gali kenapa dari rekan kerja.
 - Tanya AI selalu pakai **format terstruktur** (6 poin).
-- Verifikasi dengan **jalankan query** — AI sering ngarang.
+- Verifikasi dengan **menjalankan query** — output yang AI klaim sering tidak akurat.
 - Output Sesi 5: docstring per query + ER diagram + architecture note.

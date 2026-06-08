@@ -6,9 +6,9 @@ Durasi: 90 menit
 
 3 bulan lagi auditor datang. Mereka tanya: *"Bagaimana cara kalian memastikan data di database **konsisten**? Mis. setiap order yang berstatus 'delivered' pasti punya catatan shipment?"*
 
-Kalau jawaban Anda *"...karena tim ngecek manual tiap bulan"* → auditor naik alis. Yang dia mau dengar: *"Kami punya 20 assertion query yang jalan tiap malam. Kalau ada yang fail, Slack channel kami langsung ber-ping."*
+Kalau jawaban Anda *"...karena tim mengecek manual tiap bulan"* → auditor mengangkat alis. Yang ingin dia dengar: *"Kami punya 20 assertion query yang berjalan tiap malam. Kalau ada yang gagal, channel Slack tim langsung menerima notifikasi."*
 
-Sesi 8 melatih cara bikin "**alarm otomatis untuk data**".
+Sesi 8 melatih cara membangun "**alarm otomatis untuk data**".
 
 ---
 
@@ -59,10 +59,10 @@ Jalankan:
 - 0 baris → ✅ AMAN
 - 3 baris → ❌ Ada 3 produk dengan stok negatif, mis. id 7, 12, 15. Investigate kenapa.
 
-Pola ini **enak banget** karena:
-- Self-explanatory: query itu sendiri = dokumentasi aturannya
-- Mudah investigate: ID langsung muncul
-- Mudah otomatisasi: tinggal hitung `count(*)`, kalau > 0 berarti gagal
+Pola ini **sangat efektif** karena:
+- Self-explanatory: query itu sendiri sekaligus jadi dokumentasi aturannya
+- Mudah ditelusuri: ID pelanggar langsung muncul di hasil
+- Mudah diotomatisasi: cukup hitung `count(*)`, kalau > 0 berarti gagal
 
 ---
 
@@ -87,7 +87,7 @@ GROUP BY customer_id, product_id
 HAVING COUNT(*) > 1;
 ```
 
-### Aturan 3: Foreign Key Tidak Boleh "Yatim"
+### Aturan 3: Setiap Referensi Wajib Mengarah ke Data yang Ada
 
 ```sql
 -- T: setiap order_items.product_id harus ada di products
@@ -265,7 +265,7 @@ Aturan ringan:
 
 Aturan baru dari PM: *"Order yang `cancelled` tidak boleh punya shipment yang sudah `delivered`."*
 
-Bareng fasilitator:
+Bersama fasilitator:
 
 1. **Konversi aturan**: pelanggar = order cancelled + shipment delivered
 2. **Prompt AI** dengan template

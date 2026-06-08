@@ -28,7 +28,7 @@ Sesi 7 melatih cara **merapikan query** tanpa mengubah hasilnya. Istilah teknisn
 | Pendekatan | Yang dilakukan | Risiko |
 |------------|----------------|--------|
 | **Refactor** | Rapikan: pindah sofa, gulung karpet, tata ulang | Rendah — barangnya sama, posisinya berubah |
-| **Rewrite** | Bongkar total, beli furniture baru | Tinggi — bisa kelupaan barang penting |
+| **Rewrite** | Bongkar total, beli furniture baru | Tinggi — bisa lupa memindahkan barang penting |
 
 Sama dengan query SQL:
 
@@ -125,7 +125,7 @@ GROUP BY city
 
 JOIN + filter sama dicopy-paste 3x. Ubah satu, harus ubah 3.
 
-**Solusi**: bikin CTE base, hitung semua metric dari sana sekaligus.
+**Solusi**: buat CTE base, hitung semua metric dari sana sekaligus.
 
 ```sql
 WITH base AS (
@@ -293,7 +293,7 @@ Refactor **buruk** kalau:
 
 ## Demo Live (15 menit)
 
-Buka `sql-playground/queries/sesi-07-refactor/01_subquery_hell.sql`. Bareng fasilitator:
+Buka `sql-playground/queries/sesi-07-refactor/01_subquery_hell.sql`. Bersama fasilitator:
 
 1. **Baseline**: run, catat 5 baris hasil + sum kolom revenue
 2. **Identify**: subquery scalar 3 lapis untuk lookup tier
