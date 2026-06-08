@@ -1,7 +1,8 @@
 -- ==============================================================
 -- Query 01 — "Total revenue per customer bulan Mei 2026"
--- LAPORAN BUG: Andi (customer 1) muncul dengan total 4.5jt,
---              padahal dari cek manual cuma 1.25jt
+-- LAPORAN BUG: Andi (customer 1) muncul dengan total ~4.9jt
+--              dengan 8 order, padahal cek manual cuma 2 order
+--              total 1.25jt (Order 22 = 650rb, Order 26 = 600rb).
 -- Tugas Anda: cari penyebab inflasi angka, lalu perbaiki.
 -- ==============================================================
 

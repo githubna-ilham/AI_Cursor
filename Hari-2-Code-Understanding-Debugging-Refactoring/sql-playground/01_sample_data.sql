@@ -83,7 +83,11 @@ insert into orders (id, customer_id, status, subtotal, discount, total, created_
   (22, 1,  'paid',      650000,  0,     650000,  '2026-05-20 09:20:00'),
   (23, 8,  'shipped',   320000,  0,     320000,  '2026-06-01 14:55:00'),
   (24, 11, 'delivered', 850000,  50000, 800000,  '2026-06-05 11:30:00'),
-  (25, 3,  'pending',   180000,  0,     180000,  '2026-06-08 18:10:00');
+  (25, 3,  'pending',   180000,  0,     180000,  '2026-06-08 18:10:00'),
+  -- Order 26: customer Andi (1) di Mei 2026 — sengaja dipasangkan dengan
+  -- multiple payments & shipments untuk memunculkan JOIN explosion bug
+  -- di queries/sesi-06-debug/01_inflated_revenue.sql
+  (26, 1,  'paid',      600000,  0,     600000,  '2026-05-25 13:15:00');
 
 -- -----------------------------------------------------------------------------
 -- order_items (≈ 60 baris detail item)
@@ -138,7 +142,9 @@ insert into order_items (order_id, product_id, qty, unit_price) values
   -- order 24: kartika
   (24, 9, 1, 850000),
   -- order 25: citra (pending)
-  (25, 4, 1, 180000);
+  (25, 4, 1, 180000),
+  -- order 26: andi (mei 2026) - mouse 4 unit = 600k
+  (26, 1, 4, 150000);
 
 -- -----------------------------------------------------------------------------
 -- reviews (15 review)
@@ -187,8 +193,14 @@ insert into payments (order_id, method, amount, status, paid_at, created_at) val
   (21, 'cc',       1400000, 'success', '2026-05-08 12:17:00', '2026-05-08 12:15:00'),
   (22, 'ovo',      650000,  'success', '2026-05-20 09:22:00', '2026-05-20 09:20:00'),
   (23, 'cc',       320000,  'success', '2026-06-01 14:57:00', '2026-06-01 14:55:00'),
-  (24, 'cc',       800000,  'success', '2026-06-05 11:32:00', '2026-06-05 11:30:00');
+  (24, 'cc',       800000,  'success', '2026-06-05 11:32:00', '2026-06-05 11:30:00'),
   -- order 25 pending → belum ada payment
+  -- Order 22 & 26: sengaja multi-payment + multi-shipment untuk bahan debug
+  -- queries/sesi-06-debug/01_inflated_revenue.sql (JOIN explosion)
+  (22, 'cc',       650000,  'failed',  null,                  '2026-05-20 09:19:00'),
+  (26, 'gopay',    600000,  'failed',  null,                  '2026-05-25 13:14:00'),
+  (26, 'gopay',    600000,  'failed',  null,                  '2026-05-25 13:14:30'),
+  (26, 'cc',       600000,  'success', '2026-05-25 13:18:00', '2026-05-25 13:15:00');
 
 -- -----------------------------------------------------------------------------
 -- shipments (untuk order yang sudah paid+)
@@ -214,7 +226,10 @@ insert into shipments (order_id, courier, tracking_no, status, shipped_at, deliv
   (21, 'jne',     'JNE021SS', 'delivered', '2026-05-09 09:00:00', '2026-05-11 14:30:00', '2026-05-09 08:00:00'),
   (22, 'gosend',  'GSD022TT', 'delivered', '2026-05-21 10:00:00', '2026-05-21 13:00:00', '2026-05-21 09:00:00'),
   (23, 'jnt',     'JNT023UU', 'picked_up',  '2026-06-02 11:00:00', null,                  '2026-06-02 10:00:00'),
-  (24, 'jne',     'JNE024VV', 'delivered', '2026-06-06 09:30:00', '2026-06-08 13:00:00', '2026-06-06 08:30:00');
+  (24, 'jne',     'JNE024VV', 'delivered', '2026-06-06 09:30:00', '2026-06-08 13:00:00', '2026-06-06 08:30:00'),
+  -- Order 26: multi-shipment (1 dikirim → returned, 1 redelivered) → JOIN explosion
+  (26, 'jne',     'JNE026WW', 'returned',  '2026-05-26 09:00:00', null,                  '2026-05-26 08:00:00'),
+  (26, 'gosend',  'GSD026XX', 'delivered', '2026-05-28 10:00:00', '2026-05-28 14:00:00', '2026-05-28 09:00:00');
 
 -- -----------------------------------------------------------------------------
 -- inventory_log (audit pergerakan stok, sengaja sparse untuk eksplorasi)

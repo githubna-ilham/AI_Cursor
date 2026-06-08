@@ -102,7 +102,7 @@ Hipotesismu benar (output investigatif sesuai). Sekarang:
 \`\`\`sql
 <query fix>
 \`\`\`
-**Verifikasi**: hasil before 4.5jt → after 1.25jt ✅
+**Verifikasi**: hasil before ~4.9jt → after 1.25jt ✅
 **Pelajaran**: ...
 ```
 

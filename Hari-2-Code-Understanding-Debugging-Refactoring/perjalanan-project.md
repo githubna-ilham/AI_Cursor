@@ -69,7 +69,7 @@ Kalau setup lulus, Anda siap mulai Tahap 11.
 **Latihan 05** · `sql-playground/queries/sesi-06-debug/`
 
 #### Tahap 13. Debug Bug 1 — JOIN Explosion (`01_inflated_revenue.sql`)
-- Reproduce: total customer 4.5jt, hand-count cuma 1.25jt
+- Reproduce: total customer ~4.9jt, hand-count cuma 1.25jt
 - Diagnose dengan AI (constraint: diagnose dulu, BUKAN fix langsung)
 - Verifikasi hipotesis dengan query investigatif
 - Apply fix minimal

@@ -24,7 +24,7 @@
 
 | # | File | Symptom | Domain Bug |
 |---|------|---------|-----------|
-| 01 | `01_inflated_revenue.sql` | Total customer 4.5jt, hand-count cuma 1.25jt | JOIN explosion |
+| 01 | `01_inflated_revenue.sql` | Total customer ~4.9jt (8 order), hand-count cuma 1.25jt (2 order) | JOIN explosion |
 | 02 | `02_customers_no_orders.sql` | Hasil selalu 0 baris, padahal data ada | NULL handling (`NOT IN`) |
 | 03 | `03_missing_jan_orders.sql` | Order 25 Jan 15:30 tidak muncul di filter 1-31 Jan | DATE vs DATETIME pitfall |
 | 04 | `04_paid_or_refunded.sql` | Hasil ikut `refunded` & `cancelled` | Operator precedence (`AND`/`OR`) |
