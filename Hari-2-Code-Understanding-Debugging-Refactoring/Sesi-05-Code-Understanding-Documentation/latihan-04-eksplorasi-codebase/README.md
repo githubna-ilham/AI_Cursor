@@ -1,94 +1,166 @@
-# Lab 04 — Eksplorasi Codebase dengan AI
+# Latihan 04 — Eksplorasi Codebase: 8 Query SQL
+
+> 🗺️ **Tahap 11–12 dari 20** di [Perjalanan Project Hari 2](../../perjalanan-project.md)
+> Sebelumnya: Hari 1 selesai (portfolio + SQL prompting drill) | Setelah ini: Sesi 6 Debugging
+
+**Durasi**: 90 menit
+**Tipe**: Hands-on individual
+**Output**: 4–8 file `submissions/<nama>/05_NN_<judul>.md` berisi docstring + diagram + asumsi bisnis hasil eksplorasi.
+
+---
+
+## Konteks
+
+Anda baru "join project" e-commerce. Di repo (`sql-playground/queries/sesi-05-explore/`) ada 8 query SQL yang ditulis developer sebelum Anda — **tanpa komentar, tanpa dokumentasi**.
+
+Tugas Anda: **pahami semuanya** dengan bantuan AI, dan **tulis dokumentasi** yang akan dibaca developer baru berikutnya.
+
+Mensimulasikan kondisi nyata: 80% waktu developer dihabiskan **memahami kode orang lain**, bukan menulis kode baru.
+
+---
 
 ## Tujuan
 
-Peserta mampu memetakan arsitektur dan flow utama sebuah repository asing menggunakan Cursor AI dalam waktu terbatas, lalu memproduksi dokumentasi teknis yang siap di-review.
+Setelah latihan, peserta mampu:
 
-## Durasi
+1. **Membaca query SQL kompleks** (multi-JOIN, CTE, window function, recursive) dengan bantuan AI tanpa terlena disuapi.
+2. Menggunakan **@-mention file** di Cursor Chat untuk attach query sebagai context.
+3. **Memvalidasi penjelasan AI** dengan run query investigatif sendiri (bukan terima mentah).
+4. **Menulis docstring & ER diagram** untuk knowledge transfer.
 
-40 menit (35 menit kerja + 5 menit debrief)
+---
 
 ## Prasyarat
 
-- Cursor terinstall, login aktif, codebase indexing menyala.
-- Git terinstall.
-- Akses internet untuk clone repo.
-- Sudah mengikuti Sesi 5.
+- MySQL Server + GUI client (DBeaver / MySQL Workbench / Cursor Database Client) terinstall.
+- Sudah apply `sql-playground/00_schema.sql` + `01_sample_data.sql` ke database `latihan_sql`.
+- Cursor aktif, mode Ask (Chat) familiar (dari Hari 1).
 
-## Repository Target
-
-<!-- STACK-PLACEHOLDER: fasilitator memilih 1 repo per stack peserta -->
-
-Default repo (pilih salah satu sesuai stack):
-
-| Stack | Repo Rekomendasi | Ukuran |
-|-------|------------------|--------|
-| Backend Node.js | `expressjs/express` | ~15k LOC |
-| Backend Python | `pallets/flask` | ~25k LOC |
-| Backend Go | `gin-gonic/gin` | ~20k LOC |
-| Frontend | `reduxjs/redux` | ~10k LOC |
-| Data Engineer | `dbt-labs/dbt-core` | sedang |
-| DevOps | `kubernetes-sigs/kind` | sedang |
+---
 
 ## Langkah
 
-1. **Clone & buka** repo target di Cursor. Tunggu indexing selesai (lihat status bar).
-2. **Orientasi struktural** (5 menit). Prompt:
-   ```
-   @folder <root-source> Buat tabel berisi: subfolder | tanggung jawab | file kunci.
-   Sertakan path untuk file kunci.
-   ```
-   Simpan output di `peta-modul.md`.
-3. **Identifikasi entry point** (3 menit). Prompt:
-   ```
-   @codebase Apa entry point eksekusi utama project ini?
-   Sertakan path:line.
-   ```
-4. **Map flow utama** (10 menit). Pilih satu flow representatif (misal: HTTP request lifecycle, atau task execution). Prompt:
-   ```
-   @codebase Petakan flow <nama flow> dari entry point hingga output akhir.
-   - Numbered list fungsi yang dipanggil + path:line
-   - Identifikasi side-effect (I/O, network, state mutation)
-   - Mermaid sequence diagram di akhir
-   Tandai [UNVERIFIED] untuk klaim yang tidak yakin.
-   ```
-   Simpan sebagai `flow-utama.md`.
-5. **Verifikasi** (5 menit). Pilih 3 klaim AI secara acak (terutama yang punya path:line), buka file aktual, konfirmasi atau koreksi. Catat di `verifikasi.md`.
-6. **Generate README submodul** (7 menit). Pilih satu submodul kecil. Prompt:
-   ```
-   @folder <submodul> Tulis README.md berisi: tujuan submodul, public API,
-   contoh penggunaan, dependency, batas tanggung jawab.
-   Cite path:line untuk setiap public API.
-   ```
-   Simpan di `submodul-readme-draft.md`.
-7. **Catat 3 pertanyaan terbuka** (5 menit) yang AI tidak bisa jawab meyakinkan. Simpan di `pertanyaan-terbuka.md`.
+### 1. Setup (10')
 
-## Deliverable
+1.1. Pastikan database `latihan_sql` ada & ter-populate:
 
-Di akhir lab, pasangan punya 5 file di folder `output-lab-04/`:
+```sql
+USE latihan_sql;
+SHOW TABLES;
+-- expect 9 tabel
 
-- `peta-modul.md`
-- `flow-utama.md`
-- `verifikasi.md`
-- `submodul-readme-draft.md`
-- `pertanyaan-terbuka.md`
+SELECT 'customers' AS t, COUNT(*) FROM customers
+UNION ALL SELECT 'products', COUNT(*) FROM products
+UNION ALL SELECT 'orders', COUNT(*) FROM orders;
+```
 
-## Kriteria Selesai / Rubrik
+1.2. Buka folder `sql-playground/queries/sesi-05-explore/` di Cursor.
 
-| Kriteria | Bobot | Indikator Selesai |
-|----------|-------|-------------------|
-| Peta modul lengkap | 20% | Minimal 80% subfolder tercakup, file kunci punya path |
-| Flow utama terverifikasi | 30% | Min. 5 langkah flow, semua punya path:line, 3 langkah sudah dicek manual |
-| Sequence diagram valid | 15% | Diagram mermaid render benar, urutan match dengan kode |
-| README submodul akurat | 20% | Public API listed semua, contoh berjalan, no fictional function |
-| Pertanyaan terbuka tajam | 15% | 3 pertanyaan menyangkut hal non-trivial (bukan "apa nama variabel ini") |
+1.3. Buat folder submission: `mkdir -p submissions/<nama>/`.
+
+### 2. Eksplorasi 8 Query (60')
+
+Untuk **minimal 4 query** (idealnya semua 8), lakukan loop berikut:
+
+#### 2a. Baca dulu (2 menit per query)
+
+Buka file query, **baca pelan-pelan**, coba terka apa yang query lakukan. Jangan tanya AI dulu.
+
+#### 2b. Tanya AI dengan format terstruktur (3 menit)
+
+Di Cursor Chat (mode **Ask**):
+
+```
+@file 01_customer_lifetime_value.sql
+
+Tolong jelaskan query ini dengan format:
+
+1. **TL;DR** (1 kalimat)
+2. **Tabel & kolom yang dipakai** (list)
+3. **Logika step-by-step** (FROM → WHERE → GROUP BY → HAVING → ORDER → LIMIT)
+4. **Asumsi bisnis** (apa yang diasumsikan developer asli)
+5. **Edge case yang bisa bikin hasil aneh**
+6. **Output sample** (3-5 baris dummy)
+```
+
+#### 2c. Verifikasi (3 menit)
+
+Run query di MySQL. Bandingkan hasil dengan klaim AI di point 6. **Kalau tidak match** → AI hallucinate, tanya ulang dengan paste hasil real.
+
+#### 2d. Tulis docstring sendiri (2 menit)
+
+Di file `submissions/<nama>/05_01_customer_lifetime_value.md`:
+
+```markdown
+# Query 01 — Customer Lifetime Value
+
+**TL;DR (versi saya)**: ...
+
+**Asumsi bisnis yang implisit**:
+- ...
+
+**1 hal yang saya tidak duga sebelum baca**: ...
+
+**Edge case yang perlu di-handle ke depan**:
+- ...
+```
+
+Ulangi 2a–2d untuk minimal 4 query.
+
+### 3. Generate ER Diagram (10')
+
+```
+@file ../../sql-playground/00_schema.sql
+
+Generate ER diagram dalam Mermaid syntax untuk schema ini. Tampilkan:
+- Semua 9 tabel dengan kolom utama
+- Relasi 1:N dengan label
+- Foreign key dengan notasi crow's foot
+
+Format Mermaid `erDiagram`, langsung paste-able ke markdown.
+```
+
+Simpan ke `submissions/<nama>/05_er_diagram.md`.
+
+### 4. Architecture Note (10')
+
+Berdasarkan 4 query yang sudah dipahami + ER diagram, tulis `submissions/<nama>/05_arsitektur.md` (max 300 kata):
+
+- **Domain bisnis apa**: e-commerce, scope: ?
+- **Entitas utama**: core vs supporting
+- **Pola query yang sering muncul**
+- **1 hal yang developer berikutnya perlu tahu duluan**
+
+---
+
+## Submit
+
+Folder `submissions/<nama>/` minimal berisi:
+
+- 4–8 file `05_NN_<judul>.md` (docstring per query)
+- `05_er_diagram.md` (Mermaid)
+- `05_arsitektur.md` (note 300 kata)
+- `refleksi.md` (≤150 kata):
+  - Query mana paling sulit dipahami? Kenapa?
+  - 1 hallucination AI yang Anda temukan & cara menemukannya
+  - 1 template prompt yang akan Anda simpan
+
+---
 
 ## Tips
 
-- Jangan habiskan waktu di repo besar (> 50k LOC) — pilih repo sedang.
-- Jika AI mengarang, perpendek scope (`@folder` lebih kecil).
-- Selalu buka file untuk verifikasi minimal 30% klaim.
+- **Baca sebelum tanya** — prompt jadi lebih tajam setelah Anda punya hipotesis.
+- **@-mention file**, jangan paste manual.
+- **Run setiap klaim AI** di MySQL.
+- **Pakai EXPLAIN** sebelum tanya kenapa query lambat — sering jawab sendiri.
 
-## Debrief (5 menit)
+---
 
-Dua pasangan mempresentasikan: 1 temuan menarik + 1 kegagalan AI yang menarik.
+## Common Issues
+
+| Issue | Solusi |
+|-------|--------|
+| `Unknown column 'X'` saat run query | Schema belum di-apply ulang, run `00_schema.sql` lagi |
+| AI bilang tabel `category` (singular) | Refresh @file mention; AI cache outdated. Schema kita pakai `categories` |
+| Recursive CTE error di MySQL | Pastikan MySQL ≥ 8.0; MariaDB ≥ 10.2 |
+| Hasil agregat berbeda dari klaim AI | Itu **expected** — sample data sengaja ada subtle mismatch. Tulis di docstring. |

@@ -1,134 +1,151 @@
-# Lab 07 — Testing & AI-Assisted Code Review
+# Latihan 07 — Testing SQL: Assertion Queries + Peer Review
+
+> 🗺️ **Tahap 18–20 dari 20** | Sebelumnya: Sesi 7 Refactoring | Setelah ini: Hari 3 (Advanced Workflow)
+
+**Durasi**: 90 menit
+**Tipe**: Hands-on individual + 30' peer review berpasangan
+**Output**: 5 assertion baru + 1 review report ke teman.
+
+---
+
+## Konteks
+
+Database `latihan_sql` sampai sini **tidak punya satu pun regression test**. Anda di Sesi 8 akan:
+
+1. Memahami pola assertion query dbt-style (return 0 baris = pass).
+2. Run 10 contoh assertion yang sudah ada — beberapa akan **fail** (data sample sengaja ada mismatch).
+3. **Tulis 5 assertion baru** untuk invariant yang belum dicover.
+4. **Peer review** assertion teman → tukar feedback.
+
+---
 
 ## Tujuan
 
-Peserta menulis unit test berkualitas untuk fungsi existing, lalu melakukan code review berbantuan AI pada pull request fiktif dan menghasilkan komentar yang konstruktif & terverifikasi.
+Setelah latihan, peserta mampu:
 
-## Durasi
+1. Memahami pola **assertion = SELECT yang return 0 baris saat pass**.
+2. **Mengonversi business rule** (bahasa Indonesia) jadi SQL assertion.
+3. **Membedakan bug data vs bug assertion** saat test fail.
+4. **Melakukan code review** assertion teman dengan checklist konkret.
 
-35 menit (30 menit kerja + 5 menit debrief)
+---
 
 ## Prasyarat
 
-- Cursor aktif.
-- Test runner stack peserta siap.
-- Telah memahami konsep Sesi 8 (test pyramid, AAA, false positive AI).
+- Latihan 04, 05, 06 selesai.
+- Database `latihan_sql` masih ada.
+- Pasangan untuk peer review (gentle pairing oleh fasilitator).
 
-## Bagian 1 — Test Generation (15 menit)
+---
 
-### Fungsi Target
+## Langkah
 
-<!-- STACK-PLACEHOLDER: ganti dengan fungsi pricing/discount dari domain peserta -->
+### 1. Pahami Pola Assertion (10')
 
-File: `src/services/pricing.ext` (PLACEHOLDER)
+Baca `sql-playground/queries/sesi-08-test/README.md` + `00_template.sql`. Pahami:
 
-```
-function calculateTotal(items, customerTier, couponCode) {
-    if (!items || items.length === 0) throw new Error("empty cart")
-    let subtotal = 0
-    for (const item of items) {
-        if (item.qty <= 0) throw new Error("invalid qty")
-        subtotal = subtotal + item.price * item.qty
-    }
-    let discount = 0
-    if (customerTier === "gold") discount = 0.10
-    else if (customerTier === "silver") discount = 0.05
-    if (couponCode === "WELCOME10") discount = discount + 0.10
-    if (discount > 0.25) discount = 0.25
-    const afterDiscount = subtotal * (1 - discount)
-    const tax = afterDiscount * 0.11
-    return Math.round((afterDiscount + tax) * 100) / 100
-}
-```
+- Konvensi: 0 baris = pass, N baris = fail
+- Cara hitung pass otomatis dengan wrapper `select count(*) from (...)`
 
-### Langkah
+### 2. Run 10 Assertion Existing (15')
 
-1. **Prompt AAA** ke AI: minta generate 8 test (2 happy, 3 edge, 2 error, 1 property). Pakai pola naming `should_X_when_Y`.
-2. **Review** tiap test:
-   - Assert spesifik? (tolak `toBeDefined`)
-   - Independen?
-   - Cover behaviour, bukan implementasi?
-3. **Jalankan** semua test. Wajib green.
-4. **Counter-example prompt**: "Beri 3 input yang Anda yakin akan break fungsi ini." Tambahkan sebagai test, jalankan. Jika green tapi seharusnya red, fungsi punya bug — catat.
-5. **Coverage cek**. Target ≥ 90% branch coverage.
+Buka `sql-playground/queries/sesi-08-test/01_assertions_example.sql`. Jalankan 10 assertion satu-satu.
 
-### Deliverable Bagian 1
+Catat di `submissions/<nama>/08_test_results.md`:
 
-- `tests/pricing.test.ext` (min. 10 test)
-- `coverage-report.md` (screenshot atau ringkasan)
-- `test-quality-notes.md` (1 paragraf: mana test yang paling bernilai, mana yang AI generate tapi Anda buang)
+| # | Assertion | Hasil (rows) | Pass/Fail | Catatan |
+|---|-----------|--------------|-----------|---------|
+| T1 | subtotal = sum line_total | 5 baris | FAIL | Data sample sengaja mismatch |
+| T2 | total = subtotal - discount | 0 | PASS | |
+| ... | | | | |
 
-## Bagian 2 — AI-Assisted Code Review pada PR Fiktif (15 menit)
+Beberapa **akan fail** — ini **expected**. Sample data sengaja ada subtle mismatch. Diskusikan: ini bug data atau bug assertion?
 
-### PR Fiktif
+### 3. Tulis 5 Assertion Baru (30')
 
-<!-- STACK-PLACEHOLDER: PR fiktif disiapkan dalam stack mayoritas peserta. Default di bawah dalam pseudocode JS/TS. -->
+Pilih **5 invariant** dari list di bawah (atau buat sendiri yang relevan):
 
-PR Title: "Add refund endpoint"
-Branch: `feature/refund`
-Changes:
+1. Order yang `cancelled`/`refunded` tidak boleh punya shipment `delivered`.
+2. Total `qty_change` `out` di `inventory_log` per produk = total `qty` di `order_items` produk itu (yang ber-status delivered).
+3. `payments.status='success'` harus selalu punya `paid_at IS NOT NULL`.
+4. Customer `tier='platinum'` harus punya spending 12-mo ≥ 2.5jt.
+5. Produk `is_active=0` tidak boleh punya order belum delivered.
+6. Tidak ada order tanpa minimal 1 `order_items`.
+7. Setiap `categories.parent_id` (kalau ada) harus point ke kategori valid.
+8. `reviews.created_at` harus >= `customer.created_at` (review tidak boleh sebelum customer signup).
+
+Pakai prompt template:
 
 ```
-+ src/routes/refund.ext      (+25 baris)
-+ src/services/refund.ext    (+40 baris)
-+ tests/refund.test.ext      (+15 baris, hanya 1 happy path)
+Bantu tulis assertion query SQL untuk MySQL.
+
+Konvensi: query SELECT yang return 0 baris saat invariant terpenuhi,
+N baris (id + kolom relevant) saat ada pelanggar.
+
+Schema: @file ../../sql-playground/00_schema.sql
+
+Invariant yang harus di-cek:
+"<paste invariant>"
+
+Output:
+1. Query SELECT
+2. Komentar 1 baris di atas: deskripsi invariant
+3. Sample output saat ada pelanggar (1-2 baris contoh)
 ```
 
-Cuplikan kode (PLACEHOLDER):
+Simpan ke `submissions/<nama>/08_my_assertions.sql` (5 query).
 
-```
-// src/services/refund.ext
-function refund(orderId, amount, reason) {
-    const order = db.queryOne("SELECT * FROM orders WHERE id = " + orderId)
-    if (!order) throw new Error("not found")
-    const refundId = db.insert("refunds", {
-        order_id: orderId, amount: amount, reason: reason, created_at: new Date()
-    })
-    db.update("orders", {id: orderId}, {status: "refunded"})
-    return {id: refundId, amount: amount}
-}
-```
+Run semua. Catat hasil di `08_test_results.md` (lanjut tabel dari step 2).
 
-Bug yang sengaja ada (jangan beri tahu peserta):
+### 4. Peer Review (30')
 
-- SQL injection.
-- Tidak cek `amount > 0` & `amount <= order.total`.
-- Tidak idempotent (bisa refund ganda).
-- Tidak ada transaksi DB.
-- Tidak handle partial refund.
-- Test hanya happy path, missing edge.
+Tukar `08_my_assertions.sql` dengan partner. Review pakai checklist:
 
-### Langkah
+| # | Kriteria | OK / Tidak | Catatan |
+|---|----------|------------|---------|
+| 1 | Komentar invariant jelas | | |
+| 2 | Query syntax-correct (bisa di-run) | | |
+| 3 | Logika benar (uji manual dengan 2-3 row dummy) | | |
+| 4 | Pakai pola dbt-style (return 0 saat pass) | | |
+| 5 | Tidak ada false positive (assertion fail untuk row yang sebenarnya valid) | | |
+| 6 | Tidak ada false negative (assertion pass padahal ada bug) | | |
+| 7 | Performance reasonable (no Cartesian/explosion) | | |
 
-1. **AI scan** dengan checklist Sesi 8 sebagai prompt. Simpan output.
-2. **Klasifikasi temuan**: True Positive / False Positive / Needs Verification. Tabel.
-3. **Verifikasi** 3 temuan paling kritis dengan membaca kode (cite path:line).
-4. **Generate missing tests** untuk 2 temuan kritis (mis. idempotency, validasi amount).
-5. **Tulis 3 komentar review** dalam tone konstruktif. Format:
-   ```
-   path/to/file.ext:line — [severity] <pertanyaan/saran>
-   ```
+Tulis review ke `submissions/<nama>/08_review_to_<partner>.md` — minimal 3 feedback konkret (bukan "good job").
 
-### Deliverable Bagian 2
+### 5. Refleksi (5')
 
-- `review-findings.md` (tabel klasifikasi)
-- `review-comments.md` (3 komentar siap-tempel)
-- `tests/refund.additional.test.ext` (test untuk 2 temuan kritis)
+`submissions/<nama>/refleksi.md` (≤200 kata):
 
-## Kriteria Selesai / Rubrik
+- Invariant mana paling sulit di-encode ke SQL?
+- 1 assertion teman Anda yang lebih bagus dari punya Anda — apa pelajarannya?
+- Kalau project ini production, assertion mana yang akan Anda jalankan **harian** vs **mingguan**?
 
-| Kriteria | Bobot |
-|----------|-------|
-| Test pricing min. 10, branch coverage ≥ 90% | 25% |
-| Assert spesifik, naming jelas | 15% |
-| Klasifikasi temuan AI dengan justifikasi | 20% |
-| Min. 3 true positive verified dengan path:line | 20% |
-| Komentar PR konstruktif (bukan akusatif, ada saran) | 20% |
+---
 
-## Debrief (5 menit)
+## Submit
 
-2 pair share: 1 false positive yang menarik + 1 komentar review terbaik.
+`submissions/<nama>/`:
+- `08_test_results.md` (tabel hasil 10 existing + 5 baru)
+- `08_my_assertions.sql` (5 assertion baru Anda)
+- `08_review_to_<partner>.md`
+- `refleksi.md`
 
-## Wrap-up Hari 2
+---
 
-Setelah debrief, instruktur menutup Hari 2: rangkuman 4 sesi, preview Hari 3 (advanced workflow & integrasi).
+## Tips
+
+- **Tes assertion sendiri sebelum di-review** — masukkan dummy row yang melanggar, pastikan assertion benar-benar nangkap.
+- **Pelan-pelan**: lebih baik 3 assertion solid daripada 5 assertion vague.
+- **Lihat sample data dulu** sebelum write assertion — biar tidak buat invariant yang tidak realistis.
+
+---
+
+## Common Issues
+
+| Issue | Solusi |
+|-------|--------|
+| Assertion pass padahal ada bug data | Cek logika — sering `WHERE x IS NULL` lupa, atau `<>` lupa handle NULL |
+| Assertion fail tapi data jelas valid | False positive — assertion terlalu strict, cek edge case business rule |
+| Performance lambat di tabel besar | Tambah index, atau materialize subquery dengan CTE |
+| Sulit nulis invariant ke SQL | Pecah jadi 2 langkah: bahasa Indonesia terstruktur → SQL |

@@ -1,125 +1,142 @@
-# Lab 05 — Debugging Studi Kasus
+# Latihan 05 — Debugging Studi Kasus: 5 Buggy SQL Queries
+
+> 🗺️ **Tahap 13–15 dari 20** | Sebelumnya: Sesi 5 Code Understanding | Setelah ini: Sesi 7 Refactoring
+
+**Durasi**: 90 menit
+**Tipe**: Hands-on individual (boleh diskusi tetangga)
+**Output**: 5 file `submissions/<nama>/06_NN_<judul>.md` berisi diagnose + fix + verifikasi.
+
+---
+
+## Konteks
+
+5 query di `sql-playground/queries/sesi-06-debug/` adalah query production yang **dilaporkan QA / product owner**:
+
+- Hasil tidak sesuai expectation
+- Hilang baris yang harusnya muncul
+- Inflasi angka yang tidak masuk akal
+- Filter yang tidak bekerja
+
+Tugas Anda: pakai AI sebagai **debugging partner** untuk diagnose + fix tanpa rewrite total.
+
+---
 
 ## Tujuan
 
-Peserta mampu mendiagnosis dan memperbaiki 3 kelas bug umum (off-by-one, race condition, null reference) dengan AI sebagai partner, sambil menulis regression test sebelum fix.
+Setelah latihan, peserta mampu:
 
-## Durasi
+1. **Membedakan symptom vs penyebab** (banyak bug terlihat sama tapi root cause beda).
+2. **Pakai AI untuk diagnose dulu**, bukan langsung minta fix (anti-pattern utama).
+3. **Memverifikasi hipotesis** dengan query investigatif minimal.
+4. **Menulis fix minimal** yang menyelesaikan bug tanpa mengubah behaviour lain.
 
-35 menit (≈10 menit per skenario + 5 menit debrief)
+---
 
 ## Prasyarat
 
-- Cursor aktif
-- Runtime stack peserta (Node/Python/Go/Java) terinstall
-- Test runner terpasang (Jest/Pytest/Go test/JUnit)
-- Telah memahami EARTH framework dari Sesi 6
+- Latihan 04 selesai (familiar dengan schema 9 tabel).
+- `latihan_sql` database ter-populate fresh (kalau ragu, re-apply `00_schema.sql` + `01_sample_data.sql`).
 
-## Aturan Main
+---
 
-1. **Wajib** menulis test yang reproduksi bug SEBELUM bertanya ke AI untuk fix.
-2. **Wajib** pakai EARTH di setiap prompt.
-3. **Wajib** menulis kalimat akar masalah (root cause) dalam 1 baris sebelum apply fix.
-4. Minimal selesai **2 dari 3** skenario.
+## Langkah Per Bug
 
-## Skenario 1 — Off-by-One pada Pagination
+Untuk **setiap 5 query** (idealnya semua), loop berikut:
 
-<!-- STACK-PLACEHOLDER: ganti dengan kode fungsi pagination pada stack peserta -->
+### A. Reproduce (3')
 
-Kode contoh (PLACEHOLDER):
+1. Buka file query (mis. `01_inflated_revenue.sql`).
+2. **Baca header `LAPORAN BUG`** — itu symptom yang harus Anda reproduce.
+3. Run query as-is di MySQL. Catat hasil aktual.
 
-```
-// File: src/utils/pagination.ext
-function paginate(items, page, perPage) {
-    start = page * perPage
-    end = start + perPage - 1
-    return items.slice(start, end)
-}
-```
+### B. Diagnose dengan AI (5')
 
-Expected: `paginate([1,2,3,4,5], 0, 2) === [1,2]`
-Actual: `[1]`
-
-Langkah:
-
-1. Tulis test yang assert expected.
-2. Jalankan test → red.
-3. Prompt AI dengan EARTH, minta 3 hipotesis + tingkat keyakinan.
-4. Verifikasi hipotesis dengan trace manual untuk `n=0,1,2`.
-5. Tulis root cause 1 baris.
-6. Apply fix → test green.
-
-## Skenario 2 — Race Condition pada Counter
-
-<!-- STACK-PLACEHOLDER: implementasi counter concurrent sesuai stack peserta -->
-
-Kode contoh (PLACEHOLDER, gaya pseudocode):
+Pakai prompt **diagnose dulu, bukan fix langsung**:
 
 ```
-counter = 0
-function increment():
-    temp = counter
-    sleep(random ms)
-    counter = temp + 1
+Query berikut hasilnya salah. Symptom:
+<paste isi header LAPORAN BUG>
 
-# 100 goroutine/thread/promise parallel memanggil increment()
-# Expected: counter == 100
-# Actual: counter < 100 (non-deterministik)
+Query:
+<paste isi query>
+
+Tugas kamu:
+1. Diagnose: cari penyebab dalam 1-2 kalimat
+2. Reproduce: query SELECT pendek (mis. SELECT COUNT(*) FROM ...)
+   untuk membuktikan hipotesismu
+3. JANGAN beri fix dulu
+
+Saya akan minta fix di prompt berikutnya setelah saya yakin diagnose
+benar.
 ```
 
-Langkah:
+### C. Verifikasi Diagnosis (3')
 
-1. Reproduksi dengan test yang menjalankan 100 increment concurrent.
-2. Prompt AI: "Identifikasi shared state dan window race condition. Jangan beri fix dulu."
-3. Tulis root cause: read-modify-write tidak atomic.
-4. Diskusikan 2 solusi (mutex vs atomic op), pilih satu, justifikasi.
-5. Apply fix → test green stabil setelah 5 run.
+Run query investigatif yang AI sarankan di point 2. Pastikan hasilnya **konsisten** dengan hipotesis.
 
-## Skenario 3 — Null Reference pada Optional Chain
+> ⚠️ Kalau hipotesis AI tidak terbukti, jangan langsung minta fix — minta AI re-diagnose dengan data baru.
 
-<!-- STACK-PLACEHOLDER: ganti dengan domain object yang sering muncul di stack peserta -->
+### D. Fix (5')
 
-Kode contoh (PLACEHOLDER):
+Sekarang minta fix:
 
 ```
-function getUserCity(user) {
-    return user.profile.address.city.toUpperCase()
-}
+Hipotesismu benar (output investigatif sesuai). Sekarang:
+
+1. Berikan query fix — ubah seminimal mungkin (jangan rewrite total)
+2. Komentar 1 baris di atas baris yang diubah, format:
+   -- FIX: <apa yang diubah & kenapa>
+3. Query SELECT untuk verifikasi: bandingkan hasil sebelum & sesudah fix
 ```
 
-Input yang menyebabkan crash:
-- `getUserCity(null)`
-- `getUserCity({profile: null})`
-- `getUserCity({profile: {address: null}})`
-- `getUserCity({profile: {address: {city: null}}})`
+### E. Tulis Submission (2')
 
-Langkah:
+`submissions/<nama>/06_01_inflated_revenue.md`:
 
-1. Tulis 4 test case di atas + 1 happy path.
-2. Prompt AI: "Petakan sumber null untuk tiap node. Tentukan invariant yang benar: mana yang boleh null, mana yang harus throw."
-3. Tulis kontrak fungsi yang jelas (return default? throw? Option/Result?).
-4. Apply fix sesuai kontrak.
-5. Semua test green.
+```markdown
+# Bug 01 — Inflated Revenue
 
-## Deliverable
+**Symptom**: ...
+**Root cause** (1 paragraf): ...
+**Fix**:
+\`\`\`sql
+<query fix>
+\`\`\`
+**Verifikasi**: hasil before 4.5jt → after 1.25jt ✅
+**Pelajaran**: ...
+```
 
-Folder `output-lab-05/` berisi:
+Ulangi A–E untuk 5 bug.
 
-- `skenario-1/` — test, fix, root-cause.md
-- `skenario-2/` — test, fix, root-cause.md
-- `skenario-3/` — test, fix, root-cause.md (opsional)
-- `refleksi.md` — 1 paragraf: di skenario mana AI paling membantu, di mana paling menyesatkan
+---
 
-## Kriteria Selesai / Rubrik
+## Submit
 
-| Kriteria | Bobot |
-|----------|-------|
-| Test reproduksi ditulis sebelum fix | 25% |
-| EARTH dipakai konsisten | 15% |
-| Root cause akurat (bukan symptom) | 25% |
-| Fix tidak break test lain | 20% |
-| Refleksi tajam & jujur | 15% |
+`submissions/<nama>/`:
+- 5 file `06_NN_<judul>.md`
+- `refleksi.md` (≤200 kata):
+  - Bug mana paling sulit di-diagnose? Kenapa?
+  - 1 kali AI memberi diagnose salah — bagaimana Anda tahu?
+  - 1 pelajaran SQL yang Anda dapat dari bug-bug ini
 
-## Debrief
+---
 
-3 pair (1 per skenario) bagikan: 1 hal mengejutkan + 1 prompt yang paling efektif.
+## Tips Anti-Pattern
+
+| ❌ Hindari | ✅ Lakukan |
+|-----------|-----------|
+| "Fix query ini" | "Diagnose dulu, baru fix" |
+| Accept fix tanpa verify | Run query sebelum & sesudah, bandingkan output |
+| Rewrite total query | Patch minimal — ubah baris yang salah saja |
+| Cuma fix happy path | Test edge case lain (kosong, NULL, banyak baris) |
+| Lupa save query asli | `git diff` atau backup file sebelum edit |
+
+---
+
+## Common Issues
+
+| Issue | Solusi |
+|-------|--------|
+| AI fix berhasil tapi `count(*)` baseline tidak match | Mungkin AI ubah lebih dari yang seharusnya, baca diff baris per baris |
+| Fix bekerja di sample data tapi rusak di edge case | Generate test case sendiri (mis. order dengan total = NULL) |
+| Bug yang Anda fix muncul lagi setelah sample data direset | Itu artinya seeded bug — wajar. Fix di query, jangan di data. |

@@ -1,107 +1,152 @@
-# Lab 06 — Refactor Legacy Controller
+# Latihan 06 — Refactor Legacy SQL: 5 Smelly Queries
+
+> 🗺️ **Tahap 16–17 dari 20** | Sebelumnya: Sesi 6 Debugging | Setelah ini: Sesi 8 Testing
+
+**Durasi**: 90 menit
+**Tipe**: Hands-on individual
+**Output**: 5 file `submissions/<nama>/07_NN_<judul>.md` berisi before/after + bukti behaviour tidak berubah.
+
+---
+
+## Konteks
+
+5 query di `sql-playground/queries/sesi-07-refactor/` adalah query **yang hasilnya BENAR** tapi strukturnya jelek:
+
+- Subquery 3 lapis untuk lookup sederhana
+- Magic numbers tersebar di banyak tempat
+- Pola JOIN diulang 3x di UNION ALL
+- Window expression yang sama ditulis 4x
+- SELECT * dari 5 tabel dengan nama ambigu
+
+Tugas Anda: **refactor tanpa mengubah behaviour**. Aturan utama: hasil query baru harus **identik** dengan yang lama (row, kolom, urutan).
+
+---
 
 ## Tujuan
 
-Peserta merefactor "spaghetti controller" legacy menjadi struktur yang testable & readable, dengan behaviour-preserving guarantee melalui characterization test.
+Setelah latihan, peserta mampu:
 
-## Durasi
+1. **Mengenali code smell SQL umum** (subquery hell, duplicate logic, magic, no DRY).
+2. **Apply refactoring SQL pattern** (CTE, named window, shared base, eksplisit kolom).
+3. **Verifikasi behaviour-preserving** dengan baseline + diff query.
+4. **Memberi AI constraint** supaya tidak rewrite total.
 
-30 menit (25 menit kerja + 5 menit debrief)
+---
 
 ## Prasyarat
 
-- Cursor aktif, `.cursorrules` siap (lihat speaker notes Sesi 7).
-- Test runner stack peserta siap.
-- Telah mengikuti Sesi 7.
+- Latihan 04 & 05 selesai.
+- Database `latihan_sql` masih ada (atau re-apply fresh).
+- Familiar dengan CTE (`WITH ... AS`) dan window function.
 
-## Kode Awal
+---
 
-<!-- STACK-PLACEHOLDER: ganti dengan controller legacy dalam stack peserta. Pseudocode di bawah adalah template. -->
+## Langkah Per Query
 
-File: `src/controllers/orderController.ext` (PLACEHOLDER, ~120 baris)
+### A. Baseline (3')
+
+1. Buka file query (mis. `01_subquery_hell.sql`).
+2. Run as-is. **Simpan hasil**: screenshot atau `EXPORT RESULT SET` di DBeaver → CSV.
+3. Catat: jumlah baris, sum kolom numerik utama, 3 baris pertama.
+
+### B. Identify Smell (2')
+
+Baca header file (smell sudah disebut), atau prompt AI:
 
 ```
-function createOrder(req, res) {
-    // 1. Validasi inline (20 baris if-else)
-    if (!req.body.customer_id) return res.status(400).send("missing")
-    if (typeof req.body.customer_id !== "number") return res.status(400).send("bad")
-    if (!req.body.items || req.body.items.length === 0) return res.status(400).send("empty")
-    for (let i = 0; i < req.body.items.length; i++) {
-        if (!req.body.items[i].sku) return res.status(400).send("no sku")
-        if (req.body.items[i].qty <= 0) return res.status(400).send("bad qty")
-    }
+@file 01_subquery_hell.sql
 
-    // 2. Query DB inline (30 baris raw SQL string)
-    const customer = db.queryOne("SELECT * FROM customers WHERE id = " + req.body.customer_id)
-    if (!customer) return res.status(404).send("no customer")
-    let total = 0
-    const products = []
-    for (let i = 0; i < req.body.items.length; i++) {
-        const p = db.queryOne("SELECT * FROM products WHERE sku = '" + req.body.items[i].sku + "'")
-        if (!p) return res.status(404).send("no product " + req.body.items[i].sku)
-        if (p.stock < req.body.items[i].qty) return res.status(409).send("out of stock")
-        total = total + p.price * req.body.items[i].qty
-        products.push({p, qty: req.body.items[i].qty})
-    }
-
-    // 3. Business logic inline (diskon, tax, dll, 40 baris)
-    if (customer.tier === "gold") total = total * 0.9
-    else if (customer.tier === "silver") total = total * 0.95
-    const tax = total * 0.11
-    const grand = total + tax
-
-    // 4. Persistence inline (15 baris)
-    const orderId = db.insert("orders", {customer_id: customer.id, total: grand})
-    for (const p of products) {
-        db.insert("order_items", {order_id: orderId, sku: p.p.sku, qty: p.qty})
-        db.update("products", {sku: p.p.sku}, {stock: p.p.stock - p.qty})
-    }
-
-    // 5. Response formatting inline (10 baris)
-    return res.status(201).json({
-        id: orderId, customer: customer.name, total: grand, tax: tax, items: products.length
-    })
-}
+Tanpa mengubah query, listing semua code smell yang kamu lihat.
+Urut dari paling berdampak ke paling minor.
 ```
 
-Smell yang sengaja ada: SQL injection, long method, mixed concerns, magic numbers, no transaction, no validation library, inline business rules.
+### C. Refactor dengan Constraint (8')
 
-## Langkah
+```
+@file 01_subquery_hell.sql
 
-1. **Identify smells** (3 menit). Prompt AI: "Daftar code smell, urutkan dari paling berdampak ke maintainability/security. Tabel: smell | dampak | severity."
-2. **Characterization test** (5 menit). Prompt AI untuk generate 6 test cases (happy + edge + error). Jalankan against kode awal. Wajib semua green sebelum lanjut.
-3. **Extract validator** (4 menit). Pisahkan validasi ke `validators/orderValidator.ext`. Commit.
-4. **Extract repository** (4 menit). Pisahkan akses DB ke `repositories/orderRepository.ext`. Pakai parameterized query (sekalian fix SQL injection — TAPI catat di changelog, ini behaviour change keamanan, bukan refactor murni). Commit terpisah.
-5. **Extract pricing service** (4 menit). Pisahkan business rule (diskon, tax) ke `services/pricingService.ext`. Constants untuk magic number. Commit.
-6. **Verify** (3 menit). Jalankan semua characterization test. Hitung complexity sebelum vs sesudah.
-7. **Optional** (jika waktu cukup): bungkus persistence dalam transaction.
+Refactor query ini dengan constraint:
+1. Behaviour HARUS identik (output baris, kolom, urutan sama persis)
+2. Target style: CTE (WITH ... AS) — bukan subquery scalar
+3. Tidak boleh ubah filter (WHERE clause)
+4. Tidak boleh ubah ORDER BY atau LIMIT
+5. Tidak boleh tambah/hapus kolom output
 
-## Deliverable
+Berikan:
+- Query versi refactor
+- 2 query test untuk verifikasi: COUNT(*) before vs after, SUM(...)
+  kolom numerik utama
+- 1 paragraf: kenapa versi baru lebih baik
+```
 
-Folder `output-lab-06/`:
+### D. Verifikasi (3')
 
-- `before/` — kode awal
-- `after/` — kode hasil refactor (terstruktur per modul)
-- `tests/characterization.test.ext`
-- `metrics.md` — complexity sebelum/sesudah, LOC per fungsi
-- `changelog.md` — daftar commit + alasan, tandai mana yang murni refactor & mana yang behaviour change (SQL injection fix)
+Run query refactor + run query test dari point C. Pastikan:
 
-## Kriteria Selesai / Rubrik
+- `COUNT(*) before = COUNT(*) after` ✅
+- `SUM(...) before = SUM(...) after` ✅
+- Spot-check 3 baris pertama identik
 
-| Kriteria | Bobot |
-|----------|-------|
-| Characterization test ditulis duluan & green | 25% |
-| Min. 3 ekstraksi (validator, repo, pricing) | 25% |
-| Tiap langkah = 1 commit | 15% |
-| Test tetap green setelah seluruh refactor | 20% |
-| Metrics terukur (complexity turun) | 15% |
+Kalau ada beda → rollback, prompt ulang dengan info lebih spesifik.
 
-## Catatan
+### E. Tulis Submission (4')
 
-- Jangan ganti library / framework di lab ini.
-- SQL injection fix WAJIB dilakukan tapi dicatat sebagai behaviour change (keamanan), bukan refactor netral.
-- Jika test red di tengah, **revert**, jangan lanjutkan.
+`submissions/<nama>/07_01_subquery_hell.md`:
 
-## Debrief (5 menit)
+````markdown
+# Refactor 01 — Subquery Hell → CTE
 
-1 pair share metric improvement; 1 pair share gotcha (mis. AI lupa update import).
+**Smell utama**: 3 lapis subquery scalar untuk lookup tier
+**Before** (15 lines):
+```sql
+<paste query lama>
+```
+
+**After** (8 lines):
+```sql
+<paste query refactor>
+```
+
+**Bukti behaviour identik**:
+- COUNT before: 5 / after: 5 ✅
+- SUM(total_spending) before: 4,250,000 / after: 4,250,000 ✅
+
+**Kenapa lebih baik**: ...
+````
+
+Ulangi A–E untuk 5 query.
+
+---
+
+## Submit
+
+`submissions/<nama>/`:
+- 5 file `07_NN_<judul>.md` dengan before/after + bukti verifikasi
+- `refleksi.md` (≤200 kata):
+  - Refactor mana yang paling dramatis impact-nya?
+  - 1 kali AI ubah behaviour secara tidak sengaja — apa yang Anda lakukan?
+  - 1 SQL pattern (CTE/window/dst.) yang akan Anda pakai esok hari
+
+---
+
+## Tips Refactor Aman
+
+| ✅ Lakukan | ❌ Hindari |
+|-----------|-----------|
+| Run baseline dulu, simpan output | Refactor tanpa baseline |
+| 1 smell per commit | Refactor semua smell sekaligus |
+| Pakai diff tool (DBeaver Compare Result Sets) | Spot check manual |
+| Test edge case (NULL, 0 row, banyak row) | Test happy path saja |
+| Beri AI constraint eksplisit | "Bersihkan query ini" (terlalu vague) |
+| `git stash` atau backup file sebelum edit | Edit langsung, hilang versi asli |
+
+---
+
+## Common Issues
+
+| Issue | Solusi |
+|-------|--------|
+| Refactor pakai LATERAL tapi MySQL belum support | Pakai `JOIN (SELECT ... LIMIT 1) sub ON ...` sebagai workaround |
+| `Window function not allowed in WHERE` | Wrap di CTE: `WITH t AS (...) SELECT * FROM t WHERE rank = 1` |
+| Hasil refactor beda 1 baris | Cek `ORDER BY` — AI sering hilangkan secondary sort key |
+| AI tambah kolom yang tidak diminta | Restate constraint: "kolom output harus sama persis", tunjukkan diff |

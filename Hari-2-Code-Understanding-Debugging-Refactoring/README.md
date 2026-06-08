@@ -1,53 +1,31 @@
-# HARI 2 — Code Understanding, Debugging & Refactoring (Project: DevNotes Backend)
+# HARI 2 — Code Understanding, Debugging & Refactoring (SQL Focus)
 
 **Penyelenggara**: Multimatics
-**Durasi**: 1 hari penuh (8 jam efektif, 4 sesi × 90 menit + break)
-**Project akhir Hari 2**: Backend **DevNotes** (Next.js App Router + Supabase) — API CRUD, auth magic link, RLS policy, tests. Berjalan di `localhost:3000`, siap di-deploy & di-konsumsi FE di Hari 3.
 
-> Catatan: project Hari 2-3 (DevNotes) **terpisah** dari project Hari 1 (portfolio personal). Anda mulai folder `devnotes/` baru di awal Sesi 5. Lihat [`../project-brd.md`](../project-brd.md) untuk spek DevNotes.
-
----
-
-## Tujuan Hari 2
-
-Hari 2 mempraktikkan **4 kemampuan inti developer sehari-hari** sambil membangun BE DevNotes dari nol:
-
-1. **Memahami codebase** yang ada (Next.js template + Supabase docs) dengan bantuan AI.
-2. **Mendiagnosis bug** sistematis dari error message & stack trace — AI sebagai partner berpikir, bukan oracle.
-3. **Refactoring** kode hasil generate AI agar maintainable dan konsisten.
-4. **Menulis test** + melakukan code review berbantuan AI dengan kesadaran terhadap false positive dan hallucination.
-
----
-
-## Yang Akan Anda Pahami
-
-Setelah Hari 2 selesai, Anda akan mampu:
-
-1. Mengeksplorasi codebase baru menggunakan Cursor AI untuk memahami arsitektur, flow utama, dan dependency tanpa membuka tiap file manual.
-2. Menghasilkan dokumentasi teknis (README modul, ADR, diagram) berbantuan AI yang akurat dan dapat diverifikasi.
-3. Mendiagnosis bug dari error message dan stack trace secara sistematis.
-4. Melakukan refactoring (extract function, rename, decompose) sambil menjaga behaviour-preserving melalui test.
-5. Menulis unit test untuk API routes Next.js + skenario RLS Supabase.
-
----
-
-## Alur Sesi
-
-```mermaid
-flowchart LR
-    S5[Sesi 5<br/>Code Understanding<br/>+ Setup Next.js & Supabase] --> S6[Sesi 6<br/>Debugging<br/>+ Build first API]
-    S6 --> S7[Sesi 7<br/>Refactoring<br/>+ Full CRUD]
-    S7 --> S8[Sesi 8<br/>Testing & Review<br/>+ Auth & RLS]
-```
-
-| Sesi | Topik                                       | Tahap Project   | Output utama                                                                  |
-| ---- | ------------------------------------------- | --------------- | ----------------------------------------------------------------------------- |
-| 5    | Code Understanding & Documentation          | **Tahap 11–12** | Next.js + Supabase project terinit, `docs/architecture.md` ter-generate       |
-| 6    | Debugging & Error Analysis                  | **Tahap 13–15** | Tabel `notes` + RLS di Supabase, `GET /api/notes` jalan, debug-log catatan    |
-| 7    | Refactoring & Code Quality                  | **Tahap 16–17** | Full CRUD API + refactor (supabase client split, response helpers)            |
-| 8    | Testing & Code Review                       | **Tahap 18–20** | Auth magic link + protected routes, Vitest test, PR simulasi siap deploy      |
+Hari ke-2 pelatihan AI Cursor. Anda akan **menerima codebase SQL** (schema e-commerce mini + ~25 query) dan menjadikannya bahan eksplorasi dengan **4 lensa berbeda** di 4 sesi.
 
 > 📋 Detail 10 tahap, urutan kerja, dan checkpoint per tahap ada di [`perjalanan-project.md`](./perjalanan-project.md). **Baca file itu sebelum mulai latihan apa pun di Hari 2.**
+
+---
+
+## Pivot Pendekatan: SQL, Bukan Aplikasi
+
+Hari 1 melatih **bikin dari nol** (portfolio HTML/CSS/JS + SQL prompting drill).
+Hari 2 melatih **memahami yang sudah ada** — kenyataan kerja developer sehari-hari.
+
+**Stack**: MySQL 8.0+ (atau MariaDB 10.5+) + GUI client pilihan.
+**Tidak ada Next.js, tidak ada framework**. Murni SQL.
+
+---
+
+## Output Akhir Hari 2
+
+Folder `submissions/<nama>/` berisi:
+
+- **Sesi 5** (Tahap 11–12): 4–8 docstring query + ER diagram + architecture note
+- **Sesi 6** (Tahap 13–15): 2–5 bug report dengan diagnose, fix, verifikasi
+- **Sesi 7** (Tahap 16–17): 2–5 refactor before/after dengan bukti behaviour identik
+- **Sesi 8** (Tahap 18–20): 5 assertion query baru + 1 peer review report
 
 ---
 
@@ -72,7 +50,16 @@ flowchart LR
 ```
 Hari-2-Code-Understanding-Debugging-Refactoring/
 ├── README.md                                          <- file ini
-├── perjalanan-project.md                              <- master narrative 10 tahap (BACA DULU)
+├── perjalanan-project.md                              <- 10 tahap (BACA DULU)
+├── sql-playground/                                    <- codebase yang dipakai 4 sesi
+│   ├── README.md                                      <- setup MySQL + apply schema
+│   ├── 00_schema.sql                                  <- 9 tabel + RLS + index
+│   ├── 01_sample_data.sql                             <- ~150 row realistic
+│   └── queries/
+│       ├── sesi-05-explore/                           <- 8 query untuk dipahami
+│       ├── sesi-06-debug/                             <- 5 query bermasalah
+│       ├── sesi-07-refactor/                          <- 5 query smelly
+│       └── sesi-08-test/                              <- template assertion + contoh
 ├── Sesi-05-Code-Understanding-Documentation/
 │   ├── materi.md
 │   └── latihan-04-eksplorasi-codebase/                <- Tahap 11–12
@@ -91,8 +78,7 @@ Hari-2-Code-Understanding-Debugging-Refactoring/
 
 ## Prasyarat Hari 2
 
-- Telah menyelesaikan Hari 1 (Setup Cursor lulus, prompt engineering dasar di tangan, portfolio statis tuntas).
-- Akun **Supabase** aktif (daftar di <https://supabase.com> dengan GitHub login — 1 menit).
-- Node.js LTS terinstall (untuk `npx create-next-app`).
-- `curl` di terminal atau Postman/Insomnia untuk test API.
-- Akses Cursor aktif.
+- Telah menyelesaikan Hari 1 (portfolio + SQL prompting drill familiar).
+- **MySQL 8.0+** terinstall + GUI client (DBeaver / Workbench / Cursor Database Client extension).
+- Cursor aktif, mode Ask & Cmd+K familiar.
+- Tidak perlu install Node, Next.js, Supabase, atau apa pun lain.
