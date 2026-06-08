@@ -95,7 +95,11 @@ insert into orders (id, customer_id, status, subtotal, discount, total, created_
   -- Ini bikin "NOT IN (SELECT customer_id FROM orders)" jadi 0 baris karena
   -- subquery mengandung NULL → bahan bug NULL trap di
   -- queries/sesi-06-debug/02_customers_no_orders.sql
-  (27, null, 'delivered', 35000,   0,     35000,   '2026-04-10 14:20:00');
+  (27, null, 'delivered', 35000,   0,     35000,   '2026-04-10 14:20:00'),
+  -- Order 28: tanggal 31 Januari 2026 jam 18:45 — bahan bug
+  -- BETWEEN datetime ('2026-01-31' di-cast jadi '2026-01-31 00:00:00')
+  -- di queries/sesi-06-debug/03_missing_jan_orders.sql
+  (28, 9,    'delivered', 225000,  0,     225000,  '2026-01-31 18:45:00');
 
 -- -----------------------------------------------------------------------------
 -- order_items (≈ 60 baris detail item)
@@ -154,7 +158,9 @@ insert into order_items (order_id, product_id, qty, unit_price) values
   -- order 26: andi (mei 2026) - mouse 4 unit = 600k
   (26, 1, 4, 150000),
   -- order 27: guest checkout (customer_id NULL) - 1 notebook
-  (27, 3, 1, 35000);
+  (27, 3, 1, 35000),
+  -- order 28: indra (31 jan jam sore) - coffee + usb cable
+  (28, 4, 1, 180000), (28, 5, 1, 45000);
 
 -- -----------------------------------------------------------------------------
 -- reviews (15 review)
@@ -174,7 +180,10 @@ insert into reviews (customer_id, product_id, rating, comment, created_at) value
   (6, 11, 4, 'Performance bagus, mahal sedikit',         '2026-05-15 14:00:00'),
   (1, 7,  3, 'Suara mid bagus, bass lemah',              '2026-05-28 16:00:00'),
   (11, 9, 5, 'Sneakers nyaman dipakai lari',             '2026-06-07 09:00:00'),
-  (8, 12, 4, 'Bedsheet halus, warna sesuai foto',        '2026-06-08 10:00:00');
+  (8, 12, 4, 'Bedsheet halus, warna sesuai foto',        '2026-06-08 10:00:00'),
+  -- Review untuk produk discontinued (id=15 Old Modem) — bahan bug
+  -- queries/sesi-06-debug/05_avg_review_per_product.sql (missing WHERE is_active=1)
+  (1, 15, 3, 'Sudah lawas, performa sedang',             '2025-09-20 10:00:00');
 
 -- -----------------------------------------------------------------------------
 -- payments (1-2 per order, kecuali pending/cancelled)
@@ -212,7 +221,9 @@ insert into payments (order_id, method, amount, status, paid_at, created_at) val
   (26, 'gopay',    600000,  'failed',  null,                  '2026-05-25 13:14:30'),
   (26, 'cc',       600000,  'success', '2026-05-25 13:18:00', '2026-05-25 13:15:00'),
   -- Order 27: guest checkout (cod)
-  (27, 'cod',      35000,   'success', '2026-04-12 11:00:00', '2026-04-10 14:20:00');
+  (27, 'cod',      35000,   'success', '2026-04-12 11:00:00', '2026-04-10 14:20:00'),
+  -- Order 28: indra (31 jan)
+  (28, 'transfer', 225000,  'success', '2026-01-31 19:00:00', '2026-01-31 18:45:00');
 
 -- -----------------------------------------------------------------------------
 -- shipments (untuk order yang sudah paid+)
@@ -243,7 +254,9 @@ insert into shipments (order_id, courier, tracking_no, status, shipped_at, deliv
   (26, 'jne',     'JNE026WW', 'returned',  '2026-05-26 09:00:00', null,                  '2026-05-26 08:00:00'),
   (26, 'gosend',  'GSD026XX', 'delivered', '2026-05-28 10:00:00', '2026-05-28 14:00:00', '2026-05-28 09:00:00'),
   -- Order 27: guest checkout — 1 shipment delivered
-  (27, 'jnt',     'JNT027YY', 'delivered', '2026-04-11 09:00:00', '2026-04-13 11:30:00', '2026-04-11 08:00:00');
+  (27, 'jnt',     'JNT027YY', 'delivered', '2026-04-11 09:00:00', '2026-04-13 11:30:00', '2026-04-11 08:00:00'),
+  -- Order 28: indra (31 jan late evening order, dikirim besok pagi)
+  (28, 'jne',     'JNE028ZZ', 'delivered', '2026-02-01 09:00:00', '2026-02-03 14:00:00', '2026-02-01 08:00:00');
 
 -- -----------------------------------------------------------------------------
 -- inventory_log (audit pergerakan stok, sengaja sparse untuk eksplorasi)

@@ -1,9 +1,10 @@
 -- ==============================================================
 -- Query 03 — "Order yang dibuat di Januari 2026"
--- LAPORAN BUG: Order id=12 tanggal 2026-01-25 15:30:00 tidak
---              muncul di hasil. Padahal jelas masih Januari.
+-- LAPORAN BUG: Order id=28 tanggal 2026-01-31 18:45:00 tidak muncul
+--              di hasil. Padahal tanggal 31 Januari jelas masih bulan
+--              Januari.
 -- Tugas Anda: cari kenapa hilang, lalu perbaiki tanpa mengubah
---             "antara 1 Jan sampai 31 Jan" jadi tanggal lain.
+--             intent "ambil order Januari" jadi tanggal lain.
 -- ==============================================================
 
 select

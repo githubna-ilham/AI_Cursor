@@ -25,9 +25,9 @@
 | # | File | Symptom | Domain Bug |
 |---|------|---------|-----------|
 | 01 | `01_inflated_revenue.sql` | Total customer ~4.9jt (8 order), hand-count cuma 1.25jt (2 order) | JOIN explosion |
-| 02 | `02_customers_no_orders.sql` | Hasil selalu 0 baris, padahal data ada | NULL handling (`NOT IN`) |
-| 03 | `03_missing_jan_orders.sql` | Order 25 Jan 15:30 tidak muncul di filter 1-31 Jan | DATE vs DATETIME pitfall |
-| 04 | `04_paid_or_refunded.sql` | Hasil ikut `refunded` & `cancelled` | Operator precedence (`AND`/`OR`) |
+| 02 | `02_customers_no_orders.sql` | Hasil selalu 0 baris, padahal Mira (id=13) belum order | NULL handling (`NOT IN`) — guest checkout bikin customer_id NULL |
+| 03 | `03_missing_jan_orders.sql` | Order 28 (31 Jan 18:45) tidak muncul di filter "Januari" | DATE vs DATETIME pitfall di BETWEEN |
+| 04 | `04_paid_or_refunded.sql` | Hasil ikut order `paid` dengan total < 1jt (mis. Order 17 = 45rb) | Operator precedence (`AND` mengikat dulu, butuh kurung) |
 | 05 | `05_avg_review_per_product.sql` | Produk tanpa review hilang + discontinued ikut tampil | JOIN type (INNER vs LEFT) + missing WHERE |
 
 ---

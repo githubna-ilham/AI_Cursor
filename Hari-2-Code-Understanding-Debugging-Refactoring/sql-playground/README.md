@@ -76,11 +76,11 @@ Hasil sekitar:
 | categories | 7 |
 | customers | 13 |
 | products | 15 |
-| orders | 27 |
-| order_items | ~44 |
-| reviews | 15 |
-| payments | 29 |
-| shipments | 24 |
+| orders | 28 |
+| order_items | ~46 |
+| reviews | 16 |
+| payments | 30 |
+| shipments | 25 |
 
 Kalau angkanya beda jauh, ulangi langkah 2-3.
 
