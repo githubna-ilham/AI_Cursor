@@ -7,7 +7,21 @@
       "Bash(/usr/bin/find . -name \"speaker-notes.md\" -not -path \"./.git/*\")",
       "Bash(/usr/bin/find . -name \"diskusi.md\" -not -path \"./.git/*\")",
       "Bash(/usr/bin/find . -type d -name \"lab-*\" -not -path \"./.git/*\")",
-      "Bash(rtk grep *)"
+      "Bash(rtk grep *)",
+      "Bash(cp -R Hari-1-Fundamental Hari-1-Fundamental-DevNotes)",
+      "Bash(/usr/bin/find Hari-1-Fundamental-DevNotes -type f)",
+      "Bash(git reset *)",
+      "Bash(cp /Users/mac14m1max/.claude/image-cache/534ccccf-28c8-41e6-a550-9e822f7c5739/2.png images/cursor-01-hub-view.png)",
+      "Bash(cp /Users/mac14m1max/.claude/image-cache/534ccccf-28c8-41e6-a550-9e822f7c5739/3.png images/cursor-02-editor-welcome.png)",
+      "Bash(cp /Users/mac14m1max/.claude/image-cache/534ccccf-28c8-41e6-a550-9e822f7c5739/4.png images/cursor-03-editor-full.png)",
+      "Bash(rtk read *)",
+      "Bash(rtk wc *)",
+      "Bash(git rm *)",
+      "Bash(npm view *)",
+      "Bash(git ls-remote *)",
+      "Bash(/usr/local/mysql/bin/mysql --version)",
+      "Bash(sudo launchctl list)",
+      "Bash(rtk ps *)"
     ]
   }
 }
