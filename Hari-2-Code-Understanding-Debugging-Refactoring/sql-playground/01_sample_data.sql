@@ -33,7 +33,10 @@ insert into customers (id, name, email, city, tier, created_at) values
   (9,  'Indra Mahesa',   'indra@x.com',  'Jakarta',   'silver',   '2025-07-15'),
   (10, 'Joko Anwar',    'joko@x.com',   'Yogyakarta','regular',  '2025-08-22'),
   (11, 'Kartika Sari',   'kartika@x.com','Bandung',   'platinum', '2024-10-01'),
-  (12, 'Lina Marlina',   'lina@x.com',   'Jakarta',   'regular',  '2026-01-05');
+  (12, 'Lina Marlina',   'lina@x.com',   'Jakarta',   'regular',  '2026-01-05'),
+  -- Customer 13 (Mira): baru daftar Juni 2026, belum pernah order →
+  -- bahan untuk queries/sesi-06-debug/02_customers_no_orders.sql
+  (13, 'Mira Anggraini', 'mira@x.com',   'Jakarta',   'regular',  '2026-06-02');
 
 -- -----------------------------------------------------------------------------
 -- products (15 produk lintas kategori)
@@ -87,7 +90,12 @@ insert into orders (id, customer_id, status, subtotal, discount, total, created_
   -- Order 26: customer Andi (1) di Mei 2026 — sengaja dipasangkan dengan
   -- multiple payments & shipments untuk memunculkan JOIN explosion bug
   -- di queries/sesi-06-debug/01_inflated_revenue.sql
-  (26, 1,  'paid',      600000,  0,     600000,  '2026-05-25 13:15:00');
+  (26, 1,    'paid',      600000,  0,     600000,  '2026-05-25 13:15:00'),
+  -- Order 27: GUEST CHECKOUT (customer_id NULL) — order tanpa akun.
+  -- Ini bikin "NOT IN (SELECT customer_id FROM orders)" jadi 0 baris karena
+  -- subquery mengandung NULL → bahan bug NULL trap di
+  -- queries/sesi-06-debug/02_customers_no_orders.sql
+  (27, null, 'delivered', 35000,   0,     35000,   '2026-04-10 14:20:00');
 
 -- -----------------------------------------------------------------------------
 -- order_items (≈ 60 baris detail item)
@@ -144,7 +152,9 @@ insert into order_items (order_id, product_id, qty, unit_price) values
   -- order 25: citra (pending)
   (25, 4, 1, 180000),
   -- order 26: andi (mei 2026) - mouse 4 unit = 600k
-  (26, 1, 4, 150000);
+  (26, 1, 4, 150000),
+  -- order 27: guest checkout (customer_id NULL) - 1 notebook
+  (27, 3, 1, 35000);
 
 -- -----------------------------------------------------------------------------
 -- reviews (15 review)
@@ -200,7 +210,9 @@ insert into payments (order_id, method, amount, status, paid_at, created_at) val
   (22, 'cc',       650000,  'failed',  null,                  '2026-05-20 09:19:00'),
   (26, 'gopay',    600000,  'failed',  null,                  '2026-05-25 13:14:00'),
   (26, 'gopay',    600000,  'failed',  null,                  '2026-05-25 13:14:30'),
-  (26, 'cc',       600000,  'success', '2026-05-25 13:18:00', '2026-05-25 13:15:00');
+  (26, 'cc',       600000,  'success', '2026-05-25 13:18:00', '2026-05-25 13:15:00'),
+  -- Order 27: guest checkout (cod)
+  (27, 'cod',      35000,   'success', '2026-04-12 11:00:00', '2026-04-10 14:20:00');
 
 -- -----------------------------------------------------------------------------
 -- shipments (untuk order yang sudah paid+)
@@ -229,7 +241,9 @@ insert into shipments (order_id, courier, tracking_no, status, shipped_at, deliv
   (24, 'jne',     'JNE024VV', 'delivered', '2026-06-06 09:30:00', '2026-06-08 13:00:00', '2026-06-06 08:30:00'),
   -- Order 26: multi-shipment (1 dikirim → returned, 1 redelivered) → JOIN explosion
   (26, 'jne',     'JNE026WW', 'returned',  '2026-05-26 09:00:00', null,                  '2026-05-26 08:00:00'),
-  (26, 'gosend',  'GSD026XX', 'delivered', '2026-05-28 10:00:00', '2026-05-28 14:00:00', '2026-05-28 09:00:00');
+  (26, 'gosend',  'GSD026XX', 'delivered', '2026-05-28 10:00:00', '2026-05-28 14:00:00', '2026-05-28 09:00:00'),
+  -- Order 27: guest checkout — 1 shipment delivered
+  (27, 'jnt',     'JNT027YY', 'delivered', '2026-04-11 09:00:00', '2026-04-13 11:30:00', '2026-04-11 08:00:00');
 
 -- -----------------------------------------------------------------------------
 -- inventory_log (audit pergerakan stok, sengaja sparse untuk eksplorasi)

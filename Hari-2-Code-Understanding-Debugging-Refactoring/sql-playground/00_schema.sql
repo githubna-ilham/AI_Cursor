@@ -97,7 +97,7 @@ create index idx_products_active on products(is_active);
 -- -----------------------------------------------------------------------------
 create table orders (
   id int auto_increment primary key,
-  customer_id int not null,
+  customer_id int null,                                  -- nullable untuk mendukung guest checkout (tanpa akun)
   status varchar(20) not null default 'pending',         -- pending|paid|shipped|delivered|cancelled|refunded
   subtotal decimal(12, 2) not null default 0,            -- denormalized (sum order_items)
   discount decimal(12, 2) not null default 0,

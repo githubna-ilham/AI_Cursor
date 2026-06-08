@@ -74,13 +74,13 @@ Hasil sekitar:
 | Tabel | Count |
 |-------|-------|
 | categories | 7 |
-| customers | 12 |
+| customers | 13 |
 | products | 15 |
-| orders | 26 |
-| order_items | ~43 |
+| orders | 27 |
+| order_items | ~44 |
 | reviews | 15 |
-| payments | 28 |
-| shipments | 23 |
+| payments | 29 |
+| shipments | 24 |
 
 Kalau angkanya beda jauh, ulangi langkah 2-3.
 

@@ -1,9 +1,13 @@
 -- ==============================================================
 -- Query 02 — "Customer yang belum pernah order"
--- LAPORAN BUG: Hasil query selalu kosong (0 baris), padahal di
---              data jelas ada customer baru yang belum order
---              (mis. customer Lina, id=12, belum punya order
---              sebelum Mei 2026).
+-- LAPORAN BUG: Hasil query selalu kosong (0 baris), padahal di data
+--              jelas ada customer baru yang belum pernah order, yaitu
+--              Mira Anggraini (id=13, daftar Juni 2026).
+--              Padahal kalau kita SELECT * FROM customers WHERE id = 13,
+--              datanya ada.
+-- Petunjuk: tabel orders punya record dengan customer_id NULL
+--           (dari fitur guest checkout). Coba pelajari pengaruhnya
+--           terhadap operator NOT IN.
 -- Tugas Anda: cari kenapa 0 baris, lalu perbaiki.
 -- ==============================================================
 
