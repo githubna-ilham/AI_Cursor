@@ -31,7 +31,7 @@ insert into customers (id, name, email, city, tier, created_at) values
   (7,  'Gita Permata',   'gita@x.com',   'Bandung',   'gold',     '2024-12-20'),
   (8,  'Hadi Kusuma',    'hadi@x.com',   'Surabaya',  'regular',  '2025-06-08'),
   (9,  'Indra Mahesa',   'indra@x.com',  'Jakarta',   'silver',   '2025-07-15'),
-  (10, 'Joko Widodo',    'joko@x.com',   'Yogyakarta','regular',  '2025-08-22'),
+  (10, 'Joko Anwar',    'joko@x.com',   'Yogyakarta','regular',  '2025-08-22'),
   (11, 'Kartika Sari',   'kartika@x.com','Bandung',   'platinum', '2024-10-01'),
   (12, 'Lina Marlina',   'lina@x.com',   'Jakarta',   'regular',  '2026-01-05');
 
