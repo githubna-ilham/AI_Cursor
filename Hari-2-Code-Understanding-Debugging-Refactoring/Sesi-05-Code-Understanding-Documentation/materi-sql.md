@@ -1,200 +1,221 @@
-# Sesi 5 (SQL) — Code Understanding & Documentation
+# Sesi 5 (SQL) — Memahami Query Orang Lain
 
 Durasi: 90 menit
-Modul: Hari 2 / Sesi 1 dari 4
 
-> Versi SQL dari `materi.md`. Konsep sama, contoh & latihan disesuaikan untuk SQL query dengan schema `sql-playground/`. Pakai file ini saat workshop SQL.
+## Bayangkan Skenario Ini
 
----
+Anda hari pertama masuk kerja di tim data. Atasan kasih akses ke folder berisi **8 file SQL**. Tidak ada komentar, tidak ada dokumentasi. Tugas Anda: pahami query-nya, supaya minggu depan bisa bantu modifikasi.
 
-## Learning Outcomes
+Tanpa AI: 1-2 jam per query, tanya rekan kerja, baca pelan-pelan, sering bingung.
+Dengan AI sebagai partner: bisa 15-20 menit per query — kalau Anda tahu cara bertanya yang benar.
 
-Setelah sesi ini peserta mampu:
-
-1. Membaca query SQL kompleks (multi-JOIN, CTE, window function, recursive) dengan strategi *outer-in* tanpa kelabakan.
-2. Memanfaatkan AI (Cursor Chat mode Ask) untuk **second-opinion** memahami query — bukan menerima penjelasan mentah.
-3. Mengekstrak **asumsi bisnis tersembunyi** dari syntax SQL ke dokumentasi bahasa manusia.
-4. Menghasilkan dokumentasi minimal yang berguna: docstring query, ER diagram, architecture note.
+Itulah inti Sesi 5.
 
 ---
 
-## Konsep Inti
+## Yang Akan Anda Pelajari
 
-### 1. Kenapa "Membaca" Lebih Penting dari "Menulis"
+1. Cara baca query SQL panjang dengan urutan yang masuk akal
+2. Cara minta AI jelaskan query tanpa dapat jawaban dangkal
+3. Cara menulis catatan supaya developer berikutnya tidak perlu bingung lagi
 
-| Aktivitas | Porsi waktu developer profesional |
-|-----------|------------------------------------|
-| Menulis kode/query baru | ~20% |
-| **Membaca & memahami kode yang sudah ada** | **~80%** |
-| Code review, debugging existing, planning | termasuk di 80% |
+---
 
-**Implikasi**: kalau Anda baru join project, mayoritas waktu pertama adalah *reading*, bukan *writing*. Kemampuan membaca cepat & akurat = kemampuan jadi produktif cepat.
+## 1. Kenapa Membaca Lebih Penting dari Menulis
 
-AI mengubah ekonomi ini: yang dulu butuh 2 jam baca + tanya senior, sekarang bisa 20 menit baca + tanya AI. Tapi syaratnya: **Anda tahu cara bertanya yang tepat**.
+Rata-rata developer profesional:
+- **20% waktu** menulis kode baru
+- **80% waktu** membaca, memahami, dan memodifikasi kode yang sudah ada
 
-### 2. Strategi Baca Query: Outer-In
+Artinya: kalau Anda baru join tim, **kemampuan utama** Anda bukan ngetik query baru. Tapi **memahami** query lama dan ngomong dengan rekan kerja tentang itu.
 
-Query SQL **dibaca berbeda** dari kode imperatif. Urutan eksekusi vs urutan tulis berbeda:
+**Analogi**: bayangkan Anda pindah ke kota baru. Skill paling penting bukan bikin jalan baru — tapi tahu cara baca peta + tanya orang lokal.
 
-```sql
-SELECT  ...                          -- 6. project kolom
-FROM    customers c                  -- 1. tabel awal
-JOIN    orders o ON ...              -- 2. join
-WHERE   o.status = 'paid'            -- 3. filter row
-GROUP BY c.city                      -- 4. agregasi
-HAVING  SUM(total) > 1000000         -- 5. filter agregat
-ORDER BY total_revenue DESC          -- 7. sort
-LIMIT 10;                            -- 8. cap
-```
+---
 
-**Cara baca yang efektif** (outer-in):
+## 2. Cara Baca Query Panjang: Mulai dari Mana?
 
-1. **Mulai dari `SELECT`**: kolom output apa? Itu *intent*-nya.
-2. **`FROM` & `JOIN`**: tabel apa yang dilibatkan? Sketch ERD mental.
-3. **`WHERE`**: row mana yang di-exclude? Itu *scope*.
-4. **`GROUP BY` + `HAVING`**: bagaimana di-agregasi? Itu *granularity*.
-5. **`ORDER BY` + `LIMIT`**: bagaimana di-rank? Itu *prioritas*.
+Query SQL dibaca **berbeda** dari kode biasa. Bukan dari atas ke bawah.
 
-Setelah baca 1 menit, Anda harusnya bisa jawab: *"Query ini menjawab pertanyaan bisnis apa?"*
-
-### 3. Pola Query yang Sering Muncul di Project
-
-Mengenali pola = cepat paham:
-
-| Pola | Ciri | Kasus Bisnis Umum |
-|------|------|-------------------|
-| **Top-N by aggregate** | `GROUP BY` + `ORDER BY agg DESC LIMIT N` | Top customer, top product |
-| **Cohort analysis** | CTE: `first_X` cohort + `activity_X` + `period_diff` | Retention, LTV |
-| **Funnel / status breakdown** | `COUNT GROUP BY status` + percentage of total | Conversion rate, ops dashboard |
-| **Rank per partition** | Window: `RANK() OVER (PARTITION BY ... ORDER BY ...)` | Top product *per kategori* |
-| **Hierarchy / tree** | `WITH RECURSIVE` | Category tree, org chart |
-| **Inventory / sum invariant** | LEFT JOIN derived + COALESCE | Stok physical vs catatan log |
-
-Saat Anda lihat pola ini → langsung tahu *jenis* query → fokus baca jadi *detail bisnis-nya*.
-
-### 4. Asumsi Tersembunyi: yang AI Sering Lewatkan
-
-Query developer asli sering mengandung **asumsi bisnis** yang tidak tertulis di komentar. Contoh:
+Coba lihat query ini:
 
 ```sql
-where o.status not in ('cancelled', 'refunded')
+SELECT  c.name, SUM(o.total) AS revenue
+FROM    customers c
+JOIN    orders o ON o.customer_id = c.id
+WHERE   o.status = 'paid'
+GROUP BY c.name
+ORDER BY revenue DESC
+LIMIT 10;
 ```
 
-Asumsinya: *"order yang di-refund tidak hitung sebagai revenue"*. Tapi:
-- Apakah `refunded` = full refund atau parsial?
-- Apakah `cancelled` sebelum/setelah bayar?
-- Apa beda dengan `failed`?
+**Cara baca yang lebih cepat — "outer-in"**:
 
-AI bisa jelaskan **apa** yang dilakukan filter, tapi sering tidak tahu **kenapa**. Jawaban "kenapa" perlu Anda gali dari:
-- Komentar di kode lain
-- Slack/Confluence team
-- Tanya owner project langsung
+| Step | Lihat bagian | Pertanyaan yang dijawab |
+|------|--------------|--------------------------|
+| 1 | `SELECT` | "Yang saya mau lihat di hasil itu apa?" → nama customer + revenue |
+| 2 | `FROM` + `JOIN` | "Data dari tabel mana saja?" → customers + orders |
+| 3 | `WHERE` | "Yang dipilih cuma yang seperti apa?" → status paid |
+| 4 | `GROUP BY` | "Di-grup per apa?" → per nama customer |
+| 5 | `ORDER BY` + `LIMIT` | "Diurut bagaimana, dibatasi berapa?" → revenue terbesar, ambil 10 |
 
-Tugas Anda di Sesi 5: **tulis "kenapa" ini** di docstring supaya orang berikutnya tidak perlu gali lagi.
+Setelah 5 step di atas (1-2 menit), Anda sudah bisa **terka apa pertanyaan bisnis** yang query ini jawab: *"Siapa 10 customer paling besar revenue-nya yang sudah bayar?"*
 
-### 5. Tools untuk Pahami Query
+Kalau **belum bisa terka** setelah 2 menit, baru tanya AI.
 
-| Tool | Fungsi | Kapan Pakai |
-|------|--------|-------------|
-| **`DESCRIBE table`** | Lihat schema tabel cepat | Awal eksplorasi |
-| **`SHOW CREATE TABLE`** | DDL lengkap + index + FK | Verifikasi schema |
-| **`EXPLAIN`** | Lihat execution plan | Pahami JOIN order, index usage |
-| **`EXPLAIN ANALYZE`** | + waktu eksekusi nyata | Kalau query slow |
-| **DBeaver "ER Diagram"** | Generate diagram dari schema | Visualize relasi |
-| **DBeaver "SQL Format"** | Auto-format query messy | Sebelum baca query 200 baris |
+---
 
-Pakai tools **sebelum** tanya AI — sering jawab sendiri.
+## 3. Pola yang Sering Anda Temui
 
-### 6. Pakai AI sebagai Reader (Bukan Writer)
+Setelah baca beberapa query, Anda akan sadar: query SQL itu cuma beberapa "pola umum" yang diulang-ulang. Mengenali pola = baca cepat.
 
-Prompt template yang efektif untuk *understanding*:
+5 pola paling sering:
+
+### Pola 1 — Top-N (Yang Paling)
+> "Siapa **top 10** customer paling besar belanjanya?"
+
+Ciri: `GROUP BY` + `ORDER BY ... DESC` + `LIMIT N`
+
+### Pola 2 — Per Kelompok (Group-by Sederhana)
+> "**Berapa total revenue** tiap kota?"
+
+Ciri: `GROUP BY <kategori>` + `SUM/COUNT`
+
+### Pola 3 — Funnel (Berapa Banyak Tiap Tahap)
+> "Dari semua order, **berapa persen** yang akhirnya delivered?"
+
+Ciri: `COUNT` per status + persentase
+
+### Pola 4 — Pencarian Bug Data
+> "Adakah produk dengan **stok beda** antara catatan vs realita?"
+
+Ciri: `LEFT JOIN` + bandingkan 2 angka
+
+### Pola 5 — Pohon Kategori (Bertingkat)
+> "Tampilkan **semua sub-kategori** Electronics."
+
+Ciri: `WITH RECURSIVE` (jangan panik, ini cuma "ulangi sambil naik")
+
+Saat Anda lihat query baru, tanya: *"Ini pola yang mana?"* Setengah pertanyaan langsung terjawab.
+
+---
+
+## 4. Asumsi Tersembunyi: Yang AI Tidak Bisa Bantu
+
+Coba lihat baris ini:
+
+```sql
+WHERE status NOT IN ('cancelled', 'refunded')
+```
+
+AI bisa jelaskan **apa** yang dilakukan: "filter ini buang order yang dibatalkan atau di-refund".
+
+Tapi AI tidak tahu **kenapa**:
+- Kenapa `refunded` juga di-buang? Bukannya `refunded` artinya sudah pernah bayar?
+- Apakah `cancelled` bisa berarti "user cancel" atau "system cancel"?
+- Mungkin developer asli mengasumsikan revenue = **uang yang benar-benar masuk** (bukan transaksi yang batal-bayar).
+
+**Tugas Anda**: gali "kenapa" ini dengan tanya rekan kerja (atau Slack/Notion), lalu **tulis di catatan**. Supaya developer berikutnya tidak perlu bingung lagi.
+
+> 💡 **Aturan emas**: AI hebat menjelaskan *apa*. *Kenapa* harus dari manusia yang tahu konteks bisnis.
+
+---
+
+## 5. Cara Tanya AI yang Bener
+
+Ada 2 cara tanya AI. Coba bedakan kualitasnya:
+
+**Tanya cara A (vague)**:
+> "Jelaskan query ini"
+
+Hasil AI: 1-2 paragraf umum, sering miss detail penting.
+
+**Tanya cara B (format terstruktur)** — pakai ini:
 
 ```
-@file <nama-query>.sql
+@file 01_customer_lifetime_value.sql
 
 Tolong jelaskan query ini dengan format:
-1. TL;DR (1 kalimat — "query ini menjawab pertanyaan apa")
-2. Tabel & kolom yang dipakai (list)
-3. Logika step-by-step (FROM → WHERE → GROUP BY → HAVING → ORDER → LIMIT)
-4. Asumsi bisnis (apa yang diasumsikan developer asli)
-5. Edge case yang bisa bikin hasil aneh
-6. Output sample (3-5 baris)
+
+1. **TL;DR** — 1 kalimat: query ini menjawab pertanyaan apa
+2. **Tabel & kolom yang dipakai** — list singkat
+3. **Logika step-by-step** — FROM, WHERE, GROUP BY, ORDER, dst.
+4. **Asumsi bisnis** — apa yang diasumsikan, mis. "cancelled tidak hitung"
+5. **Edge case** — kondisi yang bikin hasil aneh
+6. **Output sample** — 3-5 baris contoh
 ```
 
-**Format terstruktur** memaksa AI jawab lengkap, tidak skip. Tanpa format, AI sering hanya kasih "summary" yang dangkal.
+Hasil AI cara B: jauh lebih lengkap, tidak skip bagian penting.
 
-### 7. Iterasi Pemahaman
+Aturan: **selalu kasih format**. Tanpa format, AI bingung mau detail seberapa.
 
-Jangan terima jawaban pertama mentah-mentah. Pola iterasi:
+---
 
-```
-AI: <jawab format 6 poin>
+## 6. Verifikasi: Jangan Percaya, Jalankan
 
-Anda: "Di point 4, kamu bilang 'cancelled tidak hitung'. Tapi kenapa
-       refunded juga tidak hitung? Bukankah refunded artinya sudah
-       bayar tapi dikembalikan? Apakah ini bug atau policy bisnis?"
+AI sering ngarang (istilah teknis: "hallucination"). Khususnya saat bilang "outputnya begini".
 
-AI: <jelaskan dengan dua kemungkinan, minta klarifikasi dari domain expert>
-```
+**Wajib**: setelah AI jelaskan, **jalankan query-nya** di MySQL/DBeaver Anda. Bandingkan:
 
-Iterasi ini **menghasilkan pertanyaan untuk owner project** — itu seringkali lebih berharga dari jawaban AI sendiri.
+- Jumlah baris yang AI klaim vs yang muncul
+- 3 baris pertama match atau tidak
+- Sum angka utama (mis. total revenue) — match atau tidak
 
-### 8. Output Wajib: Dokumentasi
+Kalau **tidak match** → AI salah. Tanya ulang dengan paste hasil real:
 
-Akhir Sesi 5, Anda harus produksi 3 jenis dokumentasi:
+> "Kamu bilang outputnya 50 baris dengan total 12 juta. Saya run, dapat 47 baris dengan total 11.5 juta. Coba periksa lagi logika WHERE-nya."
 
-| Jenis | Audiens | Format |
-|-------|---------|--------|
-| **Docstring per query** | Developer berikutnya yang buka file | Komentar di atas query (Markdown atau SQL comment) |
-| **ER Diagram** | Developer baru join project | Mermaid `erDiagram` |
-| **Architecture Note** | Tech lead, fasilitator review | Markdown 300 kata |
+---
 
-Dokumentasi yang baik = developer berikutnya menghemat 2 jam yang Anda habiskan hari ini.
+## 7. Output Wajib: 3 Jenis Dokumentasi
 
-### 9. Anti-pattern Reading
+Akhir Sesi 5, Anda akan punya 3 hal:
+
+| Jenis | Apa Isinya | Untuk Siapa |
+|-------|------------|-------------|
+| **Docstring per query** | 4-5 baris penjelasan di atas query | Developer yang buka file ini besok |
+| **ER Diagram** | Gambar tabel + relasinya | Developer baru join project |
+| **Architecture Note** | 1 halaman: "project ini tentang apa, polanya gimana" | Tech lead, calon developer baru |
+
+Dokumentasi yang baik = developer berikutnya **menghemat 2 jam** yang Anda habiskan hari ini.
+
+---
+
+## 8. Jangan Lakukan Ini
 
 | ❌ Salah | ✅ Benar |
-|----------|---------|
-| "Jelaskan query ini" (vague) | Format 6 poin terstruktur |
-| Terima jawaban AI tanpa baca query | Baca dulu 2 menit, baru tanya |
-| Jawaban AI dipaste ke docstring as-is | Tulis ulang dengan kata-kata sendiri |
-| Lupa run query untuk verifikasi | Run + bandingkan sample output |
-| Skip ER diagram karena "sudah paham" | ER diagram = handover artifact |
+|---------|---------|
+| Langsung tanya AI tanpa baca dulu | Baca 2 menit, baru tanya |
+| "Jelaskan query ini" (vague) | Pakai format 6-poin |
+| Terima jawaban AI mentah | Verifikasi dengan jalankan query |
+| Copy-paste jawaban AI ke docstring | Tulis ulang dengan kata-kata Anda sendiri |
+| Skip ER diagram karena "sudah paham" | Tetap bikin — orang lain belum paham |
 
 ---
 
 ## Demo Live (15 menit)
 
-Skenario: query baru ditemukan di repo, tidak ada komentar.
+Buka `sql-playground/queries/sesi-05-explore/03_cohort_retention.sql`. Bareng fasilitator:
 
-Buka `sql-playground/queries/sesi-05-explore/03_cohort_retention.sql` di Cursor.
-
-Langkah:
-
-1. **Baca 2 menit**: identifikasi CTE, sketch mental.
-2. **Prompt format 6 poin** ke Cursor Chat.
-3. **Verifikasi**: run query → bandingkan klaim AI.
-4. **Iterasi**: tanya "kenapa PERIOD_DIFF dipakai bukan TIMESTAMPDIFF?".
-5. **Docstring**: tulis ringkasan 4-baris untuk file ini.
+1. Baca 2 menit
+2. Tanya AI pakai format 6-poin
+3. Jalankan query, bandingkan
+4. Tulis docstring 4 baris
 
 ---
 
-## Hands-on Latihan
+## Lanjut ke Latihan
 
-Lihat [`latihan-04-eksplorasi-codebase/`](./latihan-04-eksplorasi-codebase/).
-
----
-
-## Wrap-up & Q&A
-
-1. Pola reading "outer-in" — kapan tidak berlaku?
-2. Apa beda menjelaskan query untuk **junior** vs untuk **product manager**?
-3. Kalau AI memberi jawaban yang Anda yakin salah, apa langkah pertama?
+[`latihan-04-eksplorasi-codebase/`](./latihan-04-eksplorasi-codebase/)
 
 ---
 
-## Bacaan Lanjutan
+## Ringkasan 1 Halaman
 
-- *SQL Antipatterns* — Bill Karwin (chapter 1-3)
-- MySQL EXPLAIN documentation: <https://dev.mysql.com/doc/refman/8.0/en/explain.html>
-- *Use the Index, Luke!* — <https://use-the-index-luke.com/>
+- Developer profesional **80% waktu baca**, 20% nulis. Kuasai baca dulu.
+- Query dibaca **outer-in**: SELECT → FROM/JOIN → WHERE → GROUP → ORDER.
+- Kenali 5 pola umum (Top-N, group-by, funnel, bug data, pohon).
+- AI bagus jelasin **apa**, bukan **kenapa**. Gali kenapa dari rekan kerja.
+- Tanya AI selalu pakai **format terstruktur** (6 poin).
+- Verifikasi dengan **jalankan query** — AI sering ngarang.
+- Output Sesi 5: docstring per query + ER diagram + architecture note.

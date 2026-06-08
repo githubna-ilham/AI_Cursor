@@ -1,288 +1,292 @@
-# Sesi 8 (SQL) — Testing & Code Review
+# Sesi 8 (SQL) — Test untuk Data + Review Teman
 
 Durasi: 90 menit
-Modul: Hari 2 / Sesi 4 dari 4
 
-> Versi SQL dari `materi.md`. Test untuk SQL = assertion query (data integrity), bukan unit test imperatif.
+## Bayangkan Skenario Ini
 
----
+3 bulan lagi auditor datang. Mereka tanya: *"Bagaimana cara kalian memastikan data di database **konsisten**? Mis. setiap order yang berstatus 'delivered' pasti punya catatan shipment?"*
 
-## Learning Outcomes
+Kalau jawaban Anda *"...karena tim ngecek manual tiap bulan"* → auditor naik alis. Yang dia mau dengar: *"Kami punya 20 assertion query yang jalan tiap malam. Kalau ada yang fail, Slack channel kami langsung ber-ping."*
 
-Setelah sesi ini peserta mampu:
-
-1. Memahami **assertion query dbt-style**: 0 baris = pass, N baris = fail.
-2. Menulis assertion untuk **6 kategori invariant**: null, unique, FK orphan, range, enum, sum invariant, temporal.
-3. Mengonversi **business rule** (bahasa Indonesia) jadi assertion SQL dengan bantuan AI.
-4. Melakukan **peer code review** assertion menggunakan 7-point checklist.
-5. Mengenali **false positive** & **false negative** dalam test data integrity.
+Sesi 8 melatih cara bikin "**alarm otomatis untuk data**".
 
 ---
 
-## Konsep Inti
+## Yang Akan Anda Pelajari
 
-### 1. Test SQL Itu Apa?
+1. Apa itu **assertion query** dan kenapa beda dari test biasa
+2. **7 jenis aturan** yang sering perlu di-cek (NULL, unik, FK, dst.)
+3. Cara ubah **aturan bisnis** jadi SQL test
+4. Cara **review** assertion teman dengan checklist 7-poin
 
-Untuk kode aplikasi (Java/Python/JS), "test" = function call + assert hasil. Mudah.
+---
 
-Untuk SQL, lebih nuanced. Apa yang dites?
+## 1. Test untuk SQL Itu Beda
 
-| Jenis Test SQL | Tujuan | Tool |
-|----------------|--------|------|
-| **Data integrity** (paling penting) | Apakah data di DB konsisten dengan business rule? | Assertion query (dbt, manual) |
-| **Query correctness** | Apakah query return hasil yang diharapkan? | Test data + expected output (dbtest, sqitch verify) |
-| **Schema validity** | Apakah migration jalan tanpa error? | CI run `mysql < migration.sql` |
-| **Performance** | Apakah query memenuhi SLA latency? | EXPLAIN regression, slow query log |
+**Analogi**: di rumah Anda ada:
+- **CCTV** → memantau apakah pintu ditutup
+- **Alarm asap** → bunyi kalau ada kebakaran
+- **Sensor pintu** → notifikasi kalau pintu terbuka di malam hari
 
-Sesi 8 fokus pada **data integrity** — yang paling sering tidak ada, dan paling sering bikin bug production.
+Bukan "tes" dalam arti coba klik tombol. Tapi **monitor otomatis** yang nyala kalau ada yang aneh.
 
-### 2. Pola Assertion dbt-Style
+Untuk data, "test" yang sama:
 
-**Konvensi**: assertion = `SELECT` yang return **0 baris saat invariant terpenuhi**, **N baris (id + kolom relevant) saat ada pelanggar**.
+| Untuk Kode Aplikasi | Untuk Data SQL |
+|---------------------|----------------|
+| Klik tombol, cek hasil sesuai expectation | Jalankan query, cek tidak ada row yang melanggar aturan |
+| Pakai library (Jest, Pytest, JUnit) | Pakai assertion query (SELECT...) |
 
-Contoh: "stock tidak boleh negatif"
+Inti: kalau data **integritas terjamin**, query yang Anda tulis di Sesi 5-7 hasilnya bisa dipercaya.
+
+---
+
+## 2. Pola Assertion: 0 Baris = Aman
+
+**Konvensi sederhana**:
+- Tulis SELECT yang **return 0 baris kalau semua aman**
+- Kalau muncul N baris → ada N pelanggar, masing-masing punya ID untuk Anda investigate
+
+Contoh: "stok tidak boleh negatif".
 
 ```sql
--- assertion
-select id, sku, stock
-from products
-where stock < 0;
+SELECT id, sku, stock
+FROM products
+WHERE stock < 0;
 ```
 
 Jalankan:
-- 0 baris → **PASS** ✅
-- 3 baris → **FAIL**: ada 3 produk dengan stock negatif. Investigate ID-nya.
+- 0 baris → ✅ AMAN
+- 3 baris → ❌ Ada 3 produk dengan stok negatif, mis. id 7, 12, 15. Investigate kenapa.
 
-Wrapper untuk pass/fail otomatis:
+Pola ini **enak banget** karena:
+- Self-explanatory: query itu sendiri = dokumentasi aturannya
+- Mudah investigate: ID langsung muncul
+- Mudah otomatisasi: tinggal hitung `count(*)`, kalau > 0 berarti gagal
 
-```sql
-select count(*) as failed_rows from (
-  <assertion query>
-) t;
--- failed_rows = 0 → pass
-```
+---
 
-Kenapa pola ini bagus:
-- **Direkomendasikan dbt** (industry standard data engineering)
-- **Self-documenting**: query = test, hasil = list pelanggar (langsung bisa investigate)
-- **Composable**: bisa di-CI/CD dengan threshold (mis. "fail kalau failed_rows > 10")
+## 3. Tujuh Jenis Aturan Paling Sering
 
-### 3. Enam Kategori Invariant
+Ini "menu" aturan yang biasa dipakai. Hafalkan polanya.
 
-#### 3.1 NULL Check
-
-Kolom yang seharusnya tidak null:
+### Aturan 1: Kolom Tidak Boleh Kosong
 
 ```sql
--- T: products.price tidak boleh null
-select id, sku from products where price is null;
+-- T: products.price wajib ada
+SELECT id, sku FROM products WHERE price IS NULL;
 ```
 
-#### 3.2 Unique Check
-
-Kombinasi unik:
+### Aturan 2: Kombinasi Harus Unik
 
 ```sql
--- T: tidak boleh duplicate (customer_id, product_id) di reviews
-select customer_id, product_id, count(*) as dup
-from reviews
-group by customer_id, product_id
-having count(*) > 1;
+-- T: 1 customer hanya boleh 1 review per produk
+SELECT customer_id, product_id, COUNT(*) AS dup
+FROM reviews
+GROUP BY customer_id, product_id
+HAVING COUNT(*) > 1;
 ```
 
-#### 3.3 FK Orphan
-
-Setiap FK di child harus exist di parent:
+### Aturan 3: Foreign Key Tidak Boleh "Yatim"
 
 ```sql
--- T: setiap order_items.product_id harus exist di products
-select oi.id, oi.product_id
-from order_items oi
-left join products p on p.id = oi.product_id
-where p.id is null;
+-- T: setiap order_items.product_id harus ada di products
+SELECT oi.id, oi.product_id
+FROM order_items oi
+LEFT JOIN products p ON p.id = oi.product_id
+WHERE p.id IS NULL;
 ```
 
-#### 3.4 Range Check
-
-Nilai numerik dalam batas yang masuk akal:
+### Aturan 4: Nilai dalam Batas Wajar
 
 ```sql
 -- T: rating harus 1-5
-select id from reviews where rating < 1 or rating > 5;
+SELECT id FROM reviews WHERE rating < 1 OR rating > 5;
 ```
 
-#### 3.5 Enum / Allowed Values
-
-Kolom string yang hanya boleh nilai tertentu:
+### Aturan 5: Status Hanya Nilai yang Diizinkan
 
 ```sql
--- T: customer.tier hanya 4 nilai yang diizinkan
-select id, tier from customers
-where tier not in ('regular', 'silver', 'gold', 'platinum');
+-- T: tier customer cuma 4 nilai
+SELECT id, tier FROM customers
+WHERE tier NOT IN ('regular', 'silver', 'gold', 'platinum');
 ```
 
-#### 3.6 Sum Invariant
-
-Total di tabel A harus = total di tabel B (denormalized data consistency):
+### Aturan 6: Total di Tabel A Harus Sama dengan Total di Tabel B
 
 ```sql
--- T: orders.subtotal harus = sum(order_items.line_total) untuk order yang sama
-select o.id, o.subtotal, coalesce(sum(oi.line_total), 0) as detail_sum
-from orders o
-left join order_items oi on oi.order_id = o.id
-group by o.id, o.subtotal
-having o.subtotal <> coalesce(sum(oi.line_total), 0);
+-- T: subtotal order harus = jumlah line_total dari order_items
+SELECT o.id, o.subtotal, COALESCE(SUM(oi.line_total), 0) AS detail_sum
+FROM orders o
+LEFT JOIN order_items oi ON oi.order_id = o.id
+GROUP BY o.id, o.subtotal
+HAVING o.subtotal <> COALESCE(SUM(oi.line_total), 0);
 ```
 
-#### 3.7 Temporal Consistency (Bonus)
-
-Kolom waktu yang harus terurut:
+### Aturan 7: Waktu Harus Logis (Tidak Mundur)
 
 ```sql
--- T: delivered_at >= shipped_at
-select id from shipments
-where delivered_at is not null
-  and shipped_at  is not null
-  and delivered_at < shipped_at;
+-- T: tanggal kirim harus sebelum tanggal terima
+SELECT id FROM shipments
+WHERE delivered_at < shipped_at;
 ```
 
-### 4. Konversi Business Rule → SQL Assertion
+---
 
-Skill kunci di Sesi 8: ambil **business rule bahasa manusia**, jadikan **SQL assertion**.
+## 4. Cara Ubah Aturan Bisnis Jadi SQL
 
-Contoh rule:
-> "Customer dengan tier 'platinum' harus punya total spending 12 bulan terakhir minimal 2.5 juta."
+Ini skill paling penting di Sesi 8. Diberikan aturan bahasa Indonesia, Anda harus bisa ubah jadi assertion SQL.
 
-Langkah konversi:
+**Contoh aturan**:
+> "Customer dengan tier 'platinum' harus punya total belanja 12 bulan terakhir minimal 2,5 juta."
 
-1. **Tentukan invariant**: "Customer platinum yang spending 12-mo < 2.5jt = pelanggar."
-2. **Identifikasi tabel**: `customers` (tier) + `orders` (spending 12-mo).
+**Cara pikir**:
+
+1. **Apa pelanggarnya?**
+   → "Customer platinum yang spending 12-mo < 2,5 juta"
+
+2. **Tabel mana?**
+   → `customers` (untuk tier) + `orders` (untuk spending)
+
 3. **Tulis SELECT pelanggar**:
 
 ```sql
 -- T: platinum customer harus spending >= 2.5jt dalam 12 bulan terakhir
-select
-  c.id, c.name, c.tier,
-  coalesce(s.spending_12mo, 0) as spending_12mo
-from customers c
-left join (
-  select customer_id, sum(total) as spending_12mo
-  from orders
-  where status in ('paid', 'shipped', 'delivered')
-    and created_at >= date_sub(curdate(), interval 12 month)
-  group by customer_id
-) s on s.customer_id = c.id
-where c.tier = 'platinum'
-  and coalesce(s.spending_12mo, 0) < 2500000;
+SELECT c.id, c.name, c.tier,
+       COALESCE(s.spending_12mo, 0) AS spending_12mo
+FROM customers c
+LEFT JOIN (
+  SELECT customer_id, SUM(total) AS spending_12mo
+  FROM orders
+  WHERE status IN ('paid', 'shipped', 'delivered')
+    AND created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+  GROUP BY customer_id
+) s ON s.customer_id = c.id
+WHERE c.tier = 'platinum'
+  AND COALESCE(s.spending_12mo, 0) < 2500000;
 ```
 
-Prompt template untuk AI:
+**Template prompt untuk AI**:
 
 ```
 Bantu tulis assertion query SQL untuk MySQL.
 
-Konvensi: SELECT yang return 0 baris saat invariant terpenuhi,
-N baris (id + kolom relevant) saat ada pelanggar.
+Aturan: SELECT yang return 0 baris kalau aman, N baris (id + kolom
+relevan) kalau ada pelanggar.
 
 Schema: @file ../../sql-playground/00_schema.sql
 
-Invariant:
-"<paste rule dalam bahasa Indonesia>"
+Aturan bisnis yang harus di-cek:
+"<paste aturan dalam bahasa Indonesia>"
 
-Output:
+Beri saya:
 1. Query SELECT
-2. Komentar 1 baris di atas: deskripsi invariant
-3. Sample output saat ada pelanggar (1-2 baris contoh)
+2. Komentar 1 baris di atas: deskripsi aturan
+3. Contoh output kalau ada pelanggar (1-2 baris dummy)
 ```
 
-### 5. Code Review Assertion: 7-Point Checklist
+---
 
-Saat review assertion teman, periksa 7 hal ini:
+## 5. Review Assertion Teman: Checklist 7-Poin
 
-| # | Kriteria | Pertanyaan |
-|---|----------|------------|
-| 1 | **Komentar invariant jelas** | Apakah saya paham apa yang dites tanpa baca SQL? |
-| 2 | **Syntax-correct** | Apakah query bisa di-run? |
-| 3 | **Logika benar** | Dengan 2-3 row dummy, apakah assertion benar nangkap pelanggar? |
-| 4 | **Pola dbt-style** | Return 0 baris saat pass? |
-| 5 | **No false positive** | Apakah pelanggar yang muncul **memang** melanggar? (jangan strict berlebihan) |
-| 6 | **No false negative** | Apakah ada pelanggar yang seharusnya muncul tapi tidak? |
-| 7 | **Performance reasonable** | Tidak ada Cartesian / full scan tabel besar tanpa filter |
+Saat review assertion teman, cek 7 hal ini:
 
-### 6. False Positive vs False Negative
+| # | Yang dicek | Pertanyaan |
+|---|------------|------------|
+| 1 | Komentar jelas | Saya paham aturannya tanpa baca SQL? |
+| 2 | Syntax benar | Query-nya bisa di-run? |
+| 3 | Logika benar | Dengan 2-3 row dummy, apakah benar nangkap pelanggar? |
+| 4 | Pola 0-baris-aman | Return 0 kalau aman? |
+| 5 | Tidak false alarm | Pelanggar yang muncul **memang** melanggar? |
+| 6 | Tidak miss pelanggar | Ada pelanggar yang seharusnya muncul tapi tidak? |
+| 7 | Performance ok | Tidak ada full scan tabel besar |
 
-| Term | Artinya | Risiko |
+Tulis feedback **konkret**, bukan "good job":
+
+❌ "Bagus banget query-nya"
+✅ "Komentar aturan di poin #1 belum jelas — apa beda 'platinum' aktif vs non-aktif? Saran: tambah '(yang masih aktif berbelanja)' di komentar."
+
+---
+
+## 6. False Alarm vs Bug Lewat
+
+Dua tipe error assertion:
+
+| Tipe | Artinya | Risiko |
 |------|---------|--------|
-| **False Positive** | Assertion fail padahal data **benar** | Engineer chase bug yang tidak ada, lelah, mulai ignore alert |
-| **False Negative** | Assertion pass padahal data **salah** | Bug tidak ke-detect, masuk ke production |
+| **False Alarm** (false positive) | Assertion bilang "ada masalah" padahal datanya benar | Engineer capek kejar bug yang tidak ada → mulai ignore alert → bug nyata pun ke-skip |
+| **Bug Lewat** (false negative) | Assertion bilang "aman" padahal datanya salah | Bug masuk production, customer komplain duluan |
 
-Test data dummy untuk kalibrasi:
+Cara kalibrasi: **inject data dummy yang melanggar**, pastikan assertion benar nangkap.
 
 ```sql
--- Inject pelanggar dummy untuk test "stock tidak boleh negatif"
-update products set stock = -5 where id = 999;
--- run assertion → harus muncul id=999
--- restore: update products set stock = ... where id = 999;
+-- Inject pelanggar dummy
+UPDATE products SET stock = -5 WHERE id = 999;
+-- Run assertion → harus muncul id=999
+-- Cleanup
+UPDATE products SET stock = ... WHERE id = 999;
 ```
 
-### 7. Integrasi ke CI/CD
+Kalau assertion **tidak nangkap** → false negative. Perbaiki query.
 
-Assertion bisa dijalankan otomatis sebagai data quality gate:
+---
+
+## 7. Jalankan Otomatis (Bonus)
+
+Kalau project sudah serius, assertion bisa jalan otomatis tiap malam:
 
 | Tool | Cocok untuk |
 |------|-------------|
-| **dbt test** | Project dbt — assertion jadi `tests/*.sql` |
-| **Great Expectations** | Python-based, pakai DataFrame |
-| **Manual cron + script** | Setup minimal, full kontrol |
-| **GitHub Actions** | Run assertion di staging tiap deploy |
+| **Cron + shell script** | Setup minimal, kontrol penuh |
+| **dbt test** | Project pakai dbt — assertion jadi `tests/*.sql` |
+| **GitHub Actions** | Run tiap deploy ke staging |
+| **Great Expectations** | Python-based, untuk team data |
 
-Threshold umum:
-- **Hard fail**: `failed_rows > 0` untuk invariant kritis (mis. orphan FK)
-- **Warn only**: `failed_rows > N` untuk invariant tolerance (mis. subtotal mismatch acceptable < 1%)
+Aturan ringan:
+- **Hard fail** (block deploy): aturan kritis seperti FK orphan
+- **Warning saja**: aturan dengan tolerance (mis. subtotal mismatch < 1% bisa diterima)
 
-### 8. Anti-pattern Test SQL
+---
 
-| ❌ Hindari | ✅ Lakukan |
-|-----------|-----------|
-| Assertion tanpa komentar invariant | Komentar 1 baris di atas, jelaskan rule |
+## 8. Jangan Lakukan Ini
+
+| ❌ Salah | ✅ Benar |
+|---------|---------|
+| Assertion tanpa komentar | Komentar 1 baris di atas |
 | Test happy path saja | Inject dummy pelanggar untuk kalibrasi |
-| Assertion yang return semua kolom | Cukup id + kolom yang melanggar (investigate-friendly) |
-| Pakai SELECT * di assertion | Eksplisit kolom |
-| 1 assertion gigantis dengan banyak invariant | 1 assertion = 1 invariant (single responsibility) |
-| Skip review assertion teman | Peer review = catch false pos/neg |
+| Return semua kolom | Cukup ID + kolom yang melanggar |
+| 1 assertion gigantis (banyak aturan) | 1 assertion = 1 aturan |
+| Pakai `SELECT *` | Eksplisit kolom |
+| Skip peer review | Wajib — beda mata sering nangkap false positive |
 
 ---
 
 ## Demo Live (15 menit)
 
-Skenario: business rule baru dari product manager — "Order yang `cancelled` tidak boleh punya shipment `delivered`."
+Aturan baru dari PM: *"Order yang `cancelled` tidak boleh punya shipment yang sudah `delivered`."*
 
-Langkah:
+Bareng fasilitator:
 
-1. **Konversi rule**: identifikasi tabel (`orders` + `shipments`).
-2. **Prompt AI** dengan template.
-3. **Review query AI**: cek 7 point.
-4. **Test dengan dummy data**: insert order cancelled + shipment delivered → run assertion → harus muncul.
-5. **Cleanup dummy**, commit assertion.
-
----
-
-## Hands-on Latihan
-
-Lihat [`latihan-07-testing-review/`](./latihan-07-testing-review/).
+1. **Konversi aturan**: pelanggar = order cancelled + shipment delivered
+2. **Prompt AI** dengan template
+3. **Review query AI**: cek 7-poin
+4. **Test dengan dummy**: insert order cancelled + shipment delivered → run → harus muncul
+5. **Cleanup dummy**, commit
 
 ---
 
-## Wrap-up & Q&A
+## Lanjut ke Latihan
 
-1. Beda *data quality test* (yang kita pelajari) dengan *integration test*?
-2. Kapan assertion harus jadi **hard fail** vs **warning**?
-3. Kalau assertion lama mulai sering false positive, apa tindakan pertama?
+[`latihan-07-testing-review/`](./latihan-07-testing-review/)
 
 ---
 
-## Bacaan Lanjutan
+## Ringkasan 1 Halaman
 
-- dbt Tests docs: <https://docs.getdbt.com/docs/build/data-tests>
-- *Designing Data-Intensive Applications* — Martin Kleppmann (ch.10 — Reliability)
-- Great Expectations: <https://greatexpectations.io/>
+- **Test SQL = monitor otomatis untuk data**. Beda dari unit test aplikasi.
+- **Pola**: SELECT yang return **0 baris kalau aman**, N baris kalau ada pelanggar.
+- **7 jenis aturan**: NULL, unik, FK orphan, range, status enum, sum invariant, temporal.
+- **Konversi aturan bisnis → SQL**: cara pikir 3 langkah (pelanggar apa → tabel mana → SELECT).
+- **Review pakai checklist 7-poin**: komentar, syntax, logika, pola, false alarm, miss, performance.
+- **Kalibrasi**: inject dummy pelanggar untuk pastikan assertion benar nangkap.
+- **Otomatisasi**: cron / dbt / GitHub Actions kalau project sudah serius.

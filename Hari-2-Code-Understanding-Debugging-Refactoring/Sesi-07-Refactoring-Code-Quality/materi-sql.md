@@ -1,308 +1,320 @@
-# Sesi 7 (SQL) — Refactoring & Code Quality
+# Sesi 7 (SQL) — Merapikan Query yang Berantakan
 
 Durasi: 90 menit
-Modul: Hari 2 / Sesi 3 dari 4
 
-> Versi SQL dari `materi.md`. Konsep refactoring/code-smell sama, contoh & pattern khusus SQL.
+## Bayangkan Skenario Ini
 
----
+Anda buka file SQL yang dipakai bagian Finance. Query-nya 100 baris, subquery 3 lapis, sama nilai threshold ditulis 8 kali, susah dibaca.
 
-## Learning Outcomes
+Hasilnya **benar**. Tapi setiap kali ada perubahan kecil (mis. naikkan tier threshold), Anda harus edit 8 tempat. Sering lupa salah satu → bug.
 
-Setelah sesi ini peserta mampu:
-
-1. Mengidentifikasi **5 code smell SQL** umum: subquery hell, magic numbers, duplicate JOIN, repeated window, SELECT * wide.
-2. Menerapkan **refactoring behaviour-preserving** dengan disiplin baseline + diff.
-3. Memakai pola SQL: **CTE**, **named window**, **view**, **materialized table** sebagai alat refactor.
-4. Memberi AI **constraint eksplisit** supaya tidak rewrite total saat refactor.
-5. Mengukur dampak refactor: LOC, nesting depth, EXPLAIN simpler.
+Sesi 7 melatih cara **merapikan query** tanpa mengubah hasilnya. Istilah teknisnya: **refactoring**.
 
 ---
 
-## Konsep Inti
+## Yang Akan Anda Pelajari
 
-### 1. Refactor ≠ Rewrite
+1. Beda **refactor** vs **rewrite** (penting — sering tertukar)
+2. **5 ciri** query yang perlu dirapikan (code smell)
+3. **5 cara** merapikan (CTE, named window, view, dst.)
+4. Cara minta AI rapikan **tanpa mengubah hasilnya**
+
+---
+
+## 1. Refactor ≠ Rewrite
+
+**Analogi**: ruang tamu Anda berantakan. Ada 2 cara:
+
+| Pendekatan | Yang dilakukan | Risiko |
+|------------|----------------|--------|
+| **Refactor** | Rapikan: pindah sofa, gulung karpet, tata ulang | Rendah — barangnya sama, posisinya berubah |
+| **Rewrite** | Bongkar total, beli furniture baru | Tinggi — bisa kelupaan barang penting |
+
+Sama dengan query SQL:
 
 | Aspek | Refactor | Rewrite |
 |-------|----------|---------|
-| Behaviour | **Identik** (row, kolom, urutan) | Bisa berbeda |
-| Risiko | Rendah (dengan baseline) | Tinggi |
-| Reversible | Per langkah | Sulit |
-| Cocok untuk AI | Sangat — dengan constraint | Hanya bila spec lengkap |
+| Hasil query | **Sama persis** | Bisa beda |
+| Risiko | Rendah | Tinggi |
+| Cocok untuk AI | Sangat (dengan aturan) | Hanya kalau spec lengkap |
 
-**Aturan utama**: setelah refactor, query harus return **baris, kolom, urutan persis sama**. Tidak ada "lebih lengkap" atau "lebih ringkas tapi 1 kolom hilang".
+**Aturan utama**: setelah refactor, baris/kolom/urutan output query **harus identik**.
 
-### 2. Lima Code Smell SQL Paling Sering
+---
 
-#### Smell 1: Subquery Hell (3+ Lapis Nested)
+## 2. Lima Ciri Query Perlu Dirapikan
+
+Anggap "code smell" sebagai **bau tidak enak** — bukan langsung rusak, tapi tanda ada masalah.
+
+### Ciri 1: Subquery Bertingkat-Tingkat
 
 ```sql
--- Sulit dibaca, sulit di-debug
-select name, total_spending,
-  (select c2.tier from customers c2 where c2.id =
-     (select c3.id from customers c3 where c3.name = ...)
-  ) as tier
-from (select customer_id, sum(total) ... ) top;
+SELECT name,
+  (SELECT tier FROM customers WHERE id =
+     (SELECT id FROM customers WHERE name =
+        (SELECT name FROM customers WHERE ...)
+     )
+  ) AS tier
+FROM ...
 ```
 
-**Refactor**: pecah ke **CTE** (`WITH ... AS`). Tiap CTE = 1 step logis, namanya self-describing.
+**Masalah**: 3 lapis subquery untuk lookup sederhana. Susah dibaca, susah di-debug. Saat ada perubahan, harus telusuri tiga lapis.
+
+**Solusi**: pakai **CTE** (`WITH ... AS`). Anggap CTE seperti "variabel temporer untuk tabel".
 
 ```sql
-with top_spenders as (
-  select customer_id, sum(total) as total_spending
-  from orders
-  where status in ('paid', 'shipped', 'delivered')
-  group by customer_id
-  order by total_spending desc
-  limit 5
+WITH top_spenders AS (
+  SELECT customer_id, SUM(total) AS spending
+  FROM orders
+  WHERE status IN ('paid', 'shipped', 'delivered')
+  GROUP BY customer_id
 )
-select c.name, t.total_spending, c.tier
-from top_spenders t
-join customers c on c.id = t.customer_id;
+SELECT c.name, t.spending, c.tier
+FROM top_spenders t
+JOIN customers c ON c.id = t.customer_id;
 ```
 
-#### Smell 2: Magic Numbers Tersebar
+Lebih panjang sedikit, tapi **jauh** lebih mudah dibaca dan diubah.
+
+### Ciri 2: Angka Sama Ditulis Berkali-Kali
 
 ```sql
-case
-  when spending >= 5000000 then 'platinum'
-  when spending >= 2500000 then 'gold'
-  when spending >= 1000000 then 'silver'
-  else 'regular'
-end as suggested_tier,
-case
-  when tier='regular' and spending >= 1000000 then 'UPGRADE'  -- duplikasi!
-  when tier='silver'  and spending >= 2500000 then 'UPGRADE'
+CASE
+  WHEN spending >= 5000000 THEN 'platinum'
+  WHEN spending >= 2500000 THEN 'gold'
+  WHEN spending >= 1000000 THEN 'silver'
+  ELSE 'regular'
+END,
+CASE
+  WHEN tier='regular' AND spending >= 1000000 THEN 'UPGRADE'  -- 1jt ulang
+  WHEN tier='silver'  AND spending >= 2500000 THEN 'UPGRADE'  -- 2,5jt ulang
+  WHEN tier='gold'    AND spending >= 5000000 THEN 'UPGRADE'  -- 5jt ulang
   ...
 ```
 
-Threshold `5jt/2.5jt/1jt` muncul 8 kali. Ubah 1, harus ubah 8. Mudah inkonsisten.
+Threshold 5jt/2.5jt/1jt muncul **8 kali**. Tahun depan tim marketing minta naikkan jadi 7,5jt/3,5jt/1,5jt → harus edit 8 tempat. Lupa satu = bug.
 
-**Refactor**: extract ke CTE constant atau JOIN dengan tabel `thresholds`.
+**Solusi**: buat CTE constant.
 
 ```sql
-with thresholds(tier, min_spending) as (
-  values ('platinum', 5000000), ('gold', 2500000), ('silver', 1000000), ('regular', 0)
+WITH thresholds AS (
+  SELECT 'platinum' AS tier, 5000000 AS min_spending UNION ALL
+  SELECT 'gold',     2500000 UNION ALL
+  SELECT 'silver',   1000000 UNION ALL
+  SELECT 'regular',  0
 )
--- atau di MySQL:
-with thresholds as (
-  select 'platinum' as tier, 5000000 as min_spending union all
-  select 'gold',     2500000 union all
-  select 'silver',   1000000 union all
-  select 'regular',  0
+-- threshold cuma di 1 tempat. Ubah sekali, beres.
+```
+
+### Ciri 3: Pola JOIN Diulang-Ulang
+
+```sql
+SELECT 'revenue', city, SUM(oi.line_total)
+FROM customers c JOIN orders o ON ... JOIN order_items oi ON ...
+WHERE o.status IN ('paid','shipped','delivered') AND o.created_at >= '2026-01-01'
+GROUP BY city
+
+UNION ALL
+
+SELECT 'order_count', city, COUNT(DISTINCT o.id)
+FROM customers c JOIN orders o ON ... JOIN order_items oi ON ...
+WHERE o.status IN ('paid','shipped','delivered') AND o.created_at >= '2026-01-01'  -- SAMA persis
+GROUP BY city
+-- ...diulang 3-4 kali
+```
+
+JOIN + filter sama dicopy-paste 3x. Ubah satu, harus ubah 3.
+
+**Solusi**: bikin CTE base, hitung semua metric dari sana sekaligus.
+
+```sql
+WITH base AS (
+  SELECT c.city, o.id AS order_id, c.id AS customer_id, oi.line_total
+  FROM customers c
+  JOIN orders o ON o.customer_id = c.id
+  JOIN order_items oi ON oi.order_id = o.id
+  WHERE o.status IN ('paid','shipped','delivered')
+    AND o.created_at >= '2026-01-01'
 )
-select c.name, c.tier, s.spending,
-  (select tier from thresholds where s.spending >= min_spending order by min_spending desc limit 1) as suggested_tier
-from customers c
-left join spending s on s.customer_id = c.id;
+SELECT city,
+  SUM(line_total)            AS revenue,
+  COUNT(DISTINCT order_id)   AS order_count,
+  COUNT(DISTINCT customer_id) AS unique_customers
+FROM base
+GROUP BY city;
 ```
 
-#### Smell 3: Duplicate JOIN Base di UNION
+Filter cuma 1 tempat. Output sama persis.
+
+### Ciri 4: `SELECT *` Banyak Tabel
 
 ```sql
-select 'gross_revenue', city, sum(oi.line_total) from customers c
-  join orders o on o.customer_id = c.id
-  join order_items oi on oi.order_id = o.id
-  where o.status in (...) and o.created_at >= '2026-01-01'
-  group by city
-union all
-select 'order_count', city, count(distinct o.id) from customers c
-  join orders o on o.customer_id = c.id
-  join order_items oi on oi.order_id = o.id
-  where o.status in (...) and o.created_at >= '2026-01-01'  -- SAMA persis
-  group by city
-union all
-select 'unique_customers', city, count(distinct c.id) from customers c
-  -- ... pola sama lagi
+SELECT o.*, c.*, oi.*, p.*, s.*
+FROM orders o LEFT JOIN customers c ON ... LEFT JOIN order_items oi ON ...
+LEFT JOIN payments p ON ... LEFT JOIN shipments s ON ...
+WHERE o.id = 14;
 ```
 
-JOIN base + filter sama diulang 3x. Ubah satu, harus ubah 3.
+**Masalah**:
+1. **40+ kolom** keluar, banyak yang tidak Anda perlukan
+2. Nama kolom **ambigu** — ada `status` di orders, payments, shipments. Mau pakai yang mana?
+3. Kalau ada 2 payment per order → baris jadi duplicate
 
-**Refactor**: CTE shared + aggregate dengan `CASE WHEN` untuk pivot, atau gunakan 1 base CTE lalu 3 SELECT dari sana.
+**Solusi**: pilih kolom eksplisit + alias jelas.
 
 ```sql
-with base as (
-  select c.city, o.id as order_id, c.id as customer_id, oi.line_total
-  from customers c
-  join orders o on o.customer_id = c.id
-  join order_items oi on oi.order_id = o.id
-  where o.status in ('paid','shipped','delivered')
-    and o.created_at >= '2026-01-01'
-)
-select city,
-  sum(line_total)          as gross_revenue,
-  count(distinct order_id) as order_count,
-  count(distinct customer_id) as unique_customers
-from base
-group by city;
+SELECT
+  o.id             AS order_id,
+  o.status         AS order_status,
+  o.total          AS order_total,
+  c.name           AS customer_name,
+  p.status         AS payment_status,
+  s.status         AS shipment_status
+FROM orders o
+LEFT JOIN customers c ON c.id = o.customer_id
+LEFT JOIN payments p  ON p.order_id = o.id
+LEFT JOIN shipments s ON s.order_id = o.id
+WHERE o.id = 14;
 ```
 
-#### Smell 4: Window Expression Diulang
+Sekarang jelas mana `status` yang dipakai.
+
+### Ciri 5: Rumus Window Ditulis Berkali-Kali
 
 ```sql
-sum(sum(o.total)) over (partition by c.id order by month) as running_total,
-avg(sum(o.total)) over (partition by c.id order by month) as running_avg,
-count(*)          over (partition by c.id order by month) as months_so_far
+SUM(...)   OVER (PARTITION BY customer ORDER BY month)
+AVG(...)   OVER (PARTITION BY customer ORDER BY month)
+COUNT(...) OVER (PARTITION BY customer ORDER BY month)
+-- frame "partition by customer order by month" ditulis 3 kali
 ```
 
-Frame window `partition by c.id order by month` ditulis 3-5x. Verbose, mudah salah saat ubah.
-
-**Refactor**: pakai **named window**.
+**Solusi**: pakai **named window**.
 
 ```sql
-select
-  sum(sum(o.total)) over w as running_total,
-  avg(sum(o.total)) over w as running_avg,
-  count(*) over w          as months_so_far
-from ...
-window w as (partition by c.id order by month);
+SUM(...)   OVER w,
+AVG(...)   OVER w,
+COUNT(...) OVER w
+...
+WINDOW w AS (PARTITION BY customer ORDER BY month);
 ```
 
-#### Smell 5: SELECT * Wide + Nama Ambigu
+Frame cuma di-define 1 kali. Ubah sekali, semua ikut.
+
+---
+
+## 3. Aturan Emas Refactor Aman
+
+**Refactor query yang sudah jalan = berbahaya kalau ceroboh.** Ikuti urutan ini:
+
+```
+1. BASELINE      → run query asli, simpan hasilnya
+2. IDENTIFY      → tahu code smell apa yang mau diatasi
+3. REFACTOR      → ubah strukturnya
+4. VERIFY        → bandingkan hasil baru vs baseline
+5. COMMIT        → 1 smell = 1 commit
+```
+
+Cara cek **hasil identik**:
 
 ```sql
-select o.*, c.*, oi.*, p.*, s.*
-from orders o
-left join customers c on ...
-left join order_items oi on ...
-left join payments p on ...
-left join shipments s on ...
-where o.id = 14;
+-- Test 1: jumlah baris sama
+SELECT COUNT(*) FROM (<query asli>) t;    -- mis. 5
+SELECT COUNT(*) FROM (<query refactor>) t; -- harus 5
+
+-- Test 2: total angka utama sama
+SELECT SUM(revenue) FROM (<query asli>) t;    -- mis. 12_500_000
+SELECT SUM(revenue) FROM (<query refactor>) t; -- harus 12_500_000
+
+-- Test 3: 3 baris pertama identik (manual cek)
 ```
 
-Masalah:
-1. 40+ kolom output, banyak tidak dipakai
-2. Nama `status` ambigu (ada di orders, payments, shipments)
-3. Subtle bug: kalau `payments` lebih dari 1 per order, output row duplicate
+Kalau ada beda → **rollback**, refactor ulang lebih hati-hati.
 
-**Refactor**: eksplisit kolom + alias jelas + pakai LATERAL/window untuk pick 1 baris.
+---
 
-```sql
-select
-  o.id              as order_id,
-  o.status          as order_status,
-  o.total           as order_total,
-  c.name            as customer_name,
-  c.email           as customer_email,
-  latest_p.method   as payment_method,
-  latest_p.status   as payment_status,
-  s.tracking_no,
-  s.status          as shipment_status
-from orders o
-join customers c on c.id = o.customer_id
-left join lateral (
-  select method, status from payments where order_id = o.id order by created_at desc limit 1
-) latest_p on true
-left join shipments s on s.order_id = o.id
-where o.id = 14;
-```
+## 4. Cara Minta AI Rapikan (Tanpa Liar)
 
-### 3. Pola Refactor SQL
+**Anti-pattern**:
+> "Bersihkan query ini" → AI rewrite total, hasilnya mungkin beda.
 
-| Pola | Kapan Pakai | Trade-off |
-|------|-------------|-----------|
-| **CTE (`WITH ... AS`)** | Ada step logis berlapis | Sedikit overhead vs subquery (umumnya dapat re-write oleh optimizer) |
-| **Named window** | Frame window sama dipakai 2+ tempat | Hanya untuk MySQL 8+ |
-| **View** | Query yang sama dipakai banyak tempat di app | Bisa hide complexity dari caller |
-| **Materialized table / summary** | Aggregate mahal sering di-query | Stale data, perlu refresh |
-| **Index** | Performance | Slow write, butuh storage |
-
-### 4. Disiplin Behaviour-Preserving
-
-Aturan emas refactor:
-
-1. **Baseline dulu**. Run query asli, simpan output (screenshot atau export CSV).
-2. **1 smell per commit**. Jangan rapikan semua sekaligus.
-3. **Diff verifikasi**. Bandingkan:
-   - `COUNT(*)` before vs after
-   - `SUM(...)` kolom numerik utama before vs after
-   - Spot-check 3 baris pertama
-4. **Edge case**. Test dengan 0 row, NULL, banyak row.
-5. **Commit message jelas**. `refactor: subquery hell → CTE in 01_top_spenders.sql`.
-
-### 5. Pakai AI sebagai Refactor Accelerator
-
-Prompt dengan **constraint eksplisit** supaya AI tidak liar:
+**Pola benar — kasih aturan**:
 
 ```
 @file 01_subquery_hell.sql
 
-Refactor query ini dengan constraint:
-1. Behaviour HARUS identik (output baris, kolom, urutan sama persis)
-2. Target style: CTE (WITH ... AS) — bukan subquery scalar
+Refactor query ini dengan aturan:
+1. Hasil HARUS sama persis (baris, kolom, urutan identik)
+2. Target: pakai CTE (WITH ... AS)
 3. Tidak boleh ubah WHERE clause
 4. Tidak boleh ubah ORDER BY atau LIMIT
 5. Tidak boleh tambah/hapus kolom output
 
-Berikan:
+Beri saya:
 - Query versi refactor
-- 2 query test: COUNT(*) before vs after, SUM(...) kolom numerik
+- 2 query test untuk verifikasi: COUNT(*) dan SUM(...)
 - 1 paragraf: kenapa versi baru lebih baik
 ```
 
-Constraint #1 dan #5 paling penting — itu yang sering AI langgar.
+Aturan #1 dan #5 **paling penting** — itu yang sering AI langgar.
 
-### 6. Mengukur Dampak Refactor
+---
 
-| Metrik | Sebelum | Sesudah | Cara |
-|--------|---------|---------|------|
-| LOC query | — | — | `wc -l` |
-| Nesting depth | — | — | hitung level `(` terdalam |
-| Kolom output | — | — | `SHOW COLUMNS FROM result` (atau hitung manual) |
-| EXPLAIN type | — | — | `EXPLAIN <query>` |
-| Eksekusi (ms) | — | — | `EXPLAIN ANALYZE` |
+## 5. Ukur Dampaknya
 
-Refactor yang baik: LOC ↓ atau ≈ sama, nesting ↓, EXPLAIN tidak lebih buruk.
+Refactor yang baik bisa diukur:
 
-Refactor yang **buruk** secara metric:
-- LOC naik banyak (tanpa alasan kuat seperti readability dramatis)
-- EXPLAIN jadi `ALL` padahal sebelumnya `ref`
-- Hasil beda (behaviour berubah)
+| Yang diukur | Sebelum | Sesudah |
+|-------------|---------|---------|
+| Jumlah baris kode | 30 | 18 |
+| Lapis subquery | 3 | 0 (pakai CTE) |
+| Repetisi nilai/pola | 8 tempat | 1 tempat |
+| Kecepatan EXPLAIN | (sama atau lebih cepat) | |
+| Mudah dibaca? | (rasakan sendiri setelah 1 hari) | |
 
-### 7. Anti-pattern Refactor
+Refactor **buruk** kalau:
+- Baris kode naik dramatis tanpa alasan kuat
+- EXPLAIN jadi lebih lambat
+- Hasil beda (artinya: itu bukan refactor, itu rewrite)
 
-| ❌ Hindari | ✅ Lakukan |
-|-----------|-----------|
-| "Bersihkan query ini" (vague) | Constraint eksplisit |
-| Refactor + ubah behaviour sekaligus | Pisah jadi 2 commit |
-| Tidak baca diff AI | Selalu review baris per baris |
-| Apply ke file tanpa baseline | Run baseline dulu, simpan output |
-| Mengganti CTE jadi subquery "lebih ringkas" | Trade-off readability vs LOC: readability menang |
+---
+
+## 6. Jangan Lakukan Ini
+
+| ❌ Salah | ✅ Benar |
+|---------|---------|
+| "Bersihkan query ini" (vague) | Kasih aturan eksplisit |
+| Refactor + ubah behavior sekaligus | Pisah jadi 2 commit |
+| Tidak run baseline | Wajib run + simpan output |
+| Skip review diff AI | Baca diff baris per baris |
+| Refactor 5 hal sekaligus | 1 smell = 1 commit |
+| Ganti CTE jadi subquery "supaya ringkas" | Readability > LOC |
 
 ---
 
 ## Demo Live (15 menit)
 
-Skenario: query `01_subquery_hell.sql` di review meeting di-flag jelek.
+Buka `sql-playground/queries/sesi-07-refactor/01_subquery_hell.sql`. Bareng fasilitator:
 
-Langkah:
-
-1. **Baseline**: run, catat 5 baris hasil + sum total_spending.
-2. **Identifikasi smell** (AI prompt): list smell-nya.
-3. **Refactor 1**: subquery scalar `tier` → JOIN dengan customers di outer.
-4. **Verify**: COUNT, SUM, spot check 5 baris match.
-5. **Commit**: `refactor(01): subquery scalar tier → join`.
-6. **Refactor 2**: derived table → CTE.
-7. **Verify lagi**, commit.
+1. **Baseline**: run, catat 5 baris hasil + sum kolom revenue
+2. **Identify**: subquery scalar 3 lapis untuk lookup tier
+3. **Refactor**: extract jadi CTE
+4. **Verify**: COUNT + SUM match
+5. **Commit**: `refactor(01): subquery → CTE`
+6. **Refactor lagi** kalau masih ada smell
 
 ---
 
-## Hands-on Latihan
+## Lanjut ke Latihan
 
-Lihat [`latihan-06-refactor-legacy/`](./latihan-06-refactor-legacy/).
-
----
-
-## Wrap-up & Q&A
-
-1. Beda CTE vs subquery dari sisi optimizer — kapan beda performance?
-2. Apa beda "smelly but works" vs "needs refactor now"?
-3. Bagaimana negotiate dengan PM kalau refactor butuh sprint?
+[`latihan-06-refactor-legacy/`](./latihan-06-refactor-legacy/)
 
 ---
 
-## Bacaan Lanjutan
+## Ringkasan 1 Halaman
 
-- *Refactoring* — Martin Fowler (bab umum, tidak SQL-specific tapi prinsipnya berlaku)
-- *SQL Antipatterns* — Bill Karwin (Part III: Query Antipatterns)
-- *Modern SQL* — Markus Winand <https://modern-sql.com/>
+- **Refactor = rapikan tanpa ubah hasil**. Rewrite = bongkar total.
+- **5 code smell SQL**: subquery hell, magic numbers, duplicate JOIN, SELECT *, repeated window.
+- **5 cara merapikan**: CTE, named window, view, eksplisit kolom, threshold constant.
+- **Urutan kerja**: baseline → identify → refactor → verify → commit.
+- Minta AI dengan **aturan eksplisit**, terutama "hasil HARUS sama persis".
+- Ukur: LOC turun, nesting turun, EXPLAIN tidak lebih buruk, hasil identik.

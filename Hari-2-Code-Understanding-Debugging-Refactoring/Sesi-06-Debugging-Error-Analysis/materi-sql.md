@@ -1,274 +1,265 @@
-# Sesi 6 (SQL) — Debugging & Error Analysis
+# Sesi 6 (SQL) — Cari Bug di Query
 
 Durasi: 90 menit
-Modul: Hari 2 / Sesi 2 dari 4
 
-> Versi SQL dari `materi.md`. Fokus debugging query salah hasil / lambat menggunakan AI + tools native MySQL.
+## Bayangkan Skenario Ini
 
----
+Senin pagi, QA team kirim chat: *"Laporan revenue customer bulan Mei salah. Andi muncul 4,5 juta, padahal dari catatan manual cuma 1,25 juta. Tolong cek."*
 
-## Learning Outcomes
-
-Setelah sesi ini peserta mampu:
-
-1. Membedakan **symptom** (gejala) vs **root cause** (penyebab) saat query salah.
-2. Mengenali **5 trap SQL** paling sering: NULL, BETWEEN datetime, AND/OR precedence, JOIN explosion, GROUP BY ambiguity.
-3. Menerapkan **workflow debug 5 langkah** tanpa terburu-buru minta AI fix.
-4. Memakai `EXPLAIN` sebagai diagnose tool *sebelum* tanya AI.
-5. Memberi AI prompt diagnose-first, bukan fix-first (anti-pattern utama).
+Anda buka query yang dipakai laporan itu. Query-nya 30 baris, gabungan 4 tabel. Mau langsung minta AI fix? Tunggu dulu — itu **anti-pattern utama** yang akan kita pelajari hari ini.
 
 ---
 
-## Konsep Inti
+## Yang Akan Anda Pelajari
 
-### 1. Anatomi Bug SQL
+1. Bedakan **gejala** (symptom) vs **penyebab** (root cause)
+2. Kenali **5 jebakan SQL** yang paling sering bikin bug
+3. Urutan kerja debug yang anti panik
+4. Cara minta AI **diagnose dulu**, bukan langsung fix
 
-Bug SQL biasanya muncul lewat **3 jenis symptom**:
+---
 
-| Symptom | Contoh | Penyebab Tipikal |
-|---------|--------|------------------|
-| **Hasil salah jumlah** | Total 4.5jt padahal hand-count 1.25jt | JOIN explosion, duplicate row |
-| **Hasil hilang** | "Customer baru tidak muncul" | `NOT IN` NULL trap, JOIN type salah |
-| **Performance** | Query timeout, EXPLAIN show full scan | Missing index, bad query plan |
+## 1. Bug = Penyakit. Symptom ≠ Penyebab
 
-Penting: **symptom yang sama bisa punya penyebab beda**. "Total inflated" bisa karena JOIN explosion ATAU karena timezone shift ATAU karena duplicate insert. Diagnose dulu, baru fix.
+**Analogi**: Anda sakit kepala. Itu **symptom** (gejala). Penyebabnya bisa macam-macam:
+- Kurang tidur
+- Dehidrasi
+- Stres
+- Tekanan darah tinggi
+- Tumor (jarang, tapi mungkin)
 
-### 2. Lima Trap SQL Paling Sering
+Beda penyebab → beda obat. Kasih obat asal-asalan = bahaya.
 
-#### Trap 1: NULL Handling (`NOT IN` + NULL = 0 rows)
+Sama dengan bug SQL. Satu gejala bisa banyak penyebab:
+
+| Gejala | Penyebab Mungkin |
+|--------|------------------|
+| "Total revenue 4,5jt padahal harusnya 1,25jt" | Join explosion, duplicate data, salah filter tanggal |
+| "Customer baru tidak muncul di daftar" | NULL trap, JOIN type salah, filter ketat |
+| "Query timeout" | Tidak pakai index, full scan tabel besar |
+
+**Aturan**: cari penyebab dulu. Jangan langsung tambal.
+
+---
+
+## 2. Lima Jebakan SQL Paling Sering
+
+Ini "anak nakal" yang sering bikin bug. Hafalkan, supaya saat lihat lagi langsung tahu.
+
+### Jebakan 1: NULL bikin `NOT IN` jadi Aneh
 
 ```sql
--- BUG: selalu return 0 baris kalau orders.customer_id punya NULL
-select * from customers
-where id not in (select customer_id from orders);
+-- Tujuan: cari customer yang belum pernah order
+SELECT * FROM customers
+WHERE id NOT IN (SELECT customer_id FROM orders);
+-- Hasil: 0 baris (selalu!) padahal jelas ada customer baru
 ```
 
-Sebab: `NOT IN (NULL, 1, 2)` → SQL evaluasi `NOT IN (..., NULL)` = UNKNOWN → row di-exclude.
+**Kenapa salah**: kalau salah satu `customer_id` di orders ada yang NULL, `NOT IN (1, 2, NULL)` jadi "tidak ada yang lulus filter". Aneh tapi nyata.
 
-Fix:
+**Fix**:
 ```sql
-where id not in (
-  select customer_id from orders where customer_id is not null
+WHERE NOT EXISTS (
+  SELECT 1 FROM orders WHERE customer_id = customers.id
 )
--- atau pakai NOT EXISTS (lebih NULL-safe):
-where not exists (
-  select 1 from orders o where o.customer_id = customers.id
-)
 ```
 
-#### Trap 2: `BETWEEN '...' AND '2026-01-31'` Exclude Jam > 00
+### Jebakan 2: `BETWEEN '...' AND '2026-01-31'` Buang Jam Sore
 
 ```sql
--- BUG: order tanggal 2026-01-31 15:30 tidak muncul
-where created_at between '2026-01-01' and '2026-01-31'
+-- Tujuan: order bulan Januari
+WHERE created_at BETWEEN '2026-01-01' AND '2026-01-31'
+-- Hasil: order tanggal 31 Jan jam 15:30 TIDAK muncul!
 ```
 
-Sebab: `'2026-01-31'` di-cast jadi `'2026-01-31 00:00:00'`. Apapun > 00:00 di hari itu tidak masuk.
+**Kenapa salah**: `'2026-01-31'` di-anggap `'2026-01-31 00:00:00'`. Apa pun yang lewat jam 00:00 hari itu, tidak masuk.
 
-Fix:
+**Fix**:
 ```sql
-where created_at >= '2026-01-01'
-  and created_at <  '2026-02-01'
--- atau:
-where date(created_at) between '2026-01-01' and '2026-01-31'
--- (tapi date() bikin index tidak terpakai)
+WHERE created_at >= '2026-01-01'
+  AND created_at <  '2026-02-01'   -- pakai awal bulan berikutnya
 ```
 
-#### Trap 3: Operator Precedence `AND` > `OR`
+### Jebakan 3: `AND` vs `OR` — Mana Duluan?
 
 ```sql
--- BUG: filter "paid atau shipped DAN total>1jt" tidak bekerja
-where status = 'paid' or status = 'shipped' and total > 1000000
+-- Tujuan: status paid ATAU shipped, DAN total > 1jt
+WHERE status = 'paid' OR status = 'shipped' AND total > 1000000
+-- Hasil: ikut muncul order paid kecil-kecil!
 ```
 
-Sebab: SQL eval `AND` dulu → `status='paid' OR (status='shipped' AND total>1jt)`.
+**Kenapa salah**: SQL eksekusi `AND` dulu. Jadinya: *"paid (semua) OR (shipped DAN total > 1jt)"*. Bukan yang Anda mau.
 
-Fix:
+**Fix**: kasih kurung.
 ```sql
-where (status = 'paid' or status = 'shipped')
-  and total > 1000000
--- atau lebih bersih:
-where status in ('paid', 'shipped')
-  and total > 1000000
+WHERE (status = 'paid' OR status = 'shipped')
+  AND total > 1000000
 ```
 
-#### Trap 4: JOIN Explosion (Multiple LEFT JOIN tanpa Aggregate)
+### Jebakan 4: JOIN "Meledak" Bikin Angka 2x Lipat
 
 ```sql
--- BUG: revenue per customer membengkak
-select c.id, sum(o.total)
-from customers c
-left join orders o    on o.customer_id = c.id
-left join payments p  on p.order_id    = o.id  -- ⚠️ 1 order bisa banyak payment
-left join shipments s on s.order_id    = o.id  -- ⚠️ idem
-group by c.id;
-```
-
-Sebab: 1 order yang punya 2 payment + 1 shipment → JOIN explode jadi 2 baris → `sum(o.total)` di-count 2x.
-
-Fix: aggregate dulu sebelum join, atau jangan JOIN payments/shipments kalau tidak perlu kolom dari sana.
-
-```sql
-select c.id, sum(o.total)
-from customers c
-left join orders o on o.customer_id = c.id
-group by c.id;
-```
-
-#### Trap 5: `GROUP BY` Ambiguity (MySQL Permissive Mode)
-
-```sql
--- BUG: name yang ditampilkan tidak konsisten antar query run
-select customer_id, name, sum(total)
-from orders o
-join customers c on c.id = o.customer_id
-group by customer_id;
--- `name` tidak ada di GROUP BY!
-```
-
-Sebab: MySQL non-strict mode mengizinkan ini, tapi `name` yang muncul = random dari salah satu baris match.
-
-Fix: tambah `name` ke GROUP BY, atau pakai `MIN(name)` / `ANY_VALUE(name)`.
-
-```sql
-select customer_id, c.name, sum(total)
-from orders o
-join customers c on c.id = o.customer_id
-group by customer_id, c.name;
-```
-
-### 3. Workflow Debug 5 Langkah
-
-```mermaid
-flowchart LR
-    A[Reproduce] --> B[Isolate]
-    B --> C[Hypothesize]
-    C --> D[Fix Minimal]
-    D --> E[Verify]
-    E -->|Tidak match| C
-    E -->|Match| F[Commit + Catat]
-```
-
-1. **Reproduce**: jalankan query persis, lihat output. Catat number/symptom.
-2. **Isolate**: kecilkan query — kalau bug muncul di 5-tabel-join, coba 2 tabel saja. Sering bug muncul di JOIN tertentu.
-3. **Hypothesize**: tulis 1-2 kalimat dugaan penyebab. **Sebelum** lihat fix.
-4. **Fix minimal**: ubah baris yang relevan saja. Jangan rewrite.
-5. **Verify**: bandingkan output sebelum vs sesudah. Test edge case lain.
-
-Aturan: **1 bug = 1 commit**. Kalau Anda fix 2 hal sekaligus, sulit ke-track mana yang sebenarnya menyelesaikan masalah.
-
-### 4. `EXPLAIN` sebagai Diagnose Tool
-
-Sebelum tanya AI "kenapa query saya lambat", run `EXPLAIN` dulu:
-
-```sql
-EXPLAIN
-SELECT c.name, SUM(o.total)
+-- Tujuan: total revenue per customer
+SELECT c.id, SUM(o.total)
 FROM customers c
-JOIN orders o ON o.customer_id = c.id
-WHERE o.created_at >= '2026-01-01'
-GROUP BY c.name;
+LEFT JOIN orders o    ON o.customer_id = c.id
+LEFT JOIN payments p  ON p.order_id    = o.id   -- 1 order bisa banyak payment
+LEFT JOIN shipments s ON s.order_id    = o.id   -- 1 order bisa banyak shipment
+GROUP BY c.id;
+-- Hasil: angka 2x lipat untuk customer dengan order yang punya 2 payment
 ```
 
-Output yang penting:
+**Kenapa salah**: 1 order yang punya 2 payment + 1 shipment → JOIN bikin baris jadi 2 → `SUM(total)` di-count 2x.
 
-| Kolom | Yang Dicari |
-|-------|-------------|
-| `type` | `ALL` (full scan) = jelek; `ref`/`eq_ref` = bagus |
-| `rows` | Estimate baris diproses. Kalau jutaan padahal expect ratusan → ada masalah |
-| `Extra` | "Using temporary", "Using filesort" = mahal |
-| `key` | NULL = tidak pakai index | yang dipakai = bagus |
+**Fix**: jangan JOIN tabel yang tidak Anda butuhkan kolomnya.
+```sql
+SELECT c.id, SUM(o.total)
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+GROUP BY c.id;
+```
 
-Sering `EXPLAIN` jawab pertanyaan tanpa AI: "Index `idx_orders_created` tidak terpakai karena Anda pakai `date()` di WHERE".
+### Jebakan 5: `GROUP BY` Lupa Sebut Kolom
 
-### 5. Pakai AI sebagai Diagnose Partner
+```sql
+SELECT customer_id, name, SUM(total)
+FROM orders o JOIN customers c ON ...
+GROUP BY customer_id;   -- `name` tidak ada di GROUP BY
+```
 
-**Anti-pattern utama**: "Fix query ini" — AI akan rewrite total tanpa Anda paham penyebab.
+**Kenapa salah**: MySQL versi longgar bolehkan ini, tapi `name` yang muncul = **acak** dari salah satu baris. Hari ini "Andi", besok bisa beda.
 
-**Pola yang benar**: minta diagnose dulu, fix kemudian.
+**Fix**: sebutkan semua kolom non-aggregate di GROUP BY.
+```sql
+GROUP BY customer_id, c.name
+```
+
+---
+
+## 3. Urutan Kerja Debug (5 Langkah Anti-Panik)
 
 ```
-Query berikut hasilnya salah. Symptom: <X>.
+1. REPRODUCE  → jalankan query, lihat hasil aktual
+2. ISOLATE    → kecilkan query (hapus JOIN/filter satu-satu)
+3. HYPOTHESIS → tebak penyebab (tulis 1 kalimat)
+4. FIX MINI   → ubah baris yang salah saja
+5. VERIFY     → run lagi, bandingkan hasil
+```
+
+**Penting**: jangan loncat langkah. Banyak orang loncat ke langkah 4 (fix), tanpa hypothesis. Hasilnya: fix berhasil tapi tidak tahu **kenapa berhasil**. Bug akan muncul lagi.
+
+---
+
+## 4. Cara Minta AI: Diagnose Dulu, Fix Kemudian
+
+**Anti-pattern utama**:
+> "Fix query ini" → AI rewrite total, Anda tidak belajar apa-apa.
+
+**Pola benar — Step 1: diagnose**:
+```
+Query berikut hasilnya salah. Gejala: total customer Andi muncul
+4,5jt, padahal cek manual cuma 1,25jt.
 
 Query:
 <paste>
 
 Tugas kamu:
-1. Diagnose: cari penyebab dalam 1-2 kalimat
-2. Reproduce: query SELECT pendek untuk membuktikan hipotesis
-3. JANGAN beri fix dulu — saya minta fix di prompt berikutnya
+1. Tebak penyebab (1-2 kalimat)
+2. Bantu saya bukti: query SELECT pendek untuk membuktikan dugaan
+3. JANGAN beri fix dulu
 
-Saya perlu paham KENAPA, bukan cuma hasilnya.
+Saya mau paham KENAPA, bukan cuma hasilnya.
 ```
 
-Setelah Anda yakin diagnose benar (verifikasi sendiri), minta fix:
+Lihat jawaban AI, **jalankan query buktinya** sendiri. Kalau hipotesis terbukti, baru minta fix.
 
+**Pola benar — Step 2: fix**:
 ```
-Hipotesismu benar (output investigatif sesuai). Sekarang:
+Hipotesis kamu benar (saya sudah verify). Sekarang:
 1. Berikan query fix — ubah seminimal mungkin
-2. Komentar 1 baris di atas baris yang diubah: -- FIX: <apa & kenapa>
-3. Query verifikasi: bandingkan hasil sebelum & sesudah
+2. Komentar 1 baris di atas yang diubah: -- FIX: <apa & kenapa>
+3. Query SELECT untuk bandingkan hasil sebelum & sesudah
 ```
 
-### 6. Mengukur Resiko Debug
+---
 
-Tidak semua bug perlu di-fix segera. Trade-off:
+## 5. Pakai EXPLAIN Kalau Query Lambat
 
-| Risiko Bug | Urgency Fix |
-|------------|--------------|
-| Hasil salah di laporan eksternal (customer/audit) | 🔴 Sekarang |
-| Hasil salah di dashboard internal | 🟡 Hari ini |
-| Performance lambat tapi hasil benar | 🟢 Sprint ini |
-| Edge case yang jarang muncul | 🔵 Backlog |
+`EXPLAIN` itu seperti **rontgen** untuk query — kasih tahu Anda *bagaimana* MySQL bakal jalanin query.
 
-Pakai AI untuk **assess risiko** juga: *"Skenario apa yang bisa trigger bug ini di production?"*
+```sql
+EXPLAIN
+SELECT name, SUM(total)
+FROM customers c JOIN orders o ON o.customer_id = c.id
+WHERE o.created_at >= '2026-01-01'
+GROUP BY name;
+```
 
-### 7. Anti-pattern Saat Debug dengan AI
+Yang dilihat di output:
 
-| ❌ Hindari | ✅ Lakukan |
-|-----------|-----------|
-| "Fix query ini" | "Diagnose dulu, baru fix" |
-| Accept fix tanpa verify | Run + bandingkan output |
-| Rewrite total query | Patch minimal, baris yang salah saja |
+| Kolom | Yang bagus | Yang buruk |
+|-------|-----------|-----------|
+| `type` | `ref`, `eq_ref` | `ALL` (full scan) |
+| `rows` | Sesuai estimasi | Jutaan padahal expect ratusan |
+| `Extra` | (kosong) | "Using temporary", "Using filesort" |
+| `key` | Nama index | NULL (tidak pakai index) |
+
+Sering `EXPLAIN` jawab pertanyaan tanpa AI: *"Aha, query tidak pakai index karena saya pakai `date()` di WHERE."*
+
+---
+
+## 6. Risiko & Urgency: Tidak Semua Bug Harus Fix Sekarang
+
+Tradeoff:
+
+| Tingkat Risiko | Contoh | Urgency |
+|----------------|--------|---------|
+| 🔴 Hasil salah di laporan ke customer/audit | Invoice salah angka | **Sekarang** |
+| 🟡 Hasil salah di dashboard internal | Manager lihat angka aneh | Hari ini |
+| 🟢 Query lambat tapi hasilnya benar | Page load 3 detik | Sprint ini |
+| 🔵 Edge case yang jarang muncul | Bug saat customer dengan email NULL | Backlog |
+
+Tanya AI juga bisa untuk **assess risiko**: *"Skenario apa yang bisa trigger bug ini di production?"*
+
+---
+
+## 7. Jangan Lakukan Ini
+
+| ❌ Salah | ✅ Benar |
+|---------|---------|
+| Langsung minta AI "fix query ini" | Minta diagnose dulu |
+| Apply fix tanpa verify | Selalu run + bandingkan output |
+| Rewrite total query | Patch minimal — ubah baris yang salah saja |
 | Cuma test happy path | Test edge case (NULL, 0 row, banyak baris) |
-| Lupa save query asli | `git diff` atau backup file |
-| Lupa run `EXPLAIN` | Cek execution plan sebelum tanya kenapa lambat |
+| Lupa simpan query asli | Backup file atau `git diff` |
+| Lupa cek EXPLAIN saat lambat | Cek dulu, sering jawab sendiri |
 
 ---
 
 ## Demo Live (15 menit)
 
-Skenario: bug report dari QA — "total revenue per customer di laporan bulan Mei salah".
+Buka `sql-playground/queries/sesi-06-debug/01_inflated_revenue.sql`. Bareng fasilitator:
 
-Buka `sql-playground/queries/sesi-06-debug/01_inflated_revenue.sql`.
-
-Langkah:
-
-1. **Reproduce**: run, lihat output → Andi muncul 4.5jt, hand-count cuma 1.25jt.
-2. **Isolate**: drop JOIN ke `shipments` dulu → masih 4.5jt. Drop JOIN ke `payments` → jadi 1.25jt. **Aha**, payments JOIN-nya bermasalah.
-3. **Hypothesize ke AI**: "JOIN ke payments bikin row duplicate karena ada 2 payment per order untuk beberapa order?"
-4. **Verifikasi**: `SELECT order_id, COUNT(*) FROM payments GROUP BY order_id HAVING COUNT(*) > 1;` → buktikan ada order dengan 2 payment.
-5. **Fix**: hapus JOIN ke payments (tidak dipakai kolomnya), atau aggregate dulu.
-6. **Verify**: run ulang, total = 1.25jt. ✅
+1. Reproduce: jalankan, lihat angka aneh
+2. Isolate: drop 1 JOIN per percobaan, cari mana yang bikin meledak
+3. Hypothesis ke AI: "kemungkinan JOIN payments duplikat?"
+4. Verify: `SELECT order_id, COUNT(*) FROM payments GROUP BY order_id HAVING COUNT(*) > 1;`
+5. Fix mini: hapus JOIN payments
+6. Verify: angka kembali normal
 
 ---
 
-## Hands-on Latihan
+## Lanjut ke Latihan
 
-Lihat [`latihan-05-debugging-studi-kasus/`](./latihan-05-debugging-studi-kasus/).
-
----
-
-## Wrap-up & Q&A
-
-1. Apa beda debugging "bug logic" vs "bug performance"?
-2. Kapan justru lebih baik **tidak** fix bug (accept trade-off)?
-3. AI memberi diagnose yang salah — bagaimana cara Anda tahu sebelum jauh?
+[`latihan-05-debugging-studi-kasus/`](./latihan-05-debugging-studi-kasus/)
 
 ---
 
-## Bacaan Lanjutan
+## Ringkasan 1 Halaman
 
-- *SQL Antipatterns* — Bill Karwin (Part II: Logical Antipatterns)
-- MySQL EXPLAIN: <https://dev.mysql.com/doc/refman/8.0/en/explain-output.html>
-- Markus Winand: *"Three-Valued Logic in SQL"* — <https://modern-sql.com/blog/2015-07/three-valued-logic>
+- **Symptom ≠ Penyebab**. Diagnose dulu, baru fix.
+- **5 jebakan**: NULL+`NOT IN`, BETWEEN datetime, AND/OR precedence, JOIN explosion, GROUP BY ambiguity.
+- **5 langkah debug**: Reproduce → Isolate → Hypothesis → Fix mini → Verify.
+- **Minta AI diagnose dulu**. Jangan "fix query ini". Itu bikin bug muncul lagi.
+- **EXPLAIN** seperti rontgen query — cek dulu sebelum tanya kenapa lambat.
+- **Tidak semua bug harus fix sekarang**. Pakai risk matrix.
