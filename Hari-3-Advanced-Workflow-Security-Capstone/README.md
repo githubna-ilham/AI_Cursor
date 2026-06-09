@@ -1,50 +1,60 @@
-# HARI 3 — Advanced Workflow, Security & Capstone
+# HARI 3 — Build Dashboard dengan Laravel
 
-**Program**: Pelatihan AI-Assisted Development dengan Cursor — Multimatics
-**Durasi**: 1 hari (8 jam efektif, termasuk istirahat)
-**Target Peserta**: Developer profesional (Backend / Frontend / Full-Stack / DevOps / Data Engineer)
-**Prasyarat**: Telah menyelesaikan Hari 1 (Fondasi) dan Hari 2 (Intermediate Workflow)
+**Penyelenggara**: Multimatics
 
----
+Hari ke-3 pelatihan AI Cursor. Anda akan **membangun aplikasi web Laravel** yang menampilkan dashboard dari database `latihan_sql` (hasil kerja Hari 2). Project nyata, deploy-able, siap dipresentasikan.
 
-## Ringkasan Hari 3
-
-Hari ketiga adalah puncak pelatihan. Anda akan menyatukan seluruh keterampilan yang telah dipelajari ke dalam alur kerja tingkat lanjut yang siap dipakai di tim enterprise — mulai dari integrasi Cursor dengan Git dan code review, perlindungan source code dan data sensitif, hingga praktik optimasi performa berbasis AI. Hari ditutup dengan **Capstone Project** kolaboratif di mana Anda mendemonstrasikan kemampuan end-to-end menggunakan Cursor pada studi kasus mendekati realita kerja.
-
-## Learning Outcomes Hari 3
-
-Setelah menyelesaikan Hari 3, peserta diharapkan mampu:
-
-1. **Mengintegrasikan Cursor** ke alur Git dan code review tim.
-2. **Mengidentifikasi & memitigasi risiko keamanan** dalam penggunaan AI coding assistant pada lingkungan enterprise.
-3. **Menerapkan praktik optimasi performa** dan reliability menggunakan AI sebagai akselerator analisis.
-4. **Mengeksekusi capstone project** end-to-end (generate, refactor, debug, test, dokumentasi) dengan pendampingan AI.
-5. **Mempresentasikan & mengevaluasi** hasil kerja secara terstruktur berdasarkan rubrik profesional.
+> 📋 Detail 10 tahap, urutan kerja, dan checkpoint per tahap ada di [`perjalanan-project.md`](./perjalanan-project.md). **Baca file itu sebelum mulai latihan apa pun di Hari 3.**
 
 ---
 
-## Alur Sesi
+## Lensa Hari 3: Dari Data ke Aplikasi
 
-| Sesi | Topik | Durasi | Format |
-|------|-------|--------|--------|
-| 09 | Advanced Workflow — Git & Kolaborasi Tim | 90 menit | Materi + Lab |
-| 10 | Security, Ethics & Governance | 90 menit | Materi + Studi Kasus |
-| 11 | Best Practices & Performance Optimization | 90 menit | Materi + Demo |
-| 12 | Capstone Project & Presentasi | 180 menit | Hands-on tim |
+Hari 2 membangun fondasi data (schema, query, view). Hari 3 menambahkan **lapisan aplikasi** di atasnya: peserta menjadi konsumen view yang sudah dirancang.
 
-## Jadwal Indikatif
+Realita developer profesional:
+- 70% kasus membangun aplikasi = wrapping logic SQL ke UI yang ramah user
+- Hari 1 membangun UI tanpa data, Hari 2 mengelola data tanpa UI, Hari 3 menggabungkan keduanya.
 
-| Waktu | Aktivitas |
-|-------|-----------|
-| 08.30 – 09.00 | Registrasi & Recap Hari 2 |
-| 09.00 – 10.30 | **Sesi 09** — Advanced Workflow |
-| 10.30 – 10.45 | Coffee break |
-| 10.45 – 12.15 | **Sesi 10** — Security, Ethics & Governance |
-| 12.15 – 13.15 | Ishoma |
-| 13.15 – 14.45 | **Sesi 11** — Best Practices & Performance |
-| 14.45 – 15.00 | Break + briefing capstone |
-| 15.00 – 18.00 | **Sesi 12** — Capstone Project & Presentasi |
-| 18.00 – 18.30 | Closing, Feedback, Sertifikasi |
+---
+
+## Stack
+
+- **PHP 8.2+** + **Laravel 11** (framework)
+- **Blade** (server-side templating)
+- **Tailwind CSS** (styling)
+- **Chart.js** (visualisasi chart, via CDN)
+- **MySQL 8.0+** dengan database `latihan_sql` dari Hari 2
+
+> 💡 Cara install termudah di Mac: **Laravel Herd** (bundle PHP + Composer + Node). Setup 5 menit.
+
+---
+
+## Output Akhir Hari 3
+
+Aplikasi web Laravel dengan:
+
+- **Dashboard Data Quality**: badge PASS/FAIL untuk 10 assertion + drill-down detail pelanggar
+- **Dashboard Business**: chart revenue per bulan, top customer LTV, top product, filter date range
+- **Auth sederhana**: login dengan email + password (Laravel Breeze)
+- **Deploy**: aplikasi terakses publik via Railway / shared hosting / VPS
+- **Presentasi**: demo 5 menit + dokumentasi setup
+
+---
+
+## Jadwal Harian (Acuan)
+
+| Waktu          | Sesi                                                | Durasi |
+| -------------- | --------------------------------------------------- | ------ |
+| 08.30 – 09.00  | Registrasi & recap Hari 2                           | 30'    |
+| 09.00 – 10.30  | **Sesi 9**: Setup Laravel + Connect MySQL           | 90'    |
+| 10.30 – 10.45  | Coffee break                                        | 15'    |
+| 10.45 – 12.15  | **Sesi 10**: Dashboard Data Quality                 | 90'    |
+| 12.15 – 13.15  | ISHOMA                                              | 60'    |
+| 13.15 – 14.45  | **Sesi 11**: Dashboard Business Metrics             | 90'    |
+| 14.45 – 15.00  | Coffee break                                        | 15'    |
+| 15.00 – 16.30  | **Sesi 12**: Auth + Deploy + Capstone presentation  | 90'    |
+| 16.30 – 17.00  | Wrap-up & evaluasi pelatihan                        | 30'    |
 
 ---
 
@@ -52,33 +62,36 @@ Setelah menyelesaikan Hari 3, peserta diharapkan mampu:
 
 ```
 Hari-3-Advanced-Workflow-Security-Capstone/
-├── README.md                                  (file ini)
+├── README.md                                            <- file ini
+├── perjalanan-project.md                                <- 10 tahap (BACA DULU)
 ├── Sesi-09-Advanced-Workflow/
-│   ├── materi.md
-│   └── latihan-08-git-workflow/
-│       └── README.md
+│   ├── materi.md                                        <- versi lama (untuk referensi)
+│   ├── materi-laravel.md                                <- Sesi 9 versi Laravel
+│   └── latihan-08-git-workflow/                         <- Tahap 21-22 (setup + first page)
 ├── Sesi-10-Security-Ethics-Governance/
-│   ├── materi.md
+│   ├── materi.md                                        <- versi lama
+│   ├── materi-laravel.md                                <- Sesi 10 (Data Quality Dashboard)
 │   └── studi-kasus-kebocoran-data.md
 ├── Sesi-11-Best-Practices-Performance/
-│   └── materi.md
+│   ├── materi.md                                        <- versi lama
+│   └── materi-laravel.md                                <- Sesi 11 (Business Dashboard)
 └── Sesi-12-Capstone/
-    ├── panduan-capstone.md
-    ├── opsi-project.md
-    ├── template-presentasi.md
-    └── rubrik-penilaian.md
+    ├── materi-laravel.md                                <- Sesi 12 (Auth + Deploy)
+    ├── opsi-project.md                                  <- versi lama
+    ├── panduan-capstone.md                              <- versi lama
+    ├── rubrik-penilaian.md                              <- versi lama
+    └── template-presentasi.md
 ```
 
-## Persiapan Peserta
+---
 
-- Cursor terpasang dan login.
-- Akun GitHub aktif, SSH key terkonfigurasi.
-- Akses ke repo latihan (disediakan fasilitator).
-- Node 20+ / Python 3.11+ / Docker Desktop (sesuai stack pilihan).
-- Bersedia bekerja dalam tim 3–4 orang untuk Capstone.
+## Prasyarat Hari 3
 
-## Aturan Etis Penggunaan AI Selama Pelatihan
+- Telah menyelesaikan Hari 2 (database `latihan_sql` ada, schema + sample data + view assertion sudah di-apply).
+- **PHP 8.2+** terinstall (via Laravel Herd / Homebrew).
+- **Composer** terinstall (bundled di Herd).
+- **MySQL** masih jalan dari Hari 2.
+- Akun **Railway** atau **GitHub** (untuk deploy gratis).
+- Cursor aktif.
 
-- Tidak meng-input data klien atau data identitas asli ke prompt.
-- Gunakan dataset/dummy yang disediakan fasilitator.
-- Tandai jelas kode hasil generate AI saat diskusi review.
+Detail setup ada di materi Sesi 9.
