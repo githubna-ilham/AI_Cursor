@@ -51,9 +51,9 @@ Aplikasi web Laravel (jalan di lokal) dengan:
 | Waktu          | Sesi                                                | Durasi |
 | -------------- | --------------------------------------------------- | ------ |
 | 08.30 – 09.00  | Registrasi & recap Hari 2                           | 30'    |
-| 09.00 – 10.30  | **Sesi 9**: Setup Laravel + Connect MySQL           | 90'    |
+| 09.00 – 10.30  | **Sesi 9**: Security, Ethics & Governance (materi)  | 90'    |
 | 10.30 – 10.45  | Coffee break                                        | 15'    |
-| 10.45 – 12.15  | **Sesi 10**: Dashboard Data Quality                 | 90'    |
+| 10.45 – 12.15  | **Sesi 10**: Setup Laravel + Dashboard Data Quality | 90'    |
 | 12.15 – 13.15  | ISHOMA                                              | 60'    |
 | 13.15 – 14.45  | **Sesi 11**: Dashboard Business Metrics             | 90'    |
 | 14.45 – 15.00  | Coffee break                                        | 15'    |
@@ -68,24 +68,21 @@ Aplikasi web Laravel (jalan di lokal) dengan:
 Hari-3-Advanced-Workflow-Security-Capstone/
 ├── README.md                                            <- file ini
 ├── perjalanan-project.md                                <- 10 tahap (BACA DULU)
-├── Sesi-09-Advanced-Workflow/
-│   ├── materi.md                                        <- versi lama (untuk referensi)
-│   ├── materi-laravel.md                                <- Sesi 9 versi Laravel
-│   └── latihan-08-git-workflow/                         <- Tahap 21-22 (setup + first page)
-├── Sesi-10-Security-Ethics-Governance/
-│   ├── materi.md                                        <- versi lama
-│   ├── materi-laravel.md                                <- Sesi 10 (Data Quality Dashboard)
+├── Sesi-09-Security-Ethics-Governance/                  <- Sesi 9: MATERI ONLY (no latihan)
+│   ├── materi.md                                        <- Security materi utama
 │   └── studi-kasus-kebocoran-data.md
-├── Sesi-11-Best-Practices-Performance/
-│   ├── materi.md                                        <- versi lama
-│   └── materi-laravel.md                                <- Sesi 11 (Business Dashboard)
-└── Sesi-12-Capstone/
-    ├── materi-laravel.md                                <- Sesi 12 (Auth + Capstone)
+├── Sesi-10-Setup-Laravel/                               <- Sesi 10: Setup + Data Quality Dashboard
+│   ├── materi-laravel-1-setup.md                        <- Setup Laravel + Eloquent
+│   ├── materi-laravel-2-data-quality.md                 <- Dashboard Data Quality
+│   ├── latihan-08-laravel-setup/                        <- Tahap 21-22
+│   └── latihan-09-data-quality-dashboard/               <- Tahap 23-25
+├── Sesi-11-Best-Practices-Performance/                  <- Sesi 11: Business Dashboard
+│   ├── materi-laravel.md
+│   └── latihan-10-business-dashboard/                   <- Tahap 26-28
+└── Sesi-12-Capstone/                                    <- Sesi 12: Auth + Capstone
+    ├── materi-laravel.md
     ├── latihan-11-capstone-presentation/                <- Tahap 29-30
-    ├── opsi-project.md                                  <- versi lama
-    ├── panduan-capstone.md                              <- versi lama
-    ├── rubrik-penilaian.md                              <- versi lama
-    └── template-presentasi.md
+    └── (file capstone lama: opsi-project, panduan, rubrik, template)
 ```
 
 ---
@@ -103,4 +100,4 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 
 > 💡 **Cursor shortcut**: di Mac pakai `Cmd+...`, di Windows pakai `Ctrl+...`. Mis. `Cmd+L` (Mac) = `Ctrl+L` (Windows) untuk buka Chat.
 
-Detail setup ada di materi Sesi 9.
+Detail setup ada di materi Sesi 10 (`materi-laravel-1-setup.md`).

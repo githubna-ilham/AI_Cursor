@@ -1,6 +1,6 @@
-# Sesi 10 (Laravel) — Dashboard Data Quality
+# Sesi 10 (Bagian 2) — Dashboard Data Quality
 
-Durasi: 90 menit
+Durasi: ~45 menit (Bagian 2 dari Sesi 10. Bagian 1: `materi-laravel-1-setup.md`)
 
 ## Bayangkan Skenario Ini
 

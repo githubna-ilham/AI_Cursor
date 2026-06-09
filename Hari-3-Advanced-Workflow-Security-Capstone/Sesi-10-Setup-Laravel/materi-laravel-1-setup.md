@@ -1,6 +1,6 @@
-# Sesi 9 (Laravel) — Setup + Connect ke MySQL
+# Sesi 10 (Bagian 1) — Setup Laravel + Connect ke MySQL
 
-Durasi: 90 menit
+Durasi: ~45 menit (Bagian 1 dari Sesi 10. Bagian 2: `materi-laravel-2-data-quality.md`)
 
 ## Bayangkan Skenario Ini
 
