@@ -33,7 +33,7 @@ Setelah latihan:
 ## Prasyarat
 
 - Hari 2 selesai: database `latihan_sql` ada dengan schema + sample data.
-- **10 view assertion** sudah dibuat di MySQL (lihat `Setup` di bawah kalau belum).
+- **Familiar dengan 10 assertion query** dari Hari 2 Sesi 8 (`sql-playground/queries/sesi-08-test/01_assertions_example.sql`).
 - **PHP 8.2+** & **Composer** terinstall:
   - **Mac**: Laravel Herd dari <https://herd.laravel.com>
   - **Windows**: Laravel Herd dari <https://herd.laravel.com/windows> (atau alternatif XAMPP)
@@ -42,6 +42,105 @@ Setelah latihan:
 ---
 
 ## Langkah
+
+### 0. Bikin View Assertion di MySQL (15')
+
+Sebelum Laravel, kita siapkan **10 view** di MySQL yang akan dikonsumsi aplikasi nanti. Aturan: peserta **tulis sendiri 3 view** (T1, T5, T8) untuk merasakan polanya, lalu pakai AI Cursor untuk generate 7 sisa.
+
+#### Konsep View
+
+**View** = query yang disimpan dengan nama, bisa di-SELECT seperti tabel biasa. Manfaat:
+- Pakai berulang kali dengan nama pendek
+- Kalau aturan berubah, update di 1 tempat
+- Eloquent Laravel bisa baca view seperti tabel
+
+#### Pola CREATE VIEW
+
+```sql
+CREATE OR REPLACE VIEW nama_view AS
+<query SELECT yang menghasilkan baris pelanggar>;
+```
+
+Setelah dibuat:
+```sql
+SELECT * FROM nama_view;        -- semua pelanggar
+SELECT COUNT(*) FROM nama_view; -- jumlah pelanggar (0 = PASS)
+```
+
+#### Tugas: Tulis 3 View Sendiri
+
+Buka DBeaver / MySQL Workbench, pastikan database aktif:
+
+```sql
+USE latihan_sql;
+```
+
+Berdasarkan assertion query di Hari 2 Sesi 8 (`01_assertions_example.sql`), tulis 3 view berikut:
+
+**View 1 — `v_assertion_t1_subtotal_mismatch`**
+
+Wrap assertion T1 (subtotal di header order ≠ sum line_total) jadi view. Polanya:
+- `CREATE OR REPLACE VIEW v_assertion_t1_subtotal_mismatch AS`
+- Lanjutkan dengan SELECT yang ada di T1, hapus `;` di tengah-tengah
+
+**View 2 — `v_assertion_t5_delivered_no_shipment`**
+
+Wrap assertion T5 (order delivered tanpa shipment) jadi view. Latihan LEFT JOIN + IS NULL.
+
+**View 3 — `v_assertion_t8_negative_stock`**
+
+Wrap assertion T8 (stock negatif) jadi view. Yang paling sederhana — WHERE clause saja.
+
+**Verifikasi**: setelah ketiga view dibuat, test:
+
+```sql
+SELECT COUNT(*) FROM v_assertion_t1_subtotal_mismatch;  -- expect 11
+SELECT COUNT(*) FROM v_assertion_t5_delivered_no_shipment;  -- expect 0
+SELECT COUNT(*) FROM v_assertion_t8_negative_stock;  -- expect 0
+```
+
+#### Generate 7 View Sisa dengan AI Cursor
+
+Pakai prompt ini di Cursor Chat:
+
+```
+@file sql-playground/queries/sesi-08-test/01_assertions_example.sql
+
+Convert 7 assertion sisa (T2, T3, T4, T6, T7, T9, T10) jadi VIEW
+dengan pola:
+
+CREATE OR REPLACE VIEW v_assertion_t{N}_{nama_deskriptif} AS
+<query SELECT sesuai assertion>;
+
+Naming convention untuk nama_deskriptif (snake_case):
+- T2: total_mismatch
+- T3: payment_mismatch
+- T4: shipment_temporal
+- T6: invalid_rating
+- T7: invalid_tier
+- T9: invalid_timestamp
+- T10: duplicate_review
+
+Berikan 1 blok SQL yang berisi 7 CREATE OR REPLACE VIEW siap di-run.
+```
+
+Review output AI sebelum eksekusi:
+- Cek nama view sesuai konvensi
+- Cek query sama dengan assertion asli
+- Cek tidak ada `;` di tengah query (semicolon hanya di akhir tiap statement)
+
+Jalankan SQL di MySQL.
+
+**Final verification**: harus muncul 10 view total.
+
+```sql
+SHOW FULL TABLES WHERE TABLE_TYPE = 'VIEW';
+-- Expect: 10 baris dengan nama v_assertion_t1 sampai v_assertion_t10
+```
+
+✅ Kalau 10 view sudah ada, lanjut ke Step 1.
+
+---
 
 ### 1. Install Laravel Herd (10' — kalau belum)
 
