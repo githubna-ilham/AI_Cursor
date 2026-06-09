@@ -43,9 +43,9 @@ Setelah latihan:
 
 ## Langkah
 
-### 0. Bikin View Assertion di MySQL (15')
+### 0. Bikin View Assertion di MySQL (10')
 
-Sebelum Laravel, kita siapkan **10 view** di MySQL yang akan dikonsumsi aplikasi nanti. Aturan: peserta **tulis sendiri 3 view** (T1, T5, T8) untuk merasakan polanya, lalu pakai AI Cursor untuk generate 7 sisa.
+Sebelum Laravel, kita siapkan **view di MySQL** yang akan dikonsumsi aplikasi nanti. Di Step 0 ini, peserta cukup membuat **1 view contoh** (T1) untuk memahami polanya. Sisa 9 view bisa peserta tambahkan sendiri secara bertahap saat dibutuhkan.
 
 #### Konsep View
 
@@ -67,7 +67,7 @@ SELECT * FROM nama_view;        -- semua pelanggar
 SELECT COUNT(*) FROM nama_view; -- jumlah pelanggar (0 = PASS)
 ```
 
-#### Tugas: Tulis 3 View Sendiri
+#### Tugas: Bikin Contoh View T1
 
 Buka DBeaver / MySQL Workbench, pastikan database aktif:
 
@@ -75,70 +75,34 @@ Buka DBeaver / MySQL Workbench, pastikan database aktif:
 USE latihan_sql;
 ```
 
-Berdasarkan assertion query di Hari 2 Sesi 8 (`01_assertions_example.sql`), tulis 3 view berikut:
-
-**View 1 — `v_assertion_t1_subtotal_mismatch`**
-
-Wrap assertion T1 (subtotal di header order ≠ sum line_total) jadi view. Polanya:
-- `CREATE OR REPLACE VIEW v_assertion_t1_subtotal_mismatch AS`
-- Lanjutkan dengan SELECT yang ada di T1, hapus `;` di tengah-tengah
-
-**View 2 — `v_assertion_t5_delivered_no_shipment`**
-
-Wrap assertion T5 (order delivered tanpa shipment) jadi view. Latihan LEFT JOIN + IS NULL.
-
-**View 3 — `v_assertion_t8_negative_stock`**
-
-Wrap assertion T8 (stock negatif) jadi view. Yang paling sederhana — WHERE clause saja.
-
-**Verifikasi**: setelah ketiga view dibuat, test:
+Tulis view berikut berdasarkan assertion T1 di Hari 2 Sesi 8 (`01_assertions_example.sql`):
 
 ```sql
-SELECT COUNT(*) FROM v_assertion_t1_subtotal_mismatch;  -- expect 11
-SELECT COUNT(*) FROM v_assertion_t5_delivered_no_shipment;  -- expect 0
-SELECT COUNT(*) FROM v_assertion_t8_negative_stock;  -- expect 0
+CREATE OR REPLACE VIEW v_assertion_t1_subtotal_mismatch AS
+SELECT
+  o.id                                                 AS order_id,
+  o.subtotal                                           AS header_subtotal,
+  COALESCE(SUM(oi.line_total), 0)                      AS detail_sum,
+  o.subtotal - COALESCE(SUM(oi.line_total), 0)         AS difference
+FROM orders o
+LEFT JOIN order_items oi ON oi.order_id = o.id
+GROUP BY o.id, o.subtotal
+HAVING o.subtotal <> COALESCE(SUM(oi.line_total), 0);
 ```
 
-#### Generate 7 View Sisa dengan AI Cursor
-
-Pakai prompt ini di Cursor Chat:
-
-```
-@file sql-playground/queries/sesi-08-test/01_assertions_example.sql
-
-Convert 7 assertion sisa (T2, T3, T4, T6, T7, T9, T10) jadi VIEW
-dengan pola:
-
-CREATE OR REPLACE VIEW v_assertion_t{N}_{nama_deskriptif} AS
-<query SELECT sesuai assertion>;
-
-Naming convention untuk nama_deskriptif (snake_case):
-- T2: total_mismatch
-- T3: payment_mismatch
-- T4: shipment_temporal
-- T6: invalid_rating
-- T7: invalid_tier
-- T9: invalid_timestamp
-- T10: duplicate_review
-
-Berikan 1 blok SQL yang berisi 7 CREATE OR REPLACE VIEW siap di-run.
-```
-
-Review output AI sebelum eksekusi:
-- Cek nama view sesuai konvensi
-- Cek query sama dengan assertion asli
-- Cek tidak ada `;` di tengah query (semicolon hanya di akhir tiap statement)
-
-Jalankan SQL di MySQL.
-
-**Final verification**: harus muncul 10 view total.
+Verifikasi:
 
 ```sql
+SELECT COUNT(*) FROM v_assertion_t1_subtotal_mismatch;
+-- Expect: 11 (sengaja FAIL di sample data Hari 2)
+
 SHOW FULL TABLES WHERE TABLE_TYPE = 'VIEW';
--- Expect: 10 baris dengan nama v_assertion_t1 sampai v_assertion_t10
+-- Expect: 1 baris → v_assertion_t1_subtotal_mismatch
 ```
 
-✅ Kalau 10 view sudah ada, lanjut ke Step 1.
+✅ Kalau view T1 berhasil dibuat, lanjut ke Step 1.
+
+> 💡 **Sisa 9 view (T2-T10)**: tidak perlu dibuat sekarang. Dashboard di Step 4 akan jalan dengan 1 view (T1 saja) — peserta lihat hasil cepat. Sisa view bisa ditambahkan sendiri di rumah dengan pola yang sama atau bantuan AI Cursor.
 
 ---
 
@@ -222,9 +186,9 @@ DB::table('customers')->count();
 
 Kalau output 13, koneksi sukses ✅. Keluar dengan `exit`.
 
-### 4. Bikin Halaman Dashboard Sederhana (20')
+### 4. Bikin Halaman Dashboard Sederhana (15')
 
-Sebelum belajar Model Eloquent, mari **langsung tampilkan data di browser** dengan cara paling sederhana: `DB::table('nama_view')` di route closure. Nanti kita refactor pakai Model.
+Sebelum belajar Model Eloquent, mari **langsung tampilkan data di browser** dengan cara paling sederhana: `DB::table('nama_view')` di route closure. Untuk sekarang kita pakai 1 view (T1) yang sudah dibuat di Step 0. Sisa 9 view bisa ditambahkan peserta nanti dengan pola yang sama.
 
 #### 4.1. Tambah Route + Inline Logic
 
@@ -238,16 +202,14 @@ use Illuminate\Support\Facades\DB;
 
 Route::get('/dashboard', function () {
     $tests = [
-        ['key' => 't1',  'name' => 'Subtotal Mismatch',          'view' => 'v_assertion_t1_subtotal_mismatch'],
-        ['key' => 't2',  'name' => 'Total Mismatch',             'view' => 'v_assertion_t2_total_mismatch'],
-        ['key' => 't3',  'name' => 'Payment Success Mismatch',   'view' => 'v_assertion_t3_payment_mismatch'],
-        ['key' => 't4',  'name' => 'Shipment Temporal Order',    'view' => 'v_assertion_t4_shipment_temporal'],
-        ['key' => 't5',  'name' => 'Delivered Without Shipment', 'view' => 'v_assertion_t5_delivered_no_shipment'],
-        ['key' => 't6',  'name' => 'Invalid Rating Range',       'view' => 'v_assertion_t6_invalid_rating'],
-        ['key' => 't7',  'name' => 'Invalid Customer Tier',      'view' => 'v_assertion_t7_invalid_tier'],
-        ['key' => 't8',  'name' => 'Negative Product Stock',     'view' => 'v_assertion_t8_negative_stock'],
-        ['key' => 't9',  'name' => 'Invalid Timestamp Order',    'view' => 'v_assertion_t9_invalid_timestamp'],
-        ['key' => 't10', 'name' => 'Duplicate Review',           'view' => 'v_assertion_t10_duplicate_review'],
+        [
+            'key'  => 't1',
+            'name' => 'Subtotal Mismatch',
+            'view' => 'v_assertion_t1_subtotal_mismatch',
+        ],
+        // 💡 Tambah view T2-T10 di sini setelah peserta bikin
+        // view-nya di MySQL dengan pola CREATE OR REPLACE VIEW
+        // (lihat Step 0).
     ];
 
     foreach ($tests as &$test) {
@@ -308,11 +270,12 @@ php artisan serve
 ```
 
 Buka <http://localhost:8000/dashboard>. Harusnya muncul:
-- 10 kartu badge dalam grid 5 kolom
-- T1 berwarna **merah** dengan "❌ 11 FAIL"
-- T2–T10 berwarna **hijau** dengan "✅ PASS"
+- 1 kartu badge **T1**: berwarna **merah** dengan "❌ 11 FAIL"
+- Footer dengan timestamp last checked
 
 🎉 **Dashboard pertama jalan tanpa login, tanpa Model.**
+
+Saat peserta nanti tambah view T2-T10 di MySQL (dengan pola sama seperti T1), cukup tambahkan baris baru di array `$tests` → badge baru otomatis muncul di dashboard.
 
 #### 4.4. Catatan tentang Pendekatan Ini
 
@@ -363,11 +326,11 @@ App\Models\Customer::first()->name;  // → "Andi Pratama"
 
 Ulangi untuk `Product`, `Order`, `OrderItem`.
 
-### 6. Bikin Model untuk View (20')
+### 6. Bikin Model untuk View (10')
 
 View tidak punya `created_at`/`updated_at`, perlu set `$timestamps = false`.
 
-`app/Models/AssertionT1.php`:
+Buat `app/Models/AssertionT1.php`:
 ```php
 <?php
 
@@ -382,79 +345,38 @@ class AssertionT1 extends Model
 }
 ```
 
-**Tugas Anda**: Bikin Model `AssertionT2` sampai `AssertionT10` dengan pola yang sama. Cukup:
-- Ganti nama class (T2, T3, ...)
-- Ganti `protected $table` ke nama view yang sesuai
-
-Pakai AI Cursor untuk efisiensi:
-
-```
-@file app/Models/AssertionT1.php
-
-Bikin 9 Model serupa (AssertionT2 sampai AssertionT10) yang map ke view berikut:
-
-T2 → v_assertion_t2_total_mismatch
-T3 → v_assertion_t3_payment_mismatch
-T4 → v_assertion_t4_shipment_temporal
-T5 → v_assertion_t5_delivered_no_shipment
-T6 → v_assertion_t6_invalid_rating
-T7 → v_assertion_t7_invalid_tier
-T8 → v_assertion_t8_negative_stock
-T9 → v_assertion_t9_invalid_timestamp
-T10 → v_assertion_t10_duplicate_review
-
-Pola sama dengan T1: protected $table + public $timestamps = false.
-
-Berikan 9 file lengkap untuk paste.
-```
-
-Test semua:
+Test di tinker:
 ```bash
 php artisan tinker
 ```
 
 ```php
 App\Models\AssertionT1::count();    // → 11 (sengaja FAIL)
-App\Models\AssertionT2::count();    // → 0
-App\Models\AssertionT8::count();    // → 0
-// ... dst sampai T10
 ```
 
-Pastikan semua angka sesuai expectation (T1 = 11, T2-T10 = 0).
+> 💡 **Sisa Model AssertionT2-T10**: tidak perlu dibuat sekarang. Tambah secara bertahap saat peserta sudah bikin view yang sesuai di MySQL. Pola sama: 1 file per Model, ganti nama class + `$table`. Bisa pakai AI Cursor: *"Bikin Model AssertionT2 yang map ke view v_assertion_t2_total_mismatch dengan pola sama seperti @file app/Models/AssertionT1.php"*.
 
 ### 7. Refactor Dashboard Pakai Model (10')
 
 Sekarang ganti `DB::table()` di route closure dengan Model Eloquent yang baru saja dibuat.
 
-Edit `routes/web.php`, ganti seluruh isinya:
+Edit `routes/web.php`:
 
 ```php
 <?php
 
 use Illuminate\Support\Facades\Route;
 use App\Models\AssertionT1;
-use App\Models\AssertionT2;
-use App\Models\AssertionT3;
-use App\Models\AssertionT4;
-use App\Models\AssertionT5;
-use App\Models\AssertionT6;
-use App\Models\AssertionT7;
-use App\Models\AssertionT8;
-use App\Models\AssertionT9;
-use App\Models\AssertionT10;
 
 Route::get('/dashboard', function () {
     $tests = [
-        ['key' => 't1',  'name' => 'Subtotal Mismatch',          'failed' => AssertionT1::count()],
-        ['key' => 't2',  'name' => 'Total Mismatch',             'failed' => AssertionT2::count()],
-        ['key' => 't3',  'name' => 'Payment Success Mismatch',   'failed' => AssertionT3::count()],
-        ['key' => 't4',  'name' => 'Shipment Temporal Order',    'failed' => AssertionT4::count()],
-        ['key' => 't5',  'name' => 'Delivered Without Shipment', 'failed' => AssertionT5::count()],
-        ['key' => 't6',  'name' => 'Invalid Rating Range',       'failed' => AssertionT6::count()],
-        ['key' => 't7',  'name' => 'Invalid Customer Tier',      'failed' => AssertionT7::count()],
-        ['key' => 't8',  'name' => 'Negative Product Stock',     'failed' => AssertionT8::count()],
-        ['key' => 't9',  'name' => 'Invalid Timestamp Order',    'failed' => AssertionT9::count()],
-        ['key' => 't10', 'name' => 'Duplicate Review',           'failed' => AssertionT10::count()],
+        [
+            'key'    => 't1',
+            'name'   => 'Subtotal Mismatch',
+            'failed' => AssertionT1::count(),
+        ],
+        // 💡 Tambah AssertionT2-T10 di sini setelah peserta bikin
+        // Model-nya. Pola sama seperti baris di atas.
     ];
 
     return view('dashboard', compact('tests'));
