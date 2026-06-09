@@ -518,9 +518,109 @@ gh repo create dashboard-app --public --source=. --remote=origin --push
 | `SQLSTATE[HY000] [2002] Connection refused` | MySQL tidak jalan — cek dengan `mysql -u root -p` di terminal |
 | `SQLSTATE[HY000] [1045] Access denied` | Password di `.env` salah |
 | `Class 'App\Models\Customer' not found` | Salah namespace — pastikan `namespace App\Models;` di awal file |
-| `Table 'latihan_sql.v_assertion_t1...' doesn't exist` | View belum dibuat — kembali ke section Setup di atas |
+| `SQLSTATE[42S02] Base table or view not found: 1146 Table 'latihan_sql.v_assertion_t1...' doesn't exist` | View T1 belum dibuat di MySQL — lihat panduan di bawah |
 | `Column not found: 1054 Unknown column 'updated_at'` | Lupa set `public $timestamps = false` di Model View |
 | Tinker tidak buka | Cek version PHP (`php -v` harus 8.2+) |
+
+### 🔧 Detail: Error "View doesn't exist"
+
+Kalau muncul error:
+
+```
+SQLSTATE[42S02]: Base table or view not found: 1146
+Table 'latihan_sql.v_assertion_t1_subtotal_mismatch' doesn't exist
+```
+
+Artinya view T1 belum dibuat di MySQL. Aplikasi Laravel sudah benar, tapi MySQL kosong.
+
+**Langkah perbaikan:**
+
+#### 1. Cek apakah view sudah ada
+
+Di DBeaver / MySQL Workbench:
+
+```sql
+USE latihan_sql;
+SHOW FULL TABLES WHERE TABLE_TYPE = 'VIEW';
+```
+
+| Hasil | Artinya | Tindakan |
+|-------|---------|----------|
+| Kosong (0 baris) | View belum dibuat | Lanjut ke langkah 2 |
+| Ada tapi nama beda (typo) | Nama tidak match Controller | Drop view typo, bikin ulang |
+| Ada `v_assertion_t1_subtotal_mismatch` | Aneh — harusnya jalan | Lanjut ke "Cek Lain" di bawah |
+
+#### 2. Bikin view T1 sekarang
+
+Jalankan SQL ini di MySQL:
+
+```sql
+USE latihan_sql;
+
+CREATE OR REPLACE VIEW v_assertion_t1_subtotal_mismatch AS
+SELECT
+  o.id                                                 AS order_id,
+  o.subtotal                                           AS header_subtotal,
+  COALESCE(SUM(oi.line_total), 0)                      AS detail_sum,
+  o.subtotal - COALESCE(SUM(oi.line_total), 0)         AS difference
+FROM orders o
+LEFT JOIN order_items oi ON oi.order_id = o.id
+GROUP BY o.id, o.subtotal
+HAVING o.subtotal <> COALESCE(SUM(oi.line_total), 0);
+```
+
+Verifikasi:
+
+```sql
+SELECT COUNT(*) FROM v_assertion_t1_subtotal_mismatch;
+-- Expect: 11
+```
+
+Refresh browser `http://localhost:8000/dashboard` → badge T1 muncul.
+
+#### 3. Cek Lain Kalau Masih Error
+
+**a) Database di `.env` Laravel benar?**
+
+```
+DB_DATABASE=latihan_sql
+```
+
+Bukan database lain. Setelah edit `.env`, restart server: `php artisan serve`.
+
+**b) Tabel underlying ada?**
+
+View butuh tabel `orders` dan `order_items`. Cek:
+
+```sql
+USE latihan_sql;
+SHOW TABLES;
+```
+
+Harus muncul 9 tabel termasuk `orders` dan `order_items`. Kalau belum, jalankan ulang `sql-playground/00_schema.sql` + `01_sample_data.sql` dari Hari 2.
+
+**c) Clear Laravel cache**
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+
+**d) Konfirmasi connection aktif Laravel**
+
+```bash
+php artisan tinker
+```
+
+```php
+DB::connection()->getDatabaseName();
+// → harus output: "latihan_sql"
+
+DB::select("SHOW TABLES LIKE 'v_assertion%'");
+// → harus output array dengan v_assertion_t1...
+```
+
+Kalau database name tidak match, ada masalah di `.env`.
 
 ---
 
