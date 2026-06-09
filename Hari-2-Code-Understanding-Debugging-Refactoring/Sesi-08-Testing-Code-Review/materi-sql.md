@@ -187,24 +187,21 @@ Beri saya:
 
 ---
 
-## 5. Review Assertion Teman: Checklist 7-Poin
+## 5. Validasi Assertion Anda Sendiri: Checklist 7-Poin
 
-Saat review assertion teman, cek 7 hal ini:
+Sebelum assertion dipakai ke production, cek 7 hal ini sendiri:
 
 | # | Yang dicek | Pertanyaan |
 |---|------------|------------|
-| 1 | Komentar jelas | Saya paham aturannya tanpa baca SQL? |
-| 2 | Syntax benar | Query-nya bisa di-run? |
+| 1 | Komentar jelas | Apakah pembaca paham aturannya tanpa baca SQL? |
+| 2 | Syntax benar | Query-nya bisa di-run tanpa error? |
 | 3 | Logika benar | Dengan 2-3 row dummy, apakah benar nangkap pelanggar? |
-| 4 | Pola 0-baris-aman | Return 0 kalau aman? |
-| 5 | Tidak false alarm | Pelanggar yang muncul **memang** melanggar? |
-| 6 | Tidak miss pelanggar | Ada pelanggar yang seharusnya muncul tapi tidak? |
-| 7 | Performance ok | Tidak ada full scan tabel besar |
+| 4 | Pola 0-baris-aman | Return 0 baris saat data normal? |
+| 5 | Tidak false alarm | Pelanggar yang muncul **memang** melanggar aturan? |
+| 6 | Tidak miss pelanggar | Adakah pelanggar yang seharusnya muncul tapi tidak? |
+| 7 | Performance ok | Tidak ada full scan tabel besar (cek dengan EXPLAIN) |
 
-Tulis feedback **konkret**, bukan "good job":
-
-❌ "Bagus banget query-nya"
-✅ "Komentar aturan di poin #1 belum jelas — apa beda 'platinum' aktif vs non-aktif? Saran: tambah '(yang masih aktif berbelanja)' di komentar."
+Anda bisa pakai checklist ini sebagai daftar verifikasi setelah menulis tiap assertion. Salah satu cara terbaik adalah dengan **menjalankan ulang assertion sebelum & sesudah inject dummy row pelanggar** (lihat seksi berikutnya).
 
 ---
 
@@ -257,7 +254,7 @@ Aturan ringan:
 | Return semua kolom | Cukup ID + kolom yang melanggar |
 | 1 assertion gigantis (banyak aturan) | 1 assertion = 1 aturan |
 | Pakai `SELECT *` | Eksplisit kolom |
-| Skip peer review | Wajib — beda mata sering nangkap false positive |
+| Skip validasi sendiri sebelum production | Wajib — pakai checklist 7-poin di seksi 5 |
 
 ---
 

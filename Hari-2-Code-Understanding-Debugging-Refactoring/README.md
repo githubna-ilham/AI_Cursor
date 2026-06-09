@@ -25,7 +25,7 @@ Folder `submissions/<nama>/` berisi:
 - **Sesi 5** (Tahap 11–12): 4–8 docstring query + ER diagram + architecture note
 - **Sesi 6** (Tahap 13–15): 2–5 bug report dengan diagnose, fix, verifikasi
 - **Sesi 7** (Tahap 16–17): 2–5 refactor before/after dengan bukti behaviour identik
-- **Sesi 8** (Tahap 18–20): 5 assertion query baru + 1 peer review report
+- **Sesi 8** (Tahap 18–20): 5 assertion query baru + bukti validasi (dummy row test)
 
 ---
 

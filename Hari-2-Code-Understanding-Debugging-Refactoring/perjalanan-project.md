@@ -124,13 +124,12 @@ Kalau setup lulus, Anda siap mulai Tahap 11.
 - Pakai AI dengan template prompt
 - Test sendiri sebelum di-review (inject dummy row pelanggar)
 
-#### Tahap 20. Peer Review + Sign-off
-- Tukar assertion dengan partner
-- Review dengan 7-point checklist
-- Tulis feedback konkret (min 3)
+#### Tahap 20. Validasi & Refleksi
+- Test tiap assertion dengan inject dummy row pelanggar
+- Pastikan assertion benar nangkap (tidak false positive/negative)
 - Refleksi: kalau production, mana yang dijalankan harian vs mingguan
 
-**Output**: 5 assertion + 1 review report ke partner
+**Output**: 5 assertion baru + bukti validasi + refleksi
 
 ---
 
@@ -147,7 +146,7 @@ Kalau setup lulus, Anda siap mulai Tahap 11.
 | 17 | 7 | Refactor | 2 refactor lanjutan |
 | 18 | 8 | Test | Run 10 assertion existing |
 | 19 | 8 | Test | Tulis 5 assertion baru |
-| 20 | 8 | Review | Peer review + sign-off |
+| 20 | 8 | Test | Validasi assertion dengan dummy data + refleksi |
 
 ---
 

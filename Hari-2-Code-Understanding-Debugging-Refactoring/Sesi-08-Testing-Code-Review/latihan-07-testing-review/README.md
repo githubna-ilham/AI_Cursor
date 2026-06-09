@@ -1,10 +1,10 @@
-# Latihan 07 — Testing SQL: Assertion Queries + Peer Review
+# Latihan 07 — Testing SQL: Assertion Queries
 
 > 🗺️ **Tahap 18–20 dari 20** | Sebelumnya: Sesi 7 Refactoring | Setelah ini: Hari 3 (Advanced Workflow)
 
 **Durasi**: 90 menit
-**Tipe**: Hands-on individual + 30' peer review berpasangan
-**Output**: 5 assertion baru + 1 review report ke teman.
+**Tipe**: Hands-on individual
+**Output**: 5 assertion baru + refleksi.
 
 ---
 
@@ -15,7 +15,6 @@ Database `latihan_sql` sampai sini **tidak punya satu pun regression test**. And
 1. Memahami pola assertion query dbt-style (return 0 baris = pass).
 2. Run 10 contoh assertion yang sudah ada — beberapa akan **fail** (data sample sengaja ada mismatch).
 3. **Tulis 5 assertion baru** untuk invariant yang belum dicover.
-4. **Peer review** assertion teman → tukar feedback.
 
 ---
 
@@ -26,7 +25,6 @@ Setelah latihan, peserta mampu:
 1. Memahami pola **assertion = SELECT yang return 0 baris saat pass**.
 2. **Mengonversi business rule** (bahasa Indonesia) jadi SQL assertion.
 3. **Membedakan bug data vs bug assertion** saat test fail.
-4. **Melakukan code review** assertion teman dengan checklist konkret.
 
 ---
 
@@ -34,7 +32,6 @@ Setelah latihan, peserta mampu:
 
 - Latihan 04, 05, 06 selesai.
 - Database `latihan_sql` masih ada.
-- Pasangan untuk peer review (gentle pairing oleh fasilitator).
 
 ---
 
@@ -97,29 +94,13 @@ Simpan ke `submissions/<nama>/08_my_assertions.sql` (5 query).
 
 Run semua. Catat hasil di `08_test_results.md` (lanjut tabel dari step 2).
 
-### 4. Peer Review (30')
-
-Tukar `08_my_assertions.sql` dengan partner. Review pakai checklist:
-
-| # | Kriteria | OK / Tidak | Catatan |
-|---|----------|------------|---------|
-| 1 | Komentar invariant jelas | | |
-| 2 | Query syntax-correct (bisa di-run) | | |
-| 3 | Logika benar (uji manual dengan 2-3 row dummy) | | |
-| 4 | Pakai pola dbt-style (return 0 saat pass) | | |
-| 5 | Tidak ada false positive (assertion fail untuk row yang sebenarnya valid) | | |
-| 6 | Tidak ada false negative (assertion pass padahal ada bug) | | |
-| 7 | Performance reasonable (no Cartesian/explosion) | | |
-
-Tulis review ke `submissions/<nama>/08_review_to_<partner>.md` — minimal 3 feedback konkret (bukan "good job").
-
-### 5. Refleksi (5')
+### 4. Refleksi (5')
 
 `submissions/<nama>/refleksi.md` (≤200 kata):
 
 - Invariant mana paling sulit di-encode ke SQL?
-- 1 assertion teman Anda yang lebih bagus dari punya Anda — apa pelajarannya?
 - Kalau project ini production, assertion mana yang akan Anda jalankan **harian** vs **mingguan**?
+- 1 pelajaran SQL yang Anda dapat dari latihan ini.
 
 ---
 
@@ -128,7 +109,6 @@ Tulis review ke `submissions/<nama>/08_review_to_<partner>.md` — minimal 3 fee
 `submissions/<nama>/`:
 - `08_test_results.md` (tabel hasil 10 existing + 5 baru)
 - `08_my_assertions.sql` (5 assertion baru Anda)
-- `08_review_to_<partner>.md`
 - `refleksi.md`
 
 ---
