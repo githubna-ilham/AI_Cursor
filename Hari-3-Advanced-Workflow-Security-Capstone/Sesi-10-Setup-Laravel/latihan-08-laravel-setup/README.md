@@ -222,7 +222,113 @@ DB::table('customers')->count();
 
 Kalau output 13, koneksi sukses ✅. Keluar dengan `exit`.
 
-### 4. Bikin Model untuk Table (15')
+### 4. Bikin Halaman Dashboard Sederhana (20')
+
+Sebelum belajar Model Eloquent, mari **langsung tampilkan data di browser** dengan cara paling sederhana: `DB::table('nama_view')` di route closure. Nanti kita refactor pakai Model.
+
+#### 4.1. Tambah Route + Inline Logic
+
+Edit `routes/web.php`:
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
+Route::get('/dashboard', function () {
+    $tests = [
+        ['key' => 't1',  'name' => 'Subtotal Mismatch',          'view' => 'v_assertion_t1_subtotal_mismatch'],
+        ['key' => 't2',  'name' => 'Total Mismatch',             'view' => 'v_assertion_t2_total_mismatch'],
+        ['key' => 't3',  'name' => 'Payment Success Mismatch',   'view' => 'v_assertion_t3_payment_mismatch'],
+        ['key' => 't4',  'name' => 'Shipment Temporal Order',    'view' => 'v_assertion_t4_shipment_temporal'],
+        ['key' => 't5',  'name' => 'Delivered Without Shipment', 'view' => 'v_assertion_t5_delivered_no_shipment'],
+        ['key' => 't6',  'name' => 'Invalid Rating Range',       'view' => 'v_assertion_t6_invalid_rating'],
+        ['key' => 't7',  'name' => 'Invalid Customer Tier',      'view' => 'v_assertion_t7_invalid_tier'],
+        ['key' => 't8',  'name' => 'Negative Product Stock',     'view' => 'v_assertion_t8_negative_stock'],
+        ['key' => 't9',  'name' => 'Invalid Timestamp Order',    'view' => 'v_assertion_t9_invalid_timestamp'],
+        ['key' => 't10', 'name' => 'Duplicate Review',           'view' => 'v_assertion_t10_duplicate_review'],
+    ];
+
+    foreach ($tests as &$test) {
+        $test['failed'] = DB::table($test['view'])->count();
+    }
+
+    return view('dashboard', compact('tests'));
+});
+```
+
+#### 4.2. Bikin Blade View
+
+Buat file baru `resources/views/dashboard.blade.php`:
+
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Quality Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">📊 Data Quality Dashboard</h1>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            @foreach($tests as $test)
+                <div class="rounded-lg p-4 shadow {{ $test['failed'] == 0 ? 'bg-green-100' : 'bg-red-100' }}">
+                    <div class="text-xs font-medium uppercase text-gray-600">
+                        {{ $test['key'] }}
+                    </div>
+                    <div class="text-sm mt-1">
+                        {{ $test['name'] }}
+                    </div>
+                    <div class="text-2xl font-bold mt-2">
+                        @if($test['failed'] == 0)
+                            ✅ PASS
+                        @else
+                            ❌ {{ $test['failed'] }} FAIL
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="text-sm text-gray-500 mt-6 text-center">
+            Last checked: {{ now()->format('d M Y, H:i:s') }}
+        </div>
+    </div>
+</body>
+</html>
+```
+
+#### 4.3. Jalankan & Lihat Hasil
+
+```bash
+php artisan serve
+```
+
+Buka <http://localhost:8000/dashboard>. Harusnya muncul:
+- 10 kartu badge dalam grid 5 kolom
+- T1 berwarna **merah** dengan "❌ 11 FAIL"
+- T2–T10 berwarna **hijau** dengan "✅ PASS"
+
+🎉 **Dashboard pertama jalan tanpa login, tanpa Model.**
+
+#### 4.4. Catatan tentang Pendekatan Ini
+
+`DB::table('nama_view')` adalah **query builder** Laravel — abstraksi langsung di atas SQL. Cocok untuk:
+- Prototype cepat
+- Query ad-hoc
+- Akses view sederhana
+
+Tapi ada kekurangan:
+- Tidak ada type hint / autocomplete di IDE
+- Sulit reuse logic (mis. format khusus, scope query)
+- Tidak ada relasi otomatis
+
+Untuk aplikasi yang akan bertumbuh, kita perlu **Model Eloquent** — itu yang akan kita refactor di Step 5–6.
+
+### 5. Refactor — Bikin Model untuk Table (15')
 
 ```bash
 php artisan make:model Customer
@@ -257,7 +363,7 @@ App\Models\Customer::first()->name;  // → "Andi Pratama"
 
 Ulangi untuk `Product`, `Order`, `OrderItem`.
 
-### 5. Bikin Model untuk View (25')
+### 6. Bikin Model untuk View (20')
 
 View tidak punya `created_at`/`updated_at`, perlu set `$timestamps = false`.
 
@@ -316,28 +422,65 @@ App\Models\AssertionT8::count();    // → 0
 
 Pastikan semua angka sesuai expectation (T1 = 11, T2-T10 = 0).
 
-### 6. Halaman Tes Sederhana (15')
+### 7. Refactor Dashboard Pakai Model (10')
 
-Untuk verifikasi semuanya jalan, bikin halaman test sederhana yang tampilkan jumlah customer:
+Sekarang ganti `DB::table()` di route closure dengan Model Eloquent yang baru saja dibuat.
 
-`routes/web.php`:
+Edit `routes/web.php`, ganti seluruh isinya:
+
 ```php
-use App\Models\Customer;
+<?php
 
-Route::get('/test', function () {
-    $count = Customer::count();
-    return "<h1>Total Customer: {$count}</h1>";
+use Illuminate\Support\Facades\Route;
+use App\Models\AssertionT1;
+use App\Models\AssertionT2;
+use App\Models\AssertionT3;
+use App\Models\AssertionT4;
+use App\Models\AssertionT5;
+use App\Models\AssertionT6;
+use App\Models\AssertionT7;
+use App\Models\AssertionT8;
+use App\Models\AssertionT9;
+use App\Models\AssertionT10;
+
+Route::get('/dashboard', function () {
+    $tests = [
+        ['key' => 't1',  'name' => 'Subtotal Mismatch',          'failed' => AssertionT1::count()],
+        ['key' => 't2',  'name' => 'Total Mismatch',             'failed' => AssertionT2::count()],
+        ['key' => 't3',  'name' => 'Payment Success Mismatch',   'failed' => AssertionT3::count()],
+        ['key' => 't4',  'name' => 'Shipment Temporal Order',    'failed' => AssertionT4::count()],
+        ['key' => 't5',  'name' => 'Delivered Without Shipment', 'failed' => AssertionT5::count()],
+        ['key' => 't6',  'name' => 'Invalid Rating Range',       'failed' => AssertionT6::count()],
+        ['key' => 't7',  'name' => 'Invalid Customer Tier',      'failed' => AssertionT7::count()],
+        ['key' => 't8',  'name' => 'Negative Product Stock',     'failed' => AssertionT8::count()],
+        ['key' => 't9',  'name' => 'Invalid Timestamp Order',    'failed' => AssertionT9::count()],
+        ['key' => 't10', 'name' => 'Duplicate Review',           'failed' => AssertionT10::count()],
+    ];
+
+    return view('dashboard', compact('tests'));
 });
 ```
 
-Buka <http://localhost:8000/test> → muncul "Total Customer: 13".
+Refresh browser <http://localhost:8000/dashboard>. **Hasil harus identik** dengan Step 4 — ini adalah refactoring (behavior-preserving).
 
-### 7. Commit Sebelum Sesi 10 (10')
+**Yang berubah:**
+- `DB::table('v_assertion_t1_subtotal_mismatch')` → `AssertionT1::class`
+- Loop manual `foreach` untuk count → langsung di array
+- Logic lebih dekat ke domain (assertion sebagai konsep), bukan ke implementasi (nama tabel)
+
+**Yang sama:**
+- URL `/dashboard`
+- Tampilan badge 10 assertion
+- Angka yang muncul (T1=11, lainnya=0)
+
+🎯 **Ini momen "aha" Eloquent**: Model = abstraksi yang menyembunyikan detail tabel/view dari logic aplikasi.
+
+### 8. Commit Sebelum Sesi Berikutnya (10')
 
 ```bash
 git init
 git add .
-git commit -m "feat(setup): Laravel project setup + Eloquent Models for table & view"
+git commit -m "feat(setup): Laravel project + 10 view + dashboard + Eloquent Models"
 ```
 
 Push ke GitHub (opsional, untuk backup):
@@ -356,10 +499,11 @@ gh repo create dashboard-app --public --source=. --remote=origin --push
   - 1 masalah saat setup + cara Anda atasi
 - Screenshot:
   - `phpversion.png` — output `php --version`
-  - `welcome.png` — halaman welcome Laravel di browser
-  - `tinker_t1.png` — output `AssertionT1::count()` di tinker
-- `refleksi.md` (≤150 kata):
-  - 1 hal yang mengejutkan saat pakai Eloquent dibanding raw SQL
+  - `dashboard_step4.png` — dashboard versi raw DB::table (Step 4)
+  - `dashboard_step7.png` — dashboard versi Eloquent Model (Step 7) — visual sama, beda di belakang
+- `refleksi.md` (≤200 kata):
+  - 1 hal yang mengejutkan saat pakai Eloquent dibanding raw `DB::table()`
+  - Apa beda hasil di browser antara Step 4 dan Step 7? (clue: tidak ada bedanya — kenapa kita tetap refactor?)
   - 1 prompt AI Cursor yang sangat membantu di sesi ini
 
 ---
