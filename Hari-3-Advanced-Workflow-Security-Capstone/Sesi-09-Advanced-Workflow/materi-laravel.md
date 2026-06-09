@@ -67,31 +67,6 @@ flowchart LR
 | 8 | **Controller** | Terima data, kirim ke View dengan `compact()` atau `view(..., $data)` | (lanjutan langkah 4) |
 | 9 | **Blade View** | Render template Blade → HTML → kirim ke browser | `resources/views/**/*.blade.php` |
 
-### Contoh Konkret: Klik "Data Quality"
-
-```
-🌐 User klik link "/data-quality" di nav menu
-   ↓
-📋 routes/web.php cocok dengan:
-   Route::get('/data-quality', [DataQualityController::class, 'index'])
-   ↓
-🔒 Middleware 'auth' cek session → user sudah login ✓
-   ↓
-🎯 DataQualityController::index() dipanggil
-   ↓
-🗂️  Loop 10 Model: AssertionT1::count(), AssertionT2::count(), ...
-   ↓
-🗄️  MySQL eksekusi: SELECT COUNT(*) FROM v_assertion_t1_subtotal_mismatch
-   → balas: 11
-   ↓
-📦 Controller kumpulkan jadi array $tests = [['key'=>'t1','failed'=>11], ...]
-   ↓
-🎨 return view('data-quality.index', compact('tests'))
-   → Blade render grid 10 badge
-   ↓
-📄 HTML dikirim balik ke browser → user lihat 10 badge
-```
-
 ### Yang Penting Diingat
 
 | Konsep | Inti |
