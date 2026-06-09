@@ -34,7 +34,9 @@ Setelah latihan:
 
 - Hari 2 selesai: database `latihan_sql` ada dengan schema + sample data.
 - **10 view assertion** sudah dibuat di MySQL (lihat `Setup` di bawah kalau belum).
-- **PHP 8.2+** & **Composer** terinstall (lihat materi Sesi 9 untuk cara install Laravel Herd).
+- **PHP 8.2+** & **Composer** terinstall:
+  - **Mac**: Laravel Herd dari <https://herd.laravel.com>
+  - **Windows**: Laravel Herd dari <https://herd.laravel.com/windows> (atau alternatif XAMPP)
 - Cursor aktif.
 
 ---
@@ -109,9 +111,10 @@ SHOW FULL TABLES WHERE TABLE_TYPE = 'VIEW';
 
 ### 1. Install Laravel Herd (10' — kalau belum)
 
-Lihat materi Sesi 9 untuk panduan install Laravel Herd. Atau lewati kalau sudah punya PHP + Composer + Laravel CLI.
+Lihat materi Sesi 9 untuk panduan install Laravel Herd di **Mac** atau **Windows**. Lewati kalau sudah punya PHP + Composer + Laravel CLI.
 
-Verifikasi:
+Verifikasi (terminal apapun — Terminal di Mac, PowerShell/CMD di Windows):
+
 ```bash
 php --version       # ≥ 8.2
 composer --version  # ≥ 2.x
@@ -120,25 +123,45 @@ laravel --version   # ≥ 5.x
 
 ### 2. Buat Project Laravel (10')
 
+#### macOS
+
 ```bash
-cd ~/Projek/mm_cursor
+cd ~/Projek/mm_cursor      # atau folder kerja Anda
 laravel new dashboard-app
-
-# Pilihan saat ditanya:
-# - Starter Kit?      → None
-# - Tests?            → No
-# - Database?         → MySQL
-# - Run migration?    → No
-
 cd dashboard-app
 ```
 
-Test:
+#### Windows (PowerShell)
+
+```powershell
+# Pindah ke folder kerja, mis. C:\Projects
+cd C:\Users\$env:USERNAME\Projects
+
+# Bikin folder kalau belum ada
+mkdir Projects -Force; cd Projects
+
+# Buat project
+laravel new dashboard-app
+cd dashboard-app
+```
+
+#### Pilihan Saat Ditanya (Mac & Windows)
+
+```
+- Starter Kit?      → None
+- Tests?            → No
+- Database?         → MySQL
+- Run migration?    → No
+```
+
+Test (sama di Mac & Windows):
 ```bash
 php artisan serve
 ```
 
 Buka <http://localhost:8000> → halaman welcome Laravel muncul.
+
+> 💡 **Cursor shortcut**: di Mac pakai `Cmd+...`, di Windows pakai `Ctrl+...`. Jadi `Cmd+L` (Mac) = `Ctrl+L` (Windows) untuk buka Chat panel.
 
 ### 3. Konfigurasi `.env` (5')
 

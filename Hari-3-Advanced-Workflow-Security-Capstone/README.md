@@ -26,7 +26,9 @@ Realita developer profesional:
 - **Chart.js** (visualisasi chart, via CDN)
 - **MySQL 8.0+** dengan database `latihan_sql` dari Hari 2
 
-> 💡 Cara install termudah di Mac: **Laravel Herd** (bundle PHP + Composer + Node). Setup 5 menit.
+> 💡 Cara install termudah: **Laravel Herd** (tersedia untuk Mac & Windows) — bundle PHP + Composer + Node. Setup 5 menit.
+> - Mac: <https://herd.laravel.com>
+> - Windows: <https://herd.laravel.com/windows>
 
 ---
 
@@ -91,10 +93,14 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 ## Prasyarat Hari 3
 
 - Telah menyelesaikan Hari 2 (database `latihan_sql` ada, schema + sample data + view assertion sudah di-apply).
-- **PHP 8.2+** terinstall (via Laravel Herd / Homebrew).
+- **PHP 8.2+** terinstall:
+  - **Mac**: Laravel Herd (<https://herd.laravel.com>) atau `brew install php@8.3`
+  - **Windows**: Laravel Herd for Windows (<https://herd.laravel.com/windows>) atau XAMPP
 - **Composer** terinstall (bundled di Herd).
 - **MySQL** masih jalan dari Hari 2.
 - Cursor aktif.
 - (Opsional) Akun GitHub untuk backup repo.
+
+> 💡 **Cursor shortcut**: di Mac pakai `Cmd+...`, di Windows pakai `Ctrl+...`. Mis. `Cmd+L` (Mac) = `Ctrl+L` (Windows) untuk buka Chat.
 
 Detail setup ada di materi Sesi 9.

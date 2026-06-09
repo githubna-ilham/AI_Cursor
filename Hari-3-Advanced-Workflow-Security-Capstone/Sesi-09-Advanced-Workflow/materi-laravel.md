@@ -40,16 +40,28 @@ Tidak butuh setup file webpack/build complex. Dengan 5 perintah, sudah bisa biki
 
 ---
 
-## 2. Install Laravel Herd (Cara Termudah di Mac)
+## 2. Install Laravel Herd (Cross-platform)
 
-**Laravel Herd** adalah aplikasi gratis yang bundle PHP + Composer + Node + DB. Setup 5 menit.
+**Laravel Herd** adalah aplikasi gratis yang bundle PHP + Composer + Node + DB. Tersedia untuk **macOS dan Windows**. Setup 5 menit.
 
 ### Langkah Install
 
-1. Buka <https://herd.laravel.com> → klik **Download**
+#### macOS
+
+1. Buka <https://herd.laravel.com> → klik **Download for Mac**
 2. Drag `Herd.app` ke `/Applications`
-3. Buka Herd → ikuti wizard setup (sekitar 2 menit)
-4. Setelah selesai, buka Terminal → cek:
+3. Buka Herd → ikuti wizard setup (~2 menit)
+
+#### Windows
+
+1. Buka <https://herd.laravel.com/windows> → klik **Download for Windows**
+2. Run installer `Herd-x.x.x-setup.exe`
+3. Ikuti wizard install → **restart komputer** kalau diminta
+4. Buka **PowerShell** atau **Command Prompt** baru
+
+### Verifikasi (Sama di Mac & Windows)
+
+Buka terminal (Terminal di Mac, PowerShell di Windows), jalankan:
 
 ```bash
 php --version
@@ -64,11 +76,15 @@ laravel --version
 
 Kalau tiga perintah di atas jalan, install berhasil.
 
-> 💡 **Alternatif**: tanpa Herd, bisa pakai `brew install php@8.3 composer` lalu `composer global require laravel/installer`. Tapi setup lebih ribet.
+> 💡 **Alternatif Windows**: XAMPP juga bisa (familiar untuk peserta Indonesia). Download dari <https://www.apachefriends.org>, lalu install Composer terpisah dari <https://getcomposer.org/download>. Tapi versi PHP XAMPP kadang lawas (cek `php --version` setelah install).
+>
+> 💡 **Alternatif macOS**: `brew install php@8.3 composer` lalu `composer global require laravel/installer`.
 
 ---
 
 ## 3. Buat Project Laravel Baru
+
+### macOS
 
 ```bash
 # Pindah ke folder kerja
@@ -76,17 +92,35 @@ cd ~/Projek/mm_cursor
 
 # Bikin project baru
 laravel new dashboard-app
-
-# Saat ditanya:
-# - Starter Kit? → None
-# - Tests? → No (boleh PHPUnit nanti)
-# - Database? → MySQL
-# - Run migration? → No
-
-# Masuk folder
 cd dashboard-app
+```
 
-# Jalankan
+### Windows (PowerShell)
+
+```powershell
+# Pindah ke folder kerja (sesuaikan dengan tempat Anda menyimpan project)
+cd C:\Users\$env:USERNAME\Projects
+
+# Atau buat folder dulu kalau belum ada
+mkdir Projects -Force; cd Projects
+
+# Bikin project baru
+laravel new dashboard-app
+cd dashboard-app
+```
+
+### Pilihan Saat Ditanya (Mac & Windows)
+
+```
+- Starter Kit?     → None
+- Tests?           → No (boleh PHPUnit nanti)
+- Database?        → MySQL
+- Run migration?   → No
+```
+
+### Jalankan (Sama di Mac & Windows)
+
+```bash
 php artisan serve
 ```
 

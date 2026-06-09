@@ -31,7 +31,9 @@ Ini representasi realistis kerja developer profesional: 70% kasus adalah wrappin
 
 Sebelum Tahap 21, pastikan:
 
-1. **PHP 8.2+** & **Composer** terinstall (paling mudah: install Laravel Herd dari https://herd.laravel.com — gratis).
+1. **PHP 8.2+** & **Composer** terinstall. Paling mudah: install **Laravel Herd** (gratis, tersedia untuk Mac & Windows):
+   - Mac: <https://herd.laravel.com>
+   - Windows: <https://herd.laravel.com/windows>
 2. **MySQL** dari Hari 2 masih jalan dengan database `latihan_sql`.
 3. **View Hari 2** sudah dibuat (`v_assertion_t1_*` sampai `v_assertion_t10_*`). Kalau belum, jalankan SQL berikut di MySQL:
 
