@@ -52,6 +52,34 @@ php artisan migrate
 
 > ⚠️ Migration akan **bikin tabel `users`** di `latihan_sql`. Tabel ini terpisah dari `customers` — `users` khusus untuk auth admin/internal.
 
+### 💡 Tips: Ganti Session Driver ke `file` (Opsional)
+
+Laravel 11 default pakai **session driver `database`** — session disimpan di tabel `sessions` di DB. Untuk workshop ini, lebih praktis pakai driver `file`:
+
+```bash
+# Edit .env
+SESSION_DRIVER=file
+```
+
+**Kenapa file driver untuk workshop?**
+
+| Aspek | Database (default) | File |
+|-------|---------------------|------|
+| Setup tabel `sessions` | Wajib (lewat migration) | Tidak perlu |
+| Lokasi simpan | DB | `storage/framework/sessions/` |
+| Query DB tiap request | Ya (overhead kecil) | Tidak |
+| Cocok untuk | Multi-server, scaling | Single server / dev / workshop |
+
+**Kapan harus pakai database driver?**
+- Aplikasi production dengan multi-server / load balancer
+- Aplikasi yang butuh session share antar server
+
+**Kapan file aman?**
+- Single server (workshop, demo, app kecil) — **kasus kita**
+- Lokal development
+
+> ⚠️ **Catatan permission**: pastikan folder `storage/framework/sessions/` writable. Di Mac/Linux: `chmod -R 775 storage/`. Di Windows biasanya OK by default.
+
 ### Cek Hasil
 
 ```bash

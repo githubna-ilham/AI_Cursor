@@ -49,7 +49,20 @@ npm run build
 php artisan migrate
 ```
 
-Test:
+#### Set Session Driver ke `file` (Recommended untuk Workshop)
+
+Edit `.env`, ubah baris `SESSION_DRIVER`:
+
+```
+SESSION_DRIVER=file
+```
+
+Ini bikin session disimpan di `storage/framework/sessions/` (file) daripada di tabel DB. Lebih simple untuk workshop lokal — tidak perlu khawatir koneksi DB drop saat demo.
+
+> 💡 Untuk produksi multi-server nanti, ganti ke `database` atau `redis`. Lihat materi Sesi 12 seksi "Tips: Ganti Session Driver".
+
+#### Test
+
 ```bash
 php artisan serve
 ```
@@ -271,6 +284,8 @@ Sebelum tampil:
 | `Class App\Models\User not found` | Re-install Breeze: `composer require laravel/breeze --dev` |
 | Server lambat saat demo | Clear cache: `php artisan optimize:clear` |
 | Style Breeze conflict dengan Tailwind kustom | Cek `resources/css/app.css` — comment yang tidak perlu |
+| Session hilang setelah login | Pastikan `SESSION_DRIVER=file` di `.env` + folder `storage/framework/sessions/` writable |
+| Error "session table not found" | Set `SESSION_DRIVER=file` atau jalankan `php artisan session:table && php artisan migrate` |
 
 ---
 
