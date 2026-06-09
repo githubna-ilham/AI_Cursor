@@ -422,4 +422,4 @@ git commit -m "feat(reports): business dashboard with revenue, customer, product
 
 ## Next Step
 
-Lanjut ke **Sesi 12 Latihan 11** — auth dengan Laravel Breeze + deploy ke Railway + presentasi.
+Lanjut ke **Sesi 12 Latihan 11** — auth dengan Laravel Breeze + polish + presentasi.

@@ -124,22 +124,23 @@ Kalau setup lulus, Anda siap mulai Tahap 21.
 
 ---
 
-### 🔐 Sesi 12 — Auth + Deploy + Capstone
+### 🔐 Sesi 12 — Auth + Capstone Presentation
 
-**Latihan 11** · `Hari-3-.../Sesi-12-.../latihan-11-deploy-presentation/`
+**Latihan 11** · `Hari-3-.../Sesi-12-.../latihan-11-capstone-presentation/`
 
 #### Tahap 29. Auth dengan Laravel Breeze
 - Install Breeze: `composer require laravel/breeze --dev && php artisan breeze:install blade`
 - Protect routes `/data-quality/*` dan `/reports/*` dengan middleware `auth`
 - Bikin 1 user dummy di seeder
+- Tambah info user + tombol logout di nav
 
-#### Tahap 30. Deploy + Presentasi
-- Push ke GitHub
-- Deploy ke Railway (gratis, support PHP+MySQL out of the box)
-- Test akses publik
-- Presentasi 5 menit: tour aplikasi + 1 keputusan teknis yang dipelajari
+#### Tahap 30. Polish + Presentasi
+- Tambah validasi date range di Controller (`$request->validate`)
+- Tampilkan error di Blade kalau validasi gagal
+- Latih demo 5 menit: tour aplikasi + 1 keputusan teknis yang dipelajari
+- Presentasi di kelas
 
-**Output Tahap 29-30**: App terdeploy, presentasi selesai
+**Output Tahap 29-30**: App lengkap di lokal, presentasi selesai
 
 ---
 
@@ -156,7 +157,7 @@ Kalau setup lulus, Anda siap mulai Tahap 21.
 | 27 | 11 | Chart | Top customer + product |
 | 28 | 11 | UX | Layout + nav menu |
 | 29 | 12 | Auth | Login wajib untuk dashboard |
-| 30 | 12 | Deploy | Live URL + presentasi 5' |
+| 30 | 12 | Capstone | Polish + presentasi 5' |
 
 ---
 
@@ -167,9 +168,9 @@ Hari 3 padat. Strategi prioritas:
 - **Sesi 9**: minimum project Laravel jalan, koneksi MySQL OK, 1 Model siap.
 - **Sesi 10**: minimum dashboard index dengan badge PASS/FAIL. Drill-down boleh skip kalau pendek waktu.
 - **Sesi 11**: minimum 1 chart (revenue trend). Top customer & product boleh dilanjut di rumah.
-- **Sesi 12**: deploy adalah priority. Auth boleh disederhanakan jadi single user di `.env`.
+- **Sesi 12**: auth prioritas. Polish (error handling, validasi) boleh minimal kalau pendek waktu.
 
-Yang penting: keluar dari Hari 3 dengan **aplikasi Laravel yang jalan & terdeploy** + 1 pengalaman ngoding bareng AI Cursor di Laravel.
+Yang penting: keluar dari Hari 3 dengan **aplikasi Laravel yang jalan di lokal** + 1 pengalaman ngoding bareng AI Cursor di Laravel.
 
 ---
 
@@ -177,8 +178,10 @@ Yang penting: keluar dari Hari 3 dengan **aplikasi Laravel yang jalan & terdeplo
 
 Anda akan punya:
 - Aplikasi web fungsional yang dipresentasikan ke kolega/atasan
-- Pengalaman end-to-end: SQL design → app dev → deploy
+- Pengalaman end-to-end: SQL design → app dev (di lokal)
 - Skill AI-assisted Laravel development
 - Portofolio project nyata untuk CV / LinkedIn
 
 Kombinasikan dengan portfolio Hari 1 dan SQL skill Hari 2 — itu profil developer yang lengkap.
+
+**Lanjutan opsional di rumah**: deploy ke Railway/Hostinger/VPS untuk membuat dashboard bisa diakses online.

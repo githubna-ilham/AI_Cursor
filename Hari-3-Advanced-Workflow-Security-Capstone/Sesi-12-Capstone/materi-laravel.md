@@ -1,16 +1,16 @@
-# Sesi 12 (Laravel) — Auth + Deploy + Capstone
+# Sesi 12 (Laravel) — Auth + Capstone Presentation
 
 Durasi: 90 menit
 
 ## Bayangkan Skenario Ini
 
-Dashboard Anda sudah cantik di laptop. Tapi atasan minta: *"Saya mau cek dari HP saat di lapangan, dan tim finance juga butuh akses. Tapi tidak boleh dibuka publik — data internal."*
+Dashboard Anda sudah cantik dan fungsional. Tapi atasan minta: *"Jangan dibuka publik — data internal. Tambah login dulu sebelum dipakai. Nanti besok demo ke tim finance."*
 
 Anda butuh **2 hal**:
 1. **Auth**: hanya user terdaftar yang bisa akses
-2. **Deploy**: aplikasi terakses dari internet (bukan cuma localhost)
+2. **Polish**: pastikan demo besok lancar
 
-Sesi 12 melatih kedua hal tersebut + presentasi akhir.
+Sesi 12 melatih kedua hal tersebut + presentasi capstone akhir pelatihan.
 
 ---
 
@@ -19,9 +19,8 @@ Sesi 12 melatih kedua hal tersebut + presentasi akhir.
 1. Install Laravel Breeze untuk auth instant
 2. Proteksi route dengan middleware `auth`
 3. Bikin user awal via seeder
-4. Deploy ke Railway (gratis untuk hobby tier)
-5. Pengaturan environment variables di production
-6. Tips presentasi project teknis
+4. Polish final aplikasi (error handling, validasi minimal)
+5. Tips presentasi project teknis 5 menit
 
 ---
 
@@ -51,7 +50,7 @@ Migrasi tabel `users`:
 php artisan migrate
 ```
 
-> ⚠️ Migration akan **bikin tabel `users`** di `latihan_sql`. Tabel sudah punya ada `customers` — `users` adalah tabel terpisah khusus auth.
+> ⚠️ Migration akan **bikin tabel `users`** di `latihan_sql`. Tabel ini terpisah dari `customers` — `users` khusus untuk auth admin/internal.
 
 ### Cek Hasil
 
@@ -74,11 +73,13 @@ use Illuminate\Support\Facades\Hash;
 
 public function run(): void
 {
-    User::create([
-        'name' => 'Admin Multimatics',
-        'email' => 'admin@multimatics.local',
-        'password' => Hash::make('password123'),
-    ]);
+    User::firstOrCreate(
+        ['email' => 'admin@multimatics.local'],
+        [
+            'name' => 'Admin Multimatics',
+            'password' => Hash::make('password123'),
+        ]
+    );
 }
 ```
 
@@ -88,6 +89,8 @@ php artisan db:seed
 ```
 
 Sekarang bisa login dengan `admin@multimatics.local` / `password123`.
+
+`firstOrCreate` aman dijalankan berulang — kalau email sudah ada, tidak akan duplikasi.
 
 ---
 
@@ -120,6 +123,8 @@ Sekarang akses `/data-quality` tanpa login → redirect ke `/login`.
         <div class="flex gap-6">
             <a href="{{ route('dq.index') }}" class="font-semibold">Data Quality</a>
             <a href="{{ route('reports.revenue') }}">Revenue</a>
+            <a href="{{ route('reports.customers') }}">Top Customer</a>
+            <a href="{{ route('reports.products') }}">Top Product</a>
         </div>
 
         <div class="flex items-center gap-4 text-sm">
@@ -137,87 +142,7 @@ Sekarang akses `/data-quality` tanpa login → redirect ke `/login`.
 
 ---
 
-## 3. Deploy ke Railway
-
-**Railway** adalah platform deploy gratis untuk hobby (5$/bulan kredit, biasanya cukup untuk dashboard kecil). Support PHP + MySQL out of the box.
-
-### Persiapan: Push ke GitHub
-
-```bash
-# Di folder project
-git init
-git add .
-git commit -m "Initial commit: Laravel dashboard"
-
-# Bikin repo baru di GitHub (via web atau gh CLI)
-gh repo create dashboard-app --public --source=. --remote=origin --push
-```
-
-### Setup Railway
-
-1. Buka <https://railway.app> → Sign up dengan GitHub
-2. Klik **New Project** → **Deploy from GitHub repo**
-3. Pilih repo `dashboard-app` → Deploy
-
-Railway otomatis detect Laravel.
-
-### Add MySQL Service
-
-1. Di project Railway, klik **+ New** → **Database** → **MySQL**
-2. Railway buat instance MySQL terpisah
-3. **Copy connection string** (mis. `mysql://user:pass@host:port/dbname`)
-
-### Import Data dari Local
-
-Karena database production beda dengan local, perlu import schema + data:
-
-```bash
-# Export dari local
-mysqldump -u root -p latihan_sql > latihan_sql.sql
-
-# Import ke Railway (pakai connection string)
-mysql -h HOST -P PORT -u USER -p DATABASE < latihan_sql.sql
-```
-
-Atau pakai GUI seperti DBeaver: connect ke Railway MySQL → execute `latihan_sql.sql`.
-
-### Konfigurasi Environment di Railway
-
-Di Project Settings → Variables:
-
-```
-APP_NAME=Multimatics Dashboard
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://your-app.up.railway.app
-
-DB_CONNECTION=mysql
-DB_HOST=<dari Railway>
-DB_PORT=<dari Railway>
-DB_DATABASE=<dari Railway>
-DB_USERNAME=<dari Railway>
-DB_PASSWORD=<dari Railway>
-
-APP_KEY=<generate dengan: php artisan key:generate --show>
-```
-
-`APP_KEY` wajib di production — generate dari local, copy ke Railway.
-
-### Run Migration di Railway
-
-Setelah deploy, jalankan via Railway shell:
-```bash
-php artisan migrate --force
-php artisan db:seed --force
-```
-
-### Test
-
-Buka URL `https://your-app.up.railway.app`. Login dengan user yang di-seed. Lihat dashboard online.
-
----
-
-## 4. Environment Variables: Security
+## 3. Environment Variables: Security
 
 **Aturan emas**: credential & secret **tidak boleh** di-commit ke git.
 
@@ -239,9 +164,9 @@ Kalau tidak ada, **tambahkan sekarang**.
 
 ---
 
-## 5. Optimasi Production
+## 4. Optimasi Sebelum Demo
 
-Sebelum deploy, jalankan optimasi:
+Sebelum demo ke kelas, jalankan optimasi supaya aplikasi terasa snappy:
 
 ```bash
 # Cache config (jadi lebih cepat startup)
@@ -252,24 +177,101 @@ php artisan route:cache
 
 # Cache view Blade
 php artisan view:cache
-
-# Compile asset
-npm run build
 ```
 
-Saat ada perubahan code, clear cache:
+Saat ada perubahan code setelah cache, clear dulu:
 ```bash
 php artisan optimize:clear
 ```
 
-Untuk Railway, jalankan ini saat deploy via **Build Command**:
+Untuk demo workshop, **clear dulu** kalau Anda masih mungkin edit code:
+```bash
+php artisan optimize:clear
 ```
-composer install --no-dev && php artisan config:cache && npm run build
+
+Cache cocok untuk **state stabil** (mis. produksi atau demo akhir).
+
+---
+
+## 5. Error Handling Minimal
+
+Saat demo, error 500 di tengah-tengah = jelek. Tambah safeguard di Controller:
+
+```php
+public function show($key)
+{
+    try {
+        $tests = config('dataquality.tests');
+
+        if (!isset($tests[$key])) {
+            abort(404, 'Assertion tidak ditemukan.');
+        }
+
+        $rows = $tests[$key]['model']::limit(50)->get();
+
+        return view('data-quality.show', compact('key', 'rows'));
+
+    } catch (\Exception $e) {
+        \Log::error('Gagal load assertion detail: ' . $e->getMessage());
+        return view('errors.generic', ['message' => 'Tidak dapat memuat data saat ini. Silakan coba lagi.']);
+    }
+}
+```
+
+Bikin view sederhana untuk error generic:
+
+`resources/views/errors/generic.blade.php`:
+```blade
+@extends('layouts.app')
+
+@section('content')
+    <div class="bg-yellow-100 p-6 rounded-lg">
+        <h2 class="font-bold text-lg">⚠️ Maaf, ada gangguan</h2>
+        <p class="mt-2">{{ $message }}</p>
+        <a href="{{ route('dq.index') }}" class="mt-4 inline-block text-blue-600">← Kembali</a>
+    </div>
+@endsection
+```
+
+Pengguna lihat pesan ramah, log dicatat untuk debugging Anda.
+
+---
+
+## 6. Validasi Input Minimal
+
+Untuk form filter date range, validasi supaya tidak error:
+
+```php
+public function revenue(Request $request)
+{
+    $validated = $request->validate([
+        'from' => 'nullable|date',
+        'to'   => 'nullable|date|after_or_equal:from',
+    ]);
+
+    $from = $validated['from'] ?? '2025-01-01';
+    $to   = $validated['to']   ?? now()->format('Y-m-d');
+
+    // ... query
+}
+```
+
+Kalau user kirim tanggal tidak valid (mis. `to` < `from`), Laravel auto-redirect kembali dengan pesan error.
+
+Tampilkan error di Blade:
+```blade
+@if($errors->any())
+    <div class="bg-red-100 p-3 rounded mb-4">
+        @foreach($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
+@endif
 ```
 
 ---
 
-## 6. Tips Presentasi Project Teknis
+## 7. Tips Presentasi Project Teknis
 
 Anda akan presentasi 5 menit di akhir Sesi 12. Berikut struktur efektif:
 
@@ -278,7 +280,7 @@ Anda akan presentasi 5 menit di akhir Sesi 12. Berikut struktur efektif:
 | Menit | Bagian | Yang Dipresentasikan |
 |-------|--------|----------------------|
 | 0-1 | **Problem statement** | Masalah apa yang dashboard ini selesaikan |
-| 1-3 | **Demo live** | Buka URL → login → tour 3 halaman utama |
+| 1-3 | **Demo live** | Buka aplikasi → login → tour 3 halaman utama |
 | 3-4 | **Highlight teknis** | 1-2 keputusan teknis yang menarik |
 | 4-5 | **Pelajaran & next step** | Apa yang Anda pelajari + apa rencana lanjutan |
 
@@ -298,54 +300,56 @@ Anda akan presentasi 5 menit di akhir Sesi 12. Berikut struktur efektif:
 
 ---
 
-## 7. Capstone Checklist
+## 8. Capstone Checklist
 
 Sebelum presentasi, pastikan:
 
-- [ ] Aplikasi terdeploy & URL Railway aktif
+- [ ] `php artisan serve` jalan di `localhost:8000`
 - [ ] Login pakai user dummy yang sudah dibuat
 - [ ] Dashboard Data Quality: 10 badge tampil dengan T1 FAIL
 - [ ] Drill-down 1 assertion bekerja
 - [ ] Dashboard Revenue: chart line muncul
 - [ ] Top Customer: chart bar muncul
+- [ ] Top Product: tabel muncul
 - [ ] Filter date range fungsional
 - [ ] Layout konsisten (nav + footer di semua halaman)
 - [ ] Logout bekerja
-- [ ] Repo GitHub publik dengan README jelas
-- [ ] Tidak ada `.env` ter-commit
-- [ ] Slide / notes presentasi siap
+- [ ] Tidak ada error 500 saat demo
+- [ ] Note presentasi siap
 
 ---
 
-## 8. Anti-Pattern Capstone
+## 9. Anti-Pattern Capstone
 
 | ❌ Hindari | ✅ Lakukan |
 |-----------|-----------|
-| Demo dari localhost | Demo dari URL production |
-| `.env` ter-push ke GitHub | Verifikasi `.gitignore` |
-| README kosong di GitHub | README minimal: 1 paragraf + cara setup |
+| `.env` ter-commit ke GitHub | Verifikasi `.gitignore` |
 | Hardcode credential di code | Selalu pakai `env('KEY')` |
 | Tidak ada error handling | Minimal try-catch untuk query critical |
-| Database production = development | Backup sebelum demo |
+| Demo tanpa rehearsal | Latih sekali sebelum tampil |
+| Slide tanpa demo nyata | Demo > slide kalau ada aplikasi |
+| Klaim "AI yang bikin semuanya" | Jujur — sebut bagian mana AI bantu, bagian mana Anda yang putuskan |
 
 ---
 
-## 9. Setelah Hari 3
+## 10. Setelah Hari 3
 
 Anda akan punya:
 
-1. **Aplikasi web fungsional** ter-deploy
+1. **Aplikasi web fungsional** jalan di lokal
 2. **Repo GitHub** dengan README jelas (showcase di CV)
-3. **Pengalaman end-to-end**: design data (H2) → bangun app (H3) → deploy
+3. **Pengalaman end-to-end**: design data (H2) → bangun app (H3)
 4. **Skill AI-pair-programming** di Laravel
 
 Lanjutan yang bisa Anda kerjakan sendiri di rumah:
 
-- Tambah CRUD: pelanggan bisa di-tambah/edit dari UI
-- Export PDF / Excel: dashboard bisa di-download
-- Notifikasi email saat assertion FAIL
-- Role-based auth: admin vs viewer
-- Real-time update dengan Laravel Echo + Pusher
+- **Deploy ke production** (Railway, Hostinger, atau VPS)
+- Tambah **CRUD**: pelanggan bisa di-tambah/edit dari UI
+- **Export PDF / Excel**: dashboard bisa di-download
+- **Notifikasi email** saat assertion FAIL
+- **Role-based auth**: admin vs viewer
+- **Real-time update** dengan Laravel Echo + Pusher
+- **Pakai Filament**: admin panel auto-generate dari Model
 
 ---
 
@@ -357,16 +361,15 @@ Bareng fasilitator:
 2. Migrate + seed → ada user admin
 3. Pasang middleware `auth` di route grup
 4. Tes: logout → akses `/data-quality` → redirect login
-5. Push ke GitHub
-6. Deploy ke Railway: connect repo + MySQL service + env variables
-7. Import schema + data ke MySQL Railway
-8. Akses URL public → login → dashboard online ✓
+5. Edit layout: tambah info user + logout di nav
+6. Tambah validasi date range di Controller revenue
+7. Latih presentasi 5 menit
 
 ---
 
 ## Lanjut ke Latihan
 
-[`latihan-11-deploy-presentation/`](./latihan-11-deploy-presentation/)
+[`latihan-11-capstone-presentation/`](./latihan-11-capstone-presentation/)
 
 ---
 
@@ -374,9 +377,10 @@ Bareng fasilitator:
 
 - **Laravel Breeze** = auth instant (login, register, middleware `auth`).
 - **Middleware `auth`** di route → otomatis redirect ke login kalau belum login.
-- **Seeder** untuk bikin user awal.
-- **`.env` tidak di-commit**. Gunakan `env('KEY')` di code, set value di Railway dashboard.
-- **Deploy Railway**: push ke GitHub → connect repo → add MySQL → set env → done.
-- **Optimasi production**: `config:cache`, `route:cache`, `view:cache`, `npm run build`.
+- **Seeder** untuk bikin user awal (`firstOrCreate` aman jalan berulang).
+- **`.env` tidak di-commit**. Gunakan `env('KEY')` di code, set value di `.env` lokal.
+- **Optimasi**: `config:cache`, `route:cache`, `view:cache` untuk demo stabil.
+- **Error handling**: try-catch + view error generic supaya demo tidak crash.
+- **Validasi**: `$request->validate([...])` untuk input form.
 - **Capstone presentasi 5'**: problem (1') + demo (2') + highlight teknis (1') + pelajaran (1').
-- **Aturan emas**: tidak ada credential ter-commit, demo dari production URL.
+- **Aturan emas**: tidak ada credential ter-commit, demo dari aplikasi lokal yang sudah dites.

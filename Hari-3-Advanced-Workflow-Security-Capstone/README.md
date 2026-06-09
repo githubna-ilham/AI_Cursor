@@ -32,13 +32,15 @@ Realita developer profesional:
 
 ## Output Akhir Hari 3
 
-Aplikasi web Laravel dengan:
+Aplikasi web Laravel (jalan di lokal) dengan:
 
 - **Dashboard Data Quality**: badge PASS/FAIL untuk 10 assertion + drill-down detail pelanggar
 - **Dashboard Business**: chart revenue per bulan, top customer LTV, top product, filter date range
 - **Auth sederhana**: login dengan email + password (Laravel Breeze)
-- **Deploy**: aplikasi terakses publik via Railway / shared hosting / VPS
+- **Polish**: error handling minimal + validasi input form
 - **Presentasi**: demo 5 menit + dokumentasi setup
+
+> 💡 Deploy production (Railway / Hostinger / VPS) opsional dikerjakan di rumah setelah workshop selesai.
 
 ---
 
@@ -53,7 +55,7 @@ Aplikasi web Laravel dengan:
 | 12.15 – 13.15  | ISHOMA                                              | 60'    |
 | 13.15 – 14.45  | **Sesi 11**: Dashboard Business Metrics             | 90'    |
 | 14.45 – 15.00  | Coffee break                                        | 15'    |
-| 15.00 – 16.30  | **Sesi 12**: Auth + Deploy + Capstone presentation  | 90'    |
+| 15.00 – 16.30  | **Sesi 12**: Auth + Capstone presentation          | 90'    |
 | 16.30 – 17.00  | Wrap-up & evaluasi pelatihan                        | 30'    |
 
 ---
@@ -76,7 +78,8 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 │   ├── materi.md                                        <- versi lama
 │   └── materi-laravel.md                                <- Sesi 11 (Business Dashboard)
 └── Sesi-12-Capstone/
-    ├── materi-laravel.md                                <- Sesi 12 (Auth + Deploy)
+    ├── materi-laravel.md                                <- Sesi 12 (Auth + Capstone)
+    ├── latihan-11-capstone-presentation/                <- Tahap 29-30
     ├── opsi-project.md                                  <- versi lama
     ├── panduan-capstone.md                              <- versi lama
     ├── rubrik-penilaian.md                              <- versi lama
@@ -91,7 +94,7 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 - **PHP 8.2+** terinstall (via Laravel Herd / Homebrew).
 - **Composer** terinstall (bundled di Herd).
 - **MySQL** masih jalan dari Hari 2.
-- Akun **Railway** atau **GitHub** (untuk deploy gratis).
 - Cursor aktif.
+- (Opsional) Akun GitHub untuk backup repo.
 
 Detail setup ada di materi Sesi 9.
