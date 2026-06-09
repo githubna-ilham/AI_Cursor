@@ -221,29 +221,7 @@ dist/
 
 ---
 
-## 3. Studi Kasus & Diskusi (30 menit)
-
-Lihat dokumen pendamping: [`studi-kasus-kebocoran-data.md`](./studi-kasus-kebocoran-data.md).
-
-Format: 3 kelompok membahas kasus berbeda (10 menit), lalu sharing silang (20 menit).
-
-## 4. Demo Mitigasi (15 menit)
-
-**Skenario**: Repo demo sengaja diberi file `.env` dengan token palsu dan dataset `customers.csv` berisi PII dummy.
-
-**Langkah 1** — Coba prompt biasa: "Refactor query di seluruh repo". Tunjukkan bahwa AI bisa membaca `.env` jika tidak di-ignore.
-
-**Langkah 2** — Tambahkan `.cursorignore`, restart indexing.
-
-**Langkah 3** — Pasang pre-commit hook `gitleaks` (`pre-commit run --all-files`).
-
-**Langkah 4** — Tunjukkan Privacy Mode toggle di settings.
-
-**Langkah 5** — Audit: cek log Cursor untuk memastikan file sensitif tidak masuk konteks.
-
----
-
-## 5. Wrap-up & Q&A
+## 3. Wrap-up & Q&A
 
 1. Apa beda risiko Cursor cloud default dengan Privacy Mode dari sisi praktis tim Anda?
 2. Bila menemukan rekan paste credential ke prompt — apa langkah pertama?
@@ -253,7 +231,7 @@ Format: 3 kelompok membahas kasus berbeda (10 menit), lalu sharing silang (20 me
 
 ---
 
-## 6. Bacaan Lanjutan
+## 4. Bacaan Lanjutan
 
 - OWASP — *Top 10 for LLM Applications*.
 - NIST AI RMF 1.0 — *Risk Management Framework for AI*.
