@@ -69,8 +69,7 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 ├── README.md                                            <- file ini
 ├── perjalanan-project.md                                <- 10 tahap (BACA DULU)
 ├── Sesi-09-Security-Ethics-Governance/                  <- Sesi 9: MATERI ONLY (no latihan)
-│   ├── materi.md                                        <- Security materi utama
-│   └── studi-kasus-kebocoran-data.md
+│   └── materi.md                                        <- Security materi utama
 ├── Sesi-10-Setup-Laravel/                               <- Sesi 10: Setup + Data Quality Dashboard
 │   ├── materi-laravel-1-setup.md                        <- Setup Laravel + Eloquent
 │   ├── materi-laravel-2-data-quality.md                 <- Dashboard Data Quality

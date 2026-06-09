@@ -46,7 +46,7 @@ Sebelum Tahap 21, pastikan:
 
 Tidak ada latihan teknis. Sesi ini diskusi konsep + studi kasus.
 
-**Materi**: `Sesi-09-Security-Ethics-Governance/materi.md` + `studi-kasus-kebocoran-data.md`
+**Materi**: `Sesi-09-Security-Ethics-Governance/materi.md`
 
 **Topik utama**:
 - Risiko penggunaan AI coding assistant (data leakage, IP, hallucination, license, prompt injection)

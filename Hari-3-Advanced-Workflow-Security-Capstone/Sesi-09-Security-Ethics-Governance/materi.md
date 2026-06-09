@@ -135,7 +135,7 @@ Empat dimensi yang perlu disepakati:
 
 1. Scope: tools yang disetujui (Cursor, Copilot, dst).
 2. Klasifikasi data + matriks mode deployment.
-3. Daftar do/don't (lihat `studi-kasus-kebocoran-data.md`).
+3. Daftar do/don't penggunaan AI coding assistant.
 4. Proses reporting insiden.
 5. Audit & review berkala (minimal 6 bulan).
 6. Sanksi pelanggaran.
@@ -174,7 +174,7 @@ Setelah Review (5), output-nya **kembali memicu update Policy** (1) — itulah k
 - **Tools cepat berubah.** Cursor rilis fitur baru tiap bulan; Copilot, Codeium, dsb. Policy yang ditulis tahun lalu mungkin sudah tidak cocok.
 - **Threat landscape berkembang.** Prompt injection baru muncul 2023; sekarang sudah jadi vektor serius. Tanpa review, policy tertinggal.
 - **Tim berubah.** Karyawan baru tidak otomatis tahu policy — training harus berulang, bukan event sekali.
-- **Insiden = bahan belajar.** Tiap insiden internal/industri (lihat `studi-kasus-kebocoran-data.md`) harus disuntik ke siklus berikutnya.
+- **Insiden = bahan belajar.** Tiap insiden internal/industri harus disuntik ke siklus berikutnya.
 
 #### Kalau Salah Satu Tahap Putus
 
