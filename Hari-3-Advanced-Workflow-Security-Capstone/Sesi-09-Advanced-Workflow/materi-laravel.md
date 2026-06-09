@@ -24,6 +24,87 @@ Hari 3 melatih opsi #2: **bangun aplikasi Laravel** yang menampilkan data Hari 2
 
 ---
 
+## Arsitektur yang Akan Dibangun
+
+Sebelum masuk ke teknis, pahami **bagaimana request mengalir** dari browser sampai ke database lalu kembali ke layar pengguna. Ini "anatomi" aplikasi Laravel yang akan Anda bangun di Hari 3:
+
+```mermaid
+flowchart LR
+    Browser([🌐 Browser])
+    Routes[/"routes/web.php<br/>(daftar URL)"/]
+    MW{{"Middleware<br/>(cek login)"}}
+    Ctrl["Controller<br/>(orkestrasi)"]
+    Model[("Eloquent Model<br/>(akses data)")]
+    DB[("🗄️ MySQL<br/>latihan_sql<br/>+ views")]
+    View["Blade View<br/>(template HTML)"]
+
+    Browser -->|"1. GET /data-quality"| Routes
+    Routes -->|"2. cocok ke route"| MW
+    MW -->|"3. auth OK"| Ctrl
+    Ctrl -->|"4. query data"| Model
+    Model -->|"5. SQL via Eloquent"| DB
+    DB -->|"6. rows hasil"| Model
+    Model -->|"7. collection objek"| Ctrl
+    Ctrl -->|"8. kirim data"| View
+    View -->|"9. render HTML"| Browser
+
+    style Browser fill:#e3f2fd
+    style DB fill:#fff3e0
+    style View fill:#f3e5f5
+```
+
+### Penjelasan 9 Langkah
+
+| # | Aktor | Yang Terjadi | File yang Anda Sentuh |
+|---|-------|--------------|----------------------|
+| 1 | **Browser** | User ketik URL atau klik link | — |
+| 2 | **Router** | Cocokkan URL dengan daftar route, teruskan ke method Controller | `routes/web.php` |
+| 3 | **Middleware** | Cek otorisasi (auth, csrf, dst.). Kalau gagal, redirect | (otomatis) |
+| 4 | **Controller** | Method dipanggil. Orkestrasi: panggil Model, siapkan data | `app/Http/Controllers/*.php` |
+| 5 | **Model** | Eloquent generate query SQL → kirim ke DB | `app/Models/*.php` |
+| 6 | **Database** | Eksekusi query → balas baris hasil | (view di MySQL) |
+| 7 | **Model** | Convert baris jadi objek Collection | (otomatis Eloquent) |
+| 8 | **Controller** | Terima data, kirim ke View dengan `compact()` atau `view(..., $data)` | (lanjutan langkah 4) |
+| 9 | **Blade View** | Render template Blade → HTML → kirim ke browser | `resources/views/**/*.blade.php` |
+
+### Contoh Konkret: Klik "Data Quality"
+
+```
+🌐 User klik link "/data-quality" di nav menu
+   ↓
+📋 routes/web.php cocok dengan:
+   Route::get('/data-quality', [DataQualityController::class, 'index'])
+   ↓
+🔒 Middleware 'auth' cek session → user sudah login ✓
+   ↓
+🎯 DataQualityController::index() dipanggil
+   ↓
+🗂️  Loop 10 Model: AssertionT1::count(), AssertionT2::count(), ...
+   ↓
+🗄️  MySQL eksekusi: SELECT COUNT(*) FROM v_assertion_t1_subtotal_mismatch
+   → balas: 11
+   ↓
+📦 Controller kumpulkan jadi array $tests = [['key'=>'t1','failed'=>11], ...]
+   ↓
+🎨 return view('data-quality.index', compact('tests'))
+   → Blade render grid 10 badge
+   ↓
+📄 HTML dikirim balik ke browser → user lihat 10 badge
+```
+
+### Yang Penting Diingat
+
+| Konsep | Inti |
+|--------|------|
+| **Tiap halaman = 4 file** | Route + Controller + Model + Blade |
+| **Eloquent = abstraksi SQL** | Tidak perlu nulis SELECT/JOIN manual untuk kasus umum |
+| **Blade = template HTML** | Bisa loop, conditional, tapi logic tetap di Controller |
+| **Middleware = penjaga** | Cek dulu sebelum Controller dijalankan |
+
+Setelah paham alur ini, langkah selanjutnya jadi jelas: Sesi 9 fokus ke **Model + Database**, Sesi 10 lanjut ke **Controller + Blade**, Sesi 11 perkaya tampilan, Sesi 12 tambah Middleware auth.
+
+---
+
 ## 1. Kenapa Laravel?
 
 Laravel adalah framework PHP yang sangat populer untuk membangun aplikasi web. Cocok untuk workshop ini karena:
