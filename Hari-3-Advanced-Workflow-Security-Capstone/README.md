@@ -37,7 +37,6 @@ Realita developer profesional:
 Aplikasi web Laravel (jalan di lokal) dengan:
 
 - **Dashboard Data Quality**: badge PASS/FAIL untuk 10 assertion + drill-down detail pelanggar
-- **Dashboard Business**: chart revenue per bulan, top customer LTV, top product, filter date range
 - **Auth sederhana**: login dengan email + password (Laravel Breeze)
 - **Polish**: error handling minimal + validasi input form
 - **Presentasi**: demo 5 menit + dokumentasi setup
@@ -55,9 +54,8 @@ Aplikasi web Laravel (jalan di lokal) dengan:
 | 10.30 – 10.45  | Coffee break                                        | 15'    |
 | 10.45 – 12.15  | **Sesi 10**: Setup Laravel + Dashboard Data Quality | 90'    |
 | 12.15 – 13.15  | ISHOMA                                              | 60'    |
-| 13.15 – 14.45  | **Sesi 11**: Dashboard Business Metrics             | 90'    |
+| 13.15 – 14.45  | **Sesi 12**: Auth + Capstone presentation          | 90'    |
 | 14.45 – 15.00  | Coffee break                                        | 15'    |
-| 15.00 – 16.30  | **Sesi 12**: Auth + Capstone presentation          | 90'    |
 | 16.30 – 17.00  | Wrap-up & evaluasi pelatihan                        | 30'    |
 
 ---
@@ -75,9 +73,6 @@ Hari-3-Advanced-Workflow-Security-Capstone/
 │   ├── materi-laravel-2-data-quality.md                 <- Dashboard Data Quality
 │   ├── latihan-08-laravel-setup/                        <- Tahap 21-22
 │   └── latihan-09-data-quality-dashboard/               <- Tahap 23-25
-├── Sesi-11-Best-Practices-Performance/                  <- Sesi 11: Business Dashboard
-│   ├── materi-laravel.md
-│   └── latihan-10-business-dashboard/                   <- Tahap 26-28
 └── Sesi-12-Capstone/                                    <- Sesi 12: Auth + Capstone
     ├── materi-laravel.md
     ├── latihan-11-capstone-presentation/                <- Tahap 29-30

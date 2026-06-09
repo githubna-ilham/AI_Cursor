@@ -95,50 +95,23 @@ Tidak ada latihan teknis. Sesi ini diskusi konsep + studi kasus.
 
 ---
 
-### 📊 Sesi 11 — Dashboard Business Metrics
-
-**Materi**: `Sesi-11-Best-Practices-Performance/materi-laravel.md`
-
-#### Tahap 26. Chart Revenue Trend
-- Route `/reports/revenue` → tampilkan line chart revenue per bulan
-- Pakai Chart.js (CDN) + data dari view reporting
-- Filter date range (date picker)
-
-#### Tahap 27. Top Customer LTV + Top Product
-- Bar chart top 10 customer berdasarkan total spending
-- Tabel top 5 product per kategori
-- Filter berdasarkan tier customer
-
-#### Tahap 28. Layout & Navigation
-- Buat layout master Blade dengan nav menu
-- Sidebar: Data Quality | Reports | (kosong nanti untuk Admin)
-- Konsistensi warna, font, spacing dengan Tailwind
-
-**Output Tahap 26-28**: Dashboard business + layout konsisten
-
-**Latihan**: `latihan-10-business-dashboard/`
-
----
-
 ### 🔐 Sesi 12 — Auth + Capstone Presentation
 
 **Materi**: `Sesi-12-Capstone/materi-laravel.md`
 
-#### Tahap 29. Auth dengan Laravel Breeze
+#### Tahap 26. Auth dengan Laravel Breeze
 - Install Breeze: `composer require laravel/breeze --dev && php artisan breeze:install blade`
-- Protect routes `/data-quality/*` dan `/reports/*` dengan middleware `auth`
+- Protect routes `/dashboard/*` dengan middleware `auth`
 - Bikin 1 user dummy di seeder
 - Tambah info user + tombol logout di nav
 
-#### Tahap 30. Polish + Presentasi
-- Tambah validasi date range di Controller (`$request->validate`)
+#### Tahap 27. Polish + Presentasi
+- Tambah validasi minimal di Controller
 - Tampilkan error di Blade kalau validasi gagal
 - Latih demo 5 menit: tour aplikasi + 1 keputusan teknis yang dipelajari
 - Presentasi di kelas
 
-**Output Tahap 29-30**: App lengkap di lokal, presentasi selesai
-
-**Latihan**: `latihan-11-capstone-presentation/`
+**Output Tahap 26-27**: App lengkap di lokal, presentasi selesai
 
 ---
 
@@ -148,15 +121,12 @@ Tidak ada latihan teknis. Sesi ini diskusi konsep + studi kasus.
 |-------|------|-------|--------|
 | — | 9 | Konsep | Materi Security + diskusi (no tahap project) |
 | 21 | 10 | Setup | Laravel + welcome page |
-| 22 | 10 | Model | 14 Model Eloquent siap |
-| 23 | 10 | Dashboard | 10 badge status PASS/FAIL |
+| 22 | 10 | Model | Model Eloquent siap |
+| 23 | 10 | Dashboard | Badge status PASS/FAIL |
 | 24 | 10 | Drill-down | Detail pelanggar per assertion |
 | 25 | 10 | Refactor | Config terpusat + summary card |
-| 26 | 11 | Chart | Revenue trend + filter |
-| 27 | 11 | Chart | Top customer + product |
-| 28 | 11 | UX | Layout + nav menu |
-| 29 | 12 | Auth | Login wajib untuk dashboard |
-| 30 | 12 | Capstone | Polish + presentasi 5' |
+| 26 | 12 | Auth | Login wajib untuk dashboard |
+| 27 | 12 | Capstone | Polish + presentasi 5' |
 
 ---
 
@@ -165,8 +135,7 @@ Tidak ada latihan teknis. Sesi ini diskusi konsep + studi kasus.
 Hari 3 padat (Sesi 10 paling padat karena gabung Setup + Data Quality). Strategi prioritas:
 
 - **Sesi 9**: ikuti diskusi penuh — ini fondasi etika, jangan skip.
-- **Sesi 10**: minimum project Laravel jalan + dashboard Data Quality index (badge 10 assertion). Drill-down boleh skip kalau pendek waktu.
-- **Sesi 11**: minimum 1 chart (revenue trend). Top customer & product boleh dilanjut di rumah.
+- **Sesi 10**: minimum project Laravel jalan + dashboard Data Quality index (badge 1 assertion). Drill-down boleh skip kalau pendek waktu.
 - **Sesi 12**: auth prioritas. Polish (error handling, validasi) boleh minimal kalau pendek waktu.
 
 Yang penting: keluar dari Hari 3 dengan **aplikasi Laravel yang jalan di lokal** + **kesadaran etis** + 1 pengalaman ngoding bareng AI Cursor di Laravel.

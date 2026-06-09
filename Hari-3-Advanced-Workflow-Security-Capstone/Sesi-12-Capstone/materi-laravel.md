@@ -130,16 +130,11 @@ Tanpa proteksi, siapapun yang tahu URL bisa lihat dashboard. Tambah middleware `
 
 ```php
 Route::middleware('auth')->group(function () {
-    Route::get('/data-quality',         [DataQualityController::class, 'index'])->name('dq.index');
-    Route::get('/data-quality/{key}',   [DataQualityController::class, 'show'])->name('dq.show');
-
-    Route::get('/reports/revenue',      [ReportController::class, 'revenue'])->name('reports.revenue');
-    Route::get('/reports/customers',    [ReportController::class, 'topCustomers'])->name('reports.customers');
-    Route::get('/reports/products',     [ReportController::class, 'topProducts'])->name('reports.products');
+    Route::get('/dashboard',         [DataQualityController::class, 'index'])->name('dashboard');
 });
 ```
 
-Sekarang akses `/data-quality` tanpa login → redirect ke `/login`.
+Sekarang akses `/dashboard` tanpa login → redirect ke `/login`.
 
 ### Tambah Logout & Info User di Nav
 
@@ -149,10 +144,7 @@ Sekarang akses `/data-quality` tanpa login → redirect ke `/login`.
 <nav class="bg-white shadow p-4">
     <div class="container mx-auto flex justify-between items-center">
         <div class="flex gap-6">
-            <a href="{{ route('dq.index') }}" class="font-semibold">Data Quality</a>
-            <a href="{{ route('reports.revenue') }}">Revenue</a>
-            <a href="{{ route('reports.customers') }}">Top Customer</a>
-            <a href="{{ route('reports.products') }}">Top Product</a>
+            <a href="{{ route('dashboard') }}" class="font-semibold">Dashboard</a>
         </div>
 
         <div class="flex items-center gap-4 text-sm">
@@ -334,13 +326,8 @@ Sebelum presentasi, pastikan:
 
 - [ ] `php artisan serve` jalan di `localhost:8000`
 - [ ] Login pakai user dummy yang sudah dibuat
-- [ ] Dashboard Data Quality: 10 badge tampil dengan T1 FAIL
-- [ ] Drill-down 1 assertion bekerja
-- [ ] Dashboard Revenue: chart line muncul
-- [ ] Top Customer: chart bar muncul
-- [ ] Top Product: tabel muncul
-- [ ] Filter date range fungsional
-- [ ] Layout konsisten (nav + footer di semua halaman)
+- [ ] Dashboard Data Quality: badge tampil dengan T1 FAIL (atau view assertion lain yang dibuat peserta)
+- [ ] Drill-down assertion bekerja (kalau sudah dibikin di Sesi 10)
 - [ ] Logout bekerja
 - [ ] Tidak ada error 500 saat demo
 - [ ] Note presentasi siap
@@ -394,10 +381,6 @@ Bareng fasilitator:
 7. Latih presentasi 5 menit
 
 ---
-
-## Lanjut ke Latihan
-
-[`latihan-11-capstone-presentation/`](./latihan-11-capstone-presentation/)
 
 ---
 
