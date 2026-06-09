@@ -186,39 +186,29 @@ DB::table('customers')->count();
 
 Kalau output 13, koneksi sukses ✅. Keluar dengan `exit`.
 
-### 4. Bikin Halaman Dashboard Sederhana (15')
+### 4. Bikin Halaman Dashboard Sederhana (20')
 
-Sebelum belajar Model Eloquent, mari **langsung tampilkan data di browser** dengan cara paling sederhana: `DB::table('nama_view')` di route closure. Untuk sekarang kita pakai 1 view (T1) yang sudah dibuat di Step 0. Sisa 9 view bisa ditambahkan peserta nanti dengan pola yang sama.
+Sekarang bangun dashboard pertama dengan pola **MVC Laravel**. Urutan pembuatannya: **Route → Blade view → Controller**.
 
-#### 4.1. Tambah Route + Inline Logic
+Bayangkan alurnya seperti restoran:
+- **Route** = daftar menu (URL mana yang tersedia + diteruskan ke mana)
+- **Blade view** = template piring & dekorasi (HTML yang dilihat customer)
+- **Controller** = koki (orkestrasi: ambil data, kirim ke piring)
 
-Edit `routes/web.php`:
+#### 4.1. Bikin Route
+
+Edit `routes/web.php`. Tambah route `/dashboard` yang point ke method `index` di `DataQualityController` (Controller-nya akan kita bikin di 4.3):
 
 ```php
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\DataQualityController;
 
-Route::get('/dashboard', function () {
-    $tests = [
-        [
-            'key'  => 't1',
-            'name' => 'Subtotal Mismatch',
-            'view' => 'v_assertion_t1_subtotal_mismatch',
-        ],
-        // 💡 Tambah view T2-T10 di sini setelah peserta bikin
-        // view-nya di MySQL dengan pola CREATE OR REPLACE VIEW
-        // (lihat Step 0).
-    ];
-
-    foreach ($tests as &$test) {
-        $test['failed'] = DB::table($test['view'])->count();
-    }
-
-    return view('dashboard', compact('tests'));
-});
+Route::get('/dashboard', [DataQualityController::class, 'index'])->name('dashboard');
 ```
+
+Kalau Anda buka <http://localhost:8000/dashboard> sekarang → akan error karena Controller belum ada. Itu **expected** — kita akan bikin di langkah berikut.
 
 #### 4.2. Bikin Blade View
 
@@ -263,7 +253,60 @@ Buat file baru `resources/views/dashboard.blade.php`:
 </html>
 ```
 
-#### 4.3. Jalankan & Lihat Hasil
+Penjelasan singkat sintaks Blade:
+- `{{ $test['key'] }}` — echo nilai variabel (auto-escape XSS-safe)
+- `@foreach($tests as $test) ... @endforeach` — loop
+- `@if(...) ... @else ... @endif` — conditional
+- Variabel `$tests` belum tahu dari mana — itu akan dikirim Controller di 4.3
+
+#### 4.3. Bikin Controller
+
+Generate Controller dengan artisan:
+
+```bash
+php artisan make:controller DataQualityController
+```
+
+Ini akan membuat file `app/Http/Controllers/DataQualityController.php`. Edit jadi:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\DB;
+
+class DataQualityController extends Controller
+{
+    public function index()
+    {
+        $tests = [
+            [
+                'key'  => 't1',
+                'name' => 'Subtotal Mismatch',
+                'view' => 'v_assertion_t1_subtotal_mismatch',
+            ],
+            // 💡 Tambah view T2-T10 di sini setelah peserta bikin
+            // view-nya di MySQL dengan pola CREATE OR REPLACE VIEW.
+        ];
+
+        foreach ($tests as &$test) {
+            $test['failed'] = DB::table($test['view'])->count();
+        }
+
+        return view('dashboard', compact('tests'));
+    }
+}
+```
+
+Penjelasan:
+- `namespace App\Http\Controllers` — supaya bisa di-autoload Laravel
+- `use Illuminate\Support\Facades\DB` — import DB query builder
+- Method `index()` — dijalankan saat user buka `/dashboard` (sesuai Route di 4.1)
+- `DB::table('nama_view')->count()` — query langsung ke view, hasil jumlah baris
+- `return view('dashboard', compact('tests'))` — render `dashboard.blade.php` + kirim variabel `$tests`
+
+#### 4.4. Jalankan & Lihat Hasil
 
 ```bash
 php artisan serve
@@ -273,9 +316,27 @@ Buka <http://localhost:8000/dashboard>. Harusnya muncul:
 - 1 kartu badge **T1**: berwarna **merah** dengan "❌ 11 FAIL"
 - Footer dengan timestamp last checked
 
-🎉 **Dashboard pertama jalan tanpa login, tanpa Model.**
+🎉 **Dashboard pertama jalan dengan struktur MVC lengkap.**
 
-Saat peserta nanti tambah view T2-T10 di MySQL (dengan pola sama seperti T1), cukup tambahkan baris baru di array `$tests` → badge baru otomatis muncul di dashboard.
+Saat peserta nanti tambah view T2-T10 di MySQL, cukup tambahkan baris baru di array `$tests` di Controller → badge baru otomatis muncul di dashboard.
+
+#### Alur yang Baru Saja Anda Bangun
+
+```
+Browser GET /dashboard
+   ↓
+routes/web.php cocokkan ke DataQualityController@index
+   ↓
+DataQualityController::index() jalankan
+   ↓
+DB::table(...)->count() query ke MySQL
+   ↓
+return view('dashboard', $tests) render Blade
+   ↓
+HTML dikirim balik ke browser
+```
+
+Ini **persis alur MVC** di diagram materi Sesi 10.
 
 #### 4.4. Catatan tentang Pendekatan Ini
 
@@ -356,32 +417,43 @@ App\Models\AssertionT1::count();    // → 11 (sengaja FAIL)
 
 > 💡 **Sisa Model AssertionT2-T10**: tidak perlu dibuat sekarang. Tambah secara bertahap saat peserta sudah bikin view yang sesuai di MySQL. Pola sama: 1 file per Model, ganti nama class + `$table`. Bisa pakai AI Cursor: *"Bikin Model AssertionT2 yang map ke view v_assertion_t2_total_mismatch dengan pola sama seperti @file app/Models/AssertionT1.php"*.
 
-### 7. Refactor Dashboard Pakai Model (10')
+### 7. Refactor Controller Pakai Model (10')
 
-Sekarang ganti `DB::table()` di route closure dengan Model Eloquent yang baru saja dibuat.
+Sekarang ganti `DB::table()` di Controller dengan Model Eloquent yang baru saja dibuat di Step 6.
 
-Edit `routes/web.php`:
+Edit `app/Http/Controllers/DataQualityController.php`:
 
 ```php
 <?php
 
-use Illuminate\Support\Facades\Route;
+namespace App\Http\Controllers;
+
 use App\Models\AssertionT1;
 
-Route::get('/dashboard', function () {
-    $tests = [
-        [
-            'key'    => 't1',
-            'name'   => 'Subtotal Mismatch',
-            'failed' => AssertionT1::count(),
-        ],
-        // 💡 Tambah AssertionT2-T10 di sini setelah peserta bikin
-        // Model-nya. Pola sama seperti baris di atas.
-    ];
+class DataQualityController extends Controller
+{
+    public function index()
+    {
+        $tests = [
+            [
+                'key'    => 't1',
+                'name'   => 'Subtotal Mismatch',
+                'failed' => AssertionT1::count(),
+            ],
+            // 💡 Tambah AssertionT2-T10 di sini setelah peserta bikin
+            // Model-nya. Pola sama seperti baris di atas.
+        ];
 
-    return view('dashboard', compact('tests'));
-});
+        return view('dashboard', compact('tests'));
+    }
+}
 ```
+
+Yang berubah dari Step 4.3:
+- Hapus `use Illuminate\Support\Facades\DB`
+- Tambah `use App\Models\AssertionT1`
+- Hapus loop `foreach` + `DB::table(...)->count()`
+- Langsung embed `AssertionT1::count()` di array
 
 Refresh browser <http://localhost:8000/dashboard>. **Hasil harus identik** dengan Step 4 — ini adalah refactoring (behavior-preserving).
 
