@@ -1,6 +1,9 @@
 # Instalasi Checklist — Cursor IDE
 
-Gunakan checklist ini **sebelum** Sesi 2 dimulai bila memungkinkan, atau pandu peserta saat segmen instalasi. Tandai ✓ saat selesai.
+Gunakan checklist ini **sebelum hari pelatihan dimulai**. Estimasi total: 45–90 menit (tergantung kecepatan koneksi saat download Herd & Cursor). Tandai ✓ saat selesai.
+
+> **Bagian 1–8**: wajib selesai sebelum **Hari 1**.
+> **Bagian 5 (Herd + Database Client)**: wajib selesai sebelum **Hari 2**.
 
 ---
 
@@ -183,14 +186,45 @@ Sejak 2026, Cursor menggunakan model billing berbasis **usage credit** (bukan re
 - [ ] Linux: `sudo apt install git`.
 - [ ] Konfigurasi: `git config --global user.name "<nama>"` & `user.email`.
 
-### Stack-specific runtime
-<!-- STACK-PLACEHOLDER: isi sesuai hasil pretest -->
+### Laravel Herd (wajib — untuk Hari 2 & 3)
 
-- [ ] Node.js LTS + npm/pnpm (untuk peserta FE/Full-Stack/Node BE).
-- [ ] Python 3.11+ + pip + venv (untuk peserta Python/Data).
-- [ ] Go 1.22+ (untuk peserta Go).
-- [ ] JDK 21 + Maven/Gradle (untuk peserta Java).
-- [ ] Docker Desktop / colima (untuk peserta DevOps).
+Laravel Herd menyediakan PHP, MySQL, dan Nginx lokal dalam satu installer — tidak perlu setup manual.
+
+**macOS:**
+- [ ] Buka <https://herd.laravel.com> → klik **Download for Mac**.
+- [ ] Buka `.dmg` → drag **Herd.app** ke `Applications`.
+- [ ] Buka Herd → ikuti wizard setup awal.
+- [ ] Di Herd dashboard, pastikan layanan **PHP** dan **MySQL** berstatus hijau (running).
+
+**Windows:**
+- [ ] Buka <https://herd.laravel.com/windows> → klik **Download for Windows**.
+- [ ] Jalankan installer `.exe` → ikuti wizard.
+- [ ] Buka Herd → pastikan **PHP** dan **MySQL** running di system tray.
+
+**Verifikasi (semua OS):**
+
+```bash
+php --version        # harus ≥ 8.2
+mysql --version      # harus muncul
+herd --version       # Herd CLI aktif
+```
+
+- [ ] Coba koneksi MySQL default Herd:
+  - Host: `127.0.0.1`
+  - Port: `3306`
+  - User: `root`
+  - Password: *(kosong)*
+
+> ⚠️ Kalau port 3306 sudah dipakai MySQL lain di laptop Anda, matikan dulu service MySQL lama sebelum menjalankan Herd.
+
+### Install Extension Database Client di Cursor (wajib — untuk Hari 2 & 3)
+
+- [ ] Buka Cursor → panel Extensions (`Cmd/Ctrl+Shift+X`).
+- [ ] Cari: `Database Client`.
+- [ ] Install extension dari **cweijan** (publisher: `cweijan.vscode-database-client2`).
+- [ ] Setelah install, ikon database akan muncul di Activity Bar kiri.
+- [ ] Test koneksi: klik ikon database → **New Connection** → pilih MySQL → isi kredensial Herd di atas → **Connect**.
+- [ ] Pastikan koneksi berhasil dan database list muncul.
 
 ---
 
@@ -241,4 +275,8 @@ Bila semua ✓ → peserta siap masuk Lab 01.
 | Extension VS Code tidak ada | Install ulang via Extensions panel; cari di OpenVSX |
 | Tab tidak muncul | Pastikan auto-save aktif, cek Settings → Features → Cursor Tab |
 | Login terus loop | Hapus cache: keluar app → hapus `~/.cursor` (backup dulu) |
+| MySQL Herd tidak jalan | Buka Herd dashboard → klik restart MySQL; cek port 3306 tidak dipakai proses lain |
+| Port 3306 conflict | Matikan MySQL lama: macOS `brew services stop mysql`, Windows → Services → stop MySQL |
+| Database Client "connection refused" | Pastikan Herd MySQL running; gunakan `127.0.0.1` bukan `localhost` |
+| Database Client tidak muncul di Activity Bar | Restart Cursor setelah install extension |
 
