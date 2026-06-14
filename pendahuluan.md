@@ -15,20 +15,20 @@ Materi **AI Cursor — AI-Powered Coding & Developer Productivity** dirancang un
 Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak nyata** selama 3 hari:
 
 1. **Hari 1**: Website **portfolio personal** Anda sendiri (HTML/CSS/JS vanilla) — siap di-deploy & dipakai apply kerja.
-2. **Hari 2–3**: Aplikasi full-stack **DevNotes** (catatan teknis untuk developer) — Next.js + Supabase + Vercel.
+2. **Hari 2–3**: Aplikasi **Laravel + MySQL lokal** — dari query database dengan AI hingga dashboard data yang bisa dipakai.
 
 ### Alur 3 Hari
 
-| Hari | Topik utama                                  | Apa yang Anda hasilkan                                                                  |
-| ---- | -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Hari | Topik utama                                  | Apa yang Anda hasilkan                                                                        |
+| ---- | -------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | 1    | Fundamental Cursor & AI-Assisted Coding      | **Website portfolio personal** Anda (HTML/CSS/JS) dengan Hero, Skills, Projects, Contact form |
-| 2    | Code Understanding, Debugging, Refactoring   | Mulai project DevNotes: BE Next.js + Supabase + Vercel (API, auth, RLS)                  |
-| 3    | Advanced Workflow, Security, Capstone        | FE Next.js DevNotes konsumsi BE, deploy final, audit security & performance              |
+| 2    | Code Understanding, Debugging, Refactoring   | Project Laravel baru: setup Herd, koneksi MySQL, query AI-assisted, eksplorasi & debug data   |
+| 3    | Advanced Workflow, Dashboard & Capstone      | Dashboard data berbasis Laravel + MySQL: visualisasi query, refactor, security, presentasi     |
 
 ### Studi Kasus
 
 - **Hari 1 — Portfolio Personal**: Hari 1 berfokus pada fundamental Cursor. Anda membangun artefak yang langsung berguna: website portfolio Anda. BRD lengkap di [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md).
-- **Hari 2 & 3 — DevNotes**: Aplikasi catatan pembelajaran teknis (debugging story, decision record, learning log) yang bisa dishare publik atau dijaga privat. BRD lengkap di [`project-brd.md`](./project-brd.md). Minimal baca Section 1, 4, 11 sebelum Hari 2.
+- **Hari 2 & 3 — Dashboard Laravel**: Aplikasi dashboard data menggunakan Laravel + MySQL lokal via Laravel Herd. AI dipakai untuk menulis, memahami, dan memperbaiki query — hasilnya divisualisasikan sebagai dashboard yang bisa langsung didemonstrasikan.
 
 ### Filosofi Pelatihan
 
@@ -45,7 +45,8 @@ Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak 
 
 Anda **tidak perlu** ahli di semua hal di bawah ini, tapi minimal familiar:
 
-- Salah satu bahasa pemrograman modern (JavaScript/TypeScript paling membantu, tapi tidak wajib).
+- Salah satu bahasa pemrograman modern (PHP paling membantu, tapi tidak wajib).
+- **SQL dasar**: SELECT, WHERE, JOIN, GROUP BY — paham konsep query dan tabel relasional.
 - **Git basic**: clone, add, commit, push, branch.
 - **Terminal/CLI basic**: navigasi folder, menjalankan perintah.
 - **HTML, CSS, JavaScript dasar**: tahu apa itu `<div>`, selektor CSS, event listener.
@@ -55,22 +56,21 @@ Anda **tidak perlu** ahli di semua hal di bawah ini, tapi minimal familiar:
 
 Hal-hal ini boleh **belum** Anda kuasai — pelatihan akan memandu:
 
-- Next.js (App Router) — diperkenalkan Hari 2 Sesi 7.
-- Supabase (Postgres, RLS, Auth) — diperkenalkan Hari 2 Sesi 8.
-- Vercel deployment — dipraktikkan Hari 3 Sesi 9.
-- Markdown rendering, ISR/SSR, CI/CD dasar.
+- Laravel (MVC, routing, Eloquent, Blade) — diperkenalkan Hari 2 & 3.
+- MySQL lokal via Laravel Herd — setup di Hari 2.
+- Query analytics & agregasi SQL untuk dashboard — dipraktikkan Hari 2–3.
+- Visualisasi data sederhana di Blade/dashboard — Hari 3.
 
 ### Perangkat & Akun
 
-| Kategori    | Yang dibutuhkan                                                                                       |
-| ----------- | ----------------------------------------------------------------------------------------------------- |
-| Laptop      | RAM minimum 8 GB, disk kosong ≥ 5 GB, internet stabil                                                 |
-| OS          | macOS, Windows 10/11, atau Linux modern                                                               |
-| Akun GitHub | Aktif, sudah login dari laptop Anda (bisa lewat browser atau GitHub CLI)                              |
-| Akun email  | Aktif (untuk login Cursor & Supabase magic link)                                                      |
-| Akun Vercel | Dibuat di Hari 3 (gratis, login pakai GitHub)                                                         |
-| Akun Supabase | Dibuat di Hari 2 (gratis, login pakai GitHub atau email)                                            |
-| Browser     | Chrome / Edge / Firefox versi terbaru (untuk DevTools & Lighthouse)                                   |
+| Kategori     | Yang dibutuhkan                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| Laptop       | RAM minimum 8 GB (16 GB direkomendasikan), disk kosong ≥ 10 GB, internet stabil         |
+| OS           | macOS, Windows 10/11, atau Linux modern                                                  |
+| Akun GitHub  | Aktif, sudah login dari laptop Anda (bisa lewat browser atau GitHub CLI)                 |
+| Akun email   | Aktif (untuk login Cursor)                                                               |
+| Browser      | Chrome / Edge / Firefox versi terbaru (untuk DevTools & preview dashboard)               |
+| Laravel Herd | Diinstall sebelum Hari 2 — sudah termasuk PHP, MySQL, Nginx lokal (gratis)              |
 
 ---
 
@@ -107,7 +107,25 @@ git config --global user.email "email@anda.com"
 git config --global init.defaultBranch main
 ```
 
-### 3.4 Siapkan Folder Kerja
+### 3.4 Install Laravel Herd
+
+Laravel Herd adalah environment lokal all-in-one untuk PHP — sudah termasuk PHP, MySQL, Nginx, dan Laravel installer tanpa konfigurasi manual.
+
+1. Buka <https://herd.laravel.com> → download installer sesuai OS Anda.
+2. Install dan buka Herd.
+3. Verifikasi PHP & MySQL aktif:
+
+```bash
+php --version       # harus ≥ 8.2
+mysql --version     # harus ada
+herd --version      # verifikasi Herd CLI aktif
+```
+
+4. Pastikan MySQL service running di Herd dashboard (ikon hijau).
+
+> ℹ️ Laravel Herd gratis untuk tier dasar. MySQL sudah berjalan di port 3306 lokal — tidak perlu setup password awal untuk development.
+
+### 3.5 Siapkan Folder Kerja
 
 Buat folder kosong di laptop Anda untuk project:
 
@@ -116,9 +134,9 @@ mkdir ~/cursor-workshop
 cd ~/cursor-workshop
 ```
 
-Di Hari 1 Sesi 2 Anda akan `git init` folder `portfolio/` di sini. Di Hari 2 Anda akan menambah folder kedua untuk project DevNotes.
+Di Hari 1 Sesi 2 Anda akan `git init` folder `portfolio/` di sini. Di Hari 2 Anda akan membuat project Laravel baru di folder yang sama.
 
-### 3.5 Akses Repo Pelatihan
+### 3.6 Akses Repo Pelatihan
 
 Repo ini ([github.com/githubna-ilham/AI_Cursor](https://github.com/githubna-ilham/AI_Cursor)) berisi semua materi + brief latihan. Anda boleh:
 
@@ -129,14 +147,11 @@ Repo ini ([github.com/githubna-ilham/AI_Cursor](https://github.com/githubna-ilha
   git clone https://github.com/githubna-ilham/AI_Cursor.git
   ```
 
-Anda **tidak** perlu menulis kode di repo ini — kode aplikasi (portfolio Hari 1, DevNotes Hari 2-3) ada di folder kerja Anda sendiri (langkah 3.4).
+Anda **tidak** perlu menulis kode di repo ini — kode aplikasi (portfolio Hari 1, project Laravel Hari 2-3) ada di folder kerja Anda sendiri (langkah 3.5).
 
-### 3.6 Baca BRD
-
-Anda akan membangun **dua project** dengan dua BRD terpisah:
+### 3.7 Baca BRD
 
 - **Portfolio (Hari 1)** — [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md). Baca **Section 3 (Scope), Section 6 (Model Data), Section 9 (Wireframe)** sebelum Sesi 2. Total ~10 menit.
-- **DevNotes (Hari 2-3)** — [`project-brd.md`](./project-brd.md). Boleh ditunda baca sampai akhir Hari 1 / awal Hari 2. Minimal pahami **Section 1, 4, 11**. Total ~15 menit.
 
 ### 3.7 Persiapan Mental
 
