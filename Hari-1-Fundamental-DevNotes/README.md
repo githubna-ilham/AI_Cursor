@@ -1,23 +1,22 @@
 # HARI 1 — Fundamental AI Cursor (Project: Website Portfolio Personal)
 
 **Penyelenggara**: Multimatics
-**Durasi**: 1 hari penuh (8 jam efektif, 4 sesi × 90 menit + break)
+**Durasi**: 1 hari (2 sesi efektif)
 **Target peserta**: Developer profesional (Backend, Frontend, Full-Stack, DevOps, Data Engineer)
 **Prasyarat**: Familiar dengan minimal 1 bahasa pemrograman, Git basic, terminal/CLI basic.
-**Project akhir Hari 1**: Website **portfolio personal** Anda sendiri (HTML/CSS/JS vanilla) — Hero, Skills, Projects, Contact form dengan persistensi `localStorage`. Lihat BRD lengkap di [`portfolio-brd.md`](./portfolio-brd.md).
+**Project akhir Hari 1**: Website **portfolio personal** Anda sendiri (HTML/CSS/JS vanilla) — siap dipakai dan ditampilkan di CV / LinkedIn.
 
-> Catatan: Hari 2 & 3 melanjutkan **project berbeda** (DevNotes — full-stack app dengan Supabase BE). Hari 1 ini "warm-up" + artefak portfolio milik Anda sendiri.
+> Catatan: Hari 2 & 3 melanjutkan project **Laravel + MySQL lokal** — dashboard data berbasis AI-assisted query.
 
 ---
 
 ## Tujuan Hari 1
 
-Hari pertama membentuk **fondasi mental dan teknis** peserta sebelum masuk ke topik lanjutan di Hari 2 (BE Next.js + Supabase + Vercel) dan Hari 3 (FE Next.js terintegrasi BE). Fokusnya bukan "menulis kode lebih cepat", tetapi **mengubah cara berpikir** developer dalam berkolaborasi dengan AI sambil menghasilkan **artefak nyata yang langsung dapat Anda pakai** — website portfolio personal:
+Hari pertama membentuk **fondasi mental dan teknis** peserta sebelum masuk ke Laravel dan database di Hari 2. Fokusnya bukan "menulis kode lebih cepat", tetapi **mengubah cara berpikir** developer dalam berkolaborasi dengan AI sambil menghasilkan **artefak nyata yang langsung dapat Anda pakai**:
 
 1. Memahami posisi AI coding assistant dalam siklus pengembangan modern.
-2. Menguasai Cursor sebagai IDE — bukan sekadar VS Code dengan ChatGPT.
-3. Membangun keterampilan prompting yang reproducible dan context-aware.
-4. Menghasilkan website portfolio personal Anda sendiri (FR-01 sampai FR-07) yang layak ditampilkan di CV / LinkedIn.
+2. Menguasai 4 mode Cursor (Tab, Inline Edit, Ask, Agent) lewat latihan nyata.
+3. Menghasilkan website portfolio personal yang bisa langsung dipakai.
 
 ---
 
@@ -25,11 +24,10 @@ Hari pertama membentuk **fondasi mental dan teknis** peserta sebelum masuk ke to
 
 Setelah menyelesaikan Hari 1, peserta mampu:
 
-- **Menjelaskan** perbedaan AI-assisted coding vs traditional coding beserta implikasi pada proses review dan testing.
+- **Menjelaskan** perbedaan AI-assisted coding vs traditional coding beserta implikasi pada proses review.
 - **Mempraktikkan** instalasi, konfigurasi, dan navigasi Cursor IDE pada mesin kerja masing-masing.
-- **Menyusun** prompt yang efektif menggunakan teknik role-based, context-based, dan constraint-based dengan @-mentions.
-- **Menghasilkan** sebuah fitur fungsional (CRUD sederhana) di stack pilihan menggunakan kombinasi Tab, Inline Edit (Cmd/Ctrl+K), dan Chat/Composer.
-- **Mengevaluasi** output AI menggunakan kriteria correctness, security, dan maintainability.
+- **Menggunakan** 4 mode Cursor (Tab, Cmd+K, Ask, Agent) sesuai konteks tugas.
+- **Menghasilkan** halaman portfolio personal fungsional menggunakan HTML/CSS/JS vanilla dengan bantuan AI.
 
 ---
 
@@ -37,36 +35,28 @@ Setelah menyelesaikan Hari 1, peserta mampu:
 
 ```mermaid
 flowchart LR
-    A[Sesi 1<br/>Introduction<br/>AI Coding] --> B[Sesi 2<br/>Getting Started<br/>Cursor]
-    B --> C[Sesi 3<br/>Prompting &<br/>Context]
-    C --> D[Sesi 4<br/>Code<br/>Generation]
-    D --> E[Recap &<br/>Persiapan Hari 2]
+    A[Sesi 1<br/>Introduction<br/>AI Coding] --> B[Sesi 2<br/>Getting Started Cursor<br/>+ Build Portfolio]
+    B --> C[Recap &<br/>Persiapan Hari 2]
 ```
 
-| Sesi | Topik                              | Tahap Project | Output utama yang Anda hasilkan                                              |
-| ---- | ---------------------------------- | ------------- | ----------------------------------------------------------------------------- |
-| 1    | Introduction to AI-Assisted Coding | —             | Pemahaman lanskap, belum ada praktik Cursor                                   |
-| 2    | Getting Started with Cursor        | **Tahap 1–2** | Repo `portfolio/` ter-scaffold + skeleton HTML/CSS dengan CSS variables       |
-| 3    | Prompting & Context Management     | **Tahap 3–6** | 4 section terisi: Hero, Skills, Projects (+ `data.js`), project detail modal  |
-| 4    | Code Generation Fundamentals       | **Tahap 7–10**| Contact form + localStorage submit, nav sticky responsive, Lighthouse audit   |
-
-> 📋 Detail 10 tahap, urutan kerja, dan checkpoint per tahap ada di [`perjalanan-project.md`](./perjalanan-project.md). **Baca file itu sebelum mulai latihan apa pun di Hari 1.**
+| Sesi | Topik                              | Output utama yang Anda hasilkan                                              |
+| ---- | ---------------------------------- | ---------------------------------------------------------------------------- |
+| 1    | Introduction to AI-Assisted Coding | Pemahaman lanskap AI coding, belum ada praktik Cursor                        |
+| 2    | Getting Started with Cursor        | Repo `portfolio/` dengan halaman portfolio personal lengkap (HTML/CSS/JS)    |
 
 ---
 
 ## Jadwal Harian (contoh, dapat disesuaikan)
 
-| Waktu | Kegiatan | Durasi |
-|-------|----------|--------|
-| 08.30 – 09.00 | Registrasi & Pre-test singkat | 30' |
-| 09.00 – 10.30 | **Sesi 1**: Introduction to AI-Assisted Coding | 90' |
-| 10.30 – 10.45 | Coffee break | 15' |
-| 10.45 – 12.15 | **Sesi 2**: Getting Started with Cursor (+ Lab 01) | 90' |
-| 12.15 – 13.15 | Lunch | 60' |
-| 13.15 – 14.45 | **Sesi 3**: Prompting & Context (+ Lab 02) | 90' |
-| 14.45 – 15.00 | Coffee break | 15' |
-| 15.00 – 16.30 | **Sesi 4**: Code Generation (+ Lab 03) | 90' |
-| 16.30 – 17.00 | Recap, Q&A, briefing Hari 2 | 30' |
+| Waktu         | Kegiatan                                              | Durasi |
+| ------------- | ----------------------------------------------------- | ------ |
+| 08.30 – 09.00 | Registrasi & Pre-test singkat                         | 30'    |
+| 09.00 – 10.30 | **Sesi 1**: Introduction to AI-Assisted Coding        | 90'    |
+| 10.30 – 10.45 | Coffee break                                          | 15'    |
+| 10.45 – 12.15 | **Sesi 2**: Getting Started with Cursor (+ Latihan 01)| 90'    |
+| 12.15 – 13.15 | Lunch                                                 | 60'    |
+| 13.15 – 16.00 | **Lanjutan Sesi 2**: Build portfolio page             | 165'   |
+| 16.00 – 16.30 | Recap, Q&A, briefing Hari 2                           | 30'    |
 
 ---
 
@@ -76,32 +66,24 @@ flowchart LR
 Hari-1-Fundamental-DevNotes/
 ├── README.md                                  <- file ini
 ├── portfolio-brd.md                           <- BRD portfolio Hari 1 (BACA DULU)
-├── perjalanan-project.md                      <- master narrative 10 tahap
+├── perjalanan-project.md                      <- panduan tahap-tahap build portfolio
 ├── Sesi-01-Introduction-AI-Coding/
 │   └── materi.md
-├── Sesi-02-Getting-Started-Cursor/
-│   ├── materi.md
-│   ├── instalasi-checklist.md
-│   └── latihan-01-tour-cursor/README.md       <- Tahap 1–2
-├── Sesi-03-Prompting-Context/
-│   ├── materi.md
-│   ├── prompting-cheatsheet.md
-│   └── latihan-02-prompting-drill/README.md   <- Tahap 3–6
-└── Sesi-04-Code-Generation/
+└── Sesi-02-Getting-Started-Cursor/
     ├── materi.md
-    └── latihan-03-build-feature/README.md     <- Tahap 7–10
+    ├── instalasi-checklist.md
+    └── latihan-01-tour-cursor/README.md       <- build portfolio dari awal
 ```
 
 ---
 
 ## Catatan untuk Fasilitator
 
-- Stack Hari 1 **fixed**: HTML + CSS + JavaScript vanilla (no build tool). Ini disepakati di BRD untuk membuat fundamental Cursor terisolasi dari kompleksitas framework. Migrasi ke Next.js terjadi di Hari 2 Sesi 7.
-- Pastikan peserta sudah membaca [`/project-brd.md`](../project-brd.md) — minimal Section 1, 4, 5, 11 — sebelum latihan dimulai.
-- Pastikan koneksi internet stabil — Cursor butuh akses ke model provider dan CDN (untuk `marked.js`).
-- **Setiap latihan menambah file ke repo `devnotes/`** milik peserta. Repo ini akan dibawa ke Hari 2. Pastikan setiap peserta commit & (opsional) push ke GitHub di akhir hari.
+- Stack Hari 1 **fixed**: HTML + CSS + JavaScript vanilla (no build tool, no framework).
+- Pastikan peserta sudah install Cursor dan Git sebelum hari pertama — lihat `instalasi-checklist.md`.
+- Pastikan koneksi internet stabil — Cursor butuh akses ke model provider.
+- Setiap peserta commit & push ke GitHub di akhir hari — repo `portfolio/` ini milik peserta sendiri.
 - Setiap sesi diakhiri dengan **mini-checkpoint**: peserta menulis 1 hal yang dipelajari + 1 pertanyaan terbuka.
-- Peserta yang sangat tertinggal di Sesi 2 boleh `git clone` referensi DevNotes (kalau fasilitator menyediakannya) — tapi catat & dorong untuk catch-up di luar jam.
 
 ---
 
@@ -109,9 +91,9 @@ Hari-1-Fundamental-DevNotes/
 
 Peserta diharapkan datang dengan:
 
-- Laptop dengan minimum RAM 8 GB, free disk 5 GB.
-- Akun GitHub/GitLab aktif.
-- Akun email kerja untuk login Cursor.
-- Sudah membaca [cursor.com/docs/get-started](https://cursor.com/docs/get-started) (≈10 menit).
+- Laptop dengan minimum RAM 8 GB, free disk ≥ 10 GB.
+- Cursor terinstall & login berhasil.
+- Git terinstall + identitas global ter-set.
+- Akun GitHub aktif.
 
 Lihat detail di `Sesi-02-Getting-Started-Cursor/instalasi-checklist.md`.
