@@ -5,7 +5,7 @@
 
 **Durasi**: 45 menit
 **Tipe**: Hands-on individual
-**Output**: Repo `portfolio/` lokal berisi `index.html` (skeleton semantic), `assets/styles.css` (variabel CSS dasar), `assets/app.js` (fungsi `smoothScrollTo`), commit pertama, dan 5 screenshot bukti penggunaan 4 mode Cursor.
+**Output**: Repo `portfolio/` lokal berisi `index.html` (skeleton semantic penuh), `assets/styles.css` (variabel CSS dasar), `assets/app.js` (fungsi `smoothScrollTo`), commit pertama, dan 5 screenshot bukti penggunaan 4 mode Cursor.
 
 ---
 
@@ -68,17 +68,21 @@ portfolio/
     └── refleksi.md
 ```
 
-`index.html` harus punya kerangka semantic:
+`index.html` harus punya:
 
-- `<header>` dengan nav (link anchor placeholder: Home / Skills / Projects / Contact)
+- Boilerplate HTML5 (`<!DOCTYPE html>`, `<meta charset>`, `<meta viewport>`, `<title>`)
+- Link ke `assets/styles.css` di `<head>` dan `<script src="assets/app.js">` sebelum `</body>`
+- `<header>` dengan `<nav>` berisi 4 link anchor (Home / Skills / Projects / Contact)
 - `<main>` dengan 4 `<section>` kosong (id: hero, skills, projects, contact)
 - `<footer>` dengan copyright & social link placeholder
 
-CSS variables wajib di `:root`:
+`assets/styles.css` harus punya CSS variables di `:root`:
 
 - `--color-primary`, `--color-bg`, `--color-text`, `--color-muted`
 - `--font-base`, `--font-heading`
 - `--spacing-sm`, `--spacing-md`, `--spacing-lg`
+
+`assets/app.js` harus punya fungsi `smoothScrollTo(id)` dengan null-check.
 
 ---
 
@@ -110,30 +114,48 @@ portfolio/
 
 Mode paling sederhana: AI melihat konteks file aktif dan menyarankan beberapa baris berikut. Tidak perlu dialog, tidak perlu prompt.
 
-2.1. Buka `assets/app.js`. Ketik komentar di bawah, lalu tekan Enter:
+Kita mulai dari `index.html` — file yang paling pertama dibuka browser dan fondasi dari seluruh project.
 
-```js
-// fungsi smoothScrollTo menerima id section (string tanpa #),
-// scroll halus ke section tersebut
-function smoothScrollTo(id) {
+2.1. Buka `index.html`. Ketik karakter pertama ini lalu tekan Enter:
+
+```html
+<!DOCTYPE html>
 ```
 
-2.2. Tab akan menyarankan implementasi — biasanya seperti ini:
+2.2. Tab akan menyarankan boilerplate HTML5 awal — biasanya seperti ini:
 
-```js
-const section = document.getElementById(id);
-section.scrollIntoView({ behavior: 'smooth' });
+```html
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+</head>
+<body>
+    
+</body>
+</html>
 ```
 
-> ⚠️ Perhatikan: saran Tab di atas **belum cek `null`**. Kalau id tidak ditemukan, `section.scrollIntoView(...)` akan melempar `TypeError`. Untuk portfolio ini risikonya rendah (anchor kita kontrol sendiri), tapi catatan ini bagus untuk reviewer-first mindset — terima saran AI, jangan terima asumsi-nya.
+> ℹ️ Saran Tab bervariasi antar mesin — bisa satu baris, bisa langsung blok penuh. Kalau hanya satu baris yang disarankan, tekan Enter dan tunggu saran berikutnya muncul.
 
-2.3. **Baca dulu** saran sebelum terima, lalu:
+2.3. **Baca dulu** saran sebelum terima:
    - `Tab` untuk accept
-   - `Esc` untuk tolak
+   - `Esc` untuk tolak dan ketik sendiri
 
-2.4. Belum perlu memanggil `smoothScrollTo()` sekarang — fungsi ini akan dipakai di **Tahap 9** saat bikin nav sticky.
+2.4. Setelah boilerplate diterima, tambahkan link ke stylesheet dan script di dalam `<head>` dan sebelum `</body>`. Ketik karakter pertama dan biarkan Tab melengkapi:
 
-2.5. Screenshot saran Tab yang muncul → `02-tab.png`.
+```html
+<!-- di dalam <head> -->
+<link rel="stylesheet" href="assets/styles.css">
+
+<!-- sebelum </body> -->
+<script src="assets/app.js"></script>
+```
+
+> 💡 Perhatikan: Tab menyarankan berdasarkan konteks — nama file `assets/styles.css` dan `assets/app.js` disugestikan karena sudah ada di folder project yang terindex.
+
+2.5. Screenshot saran Tab yang muncul (sebelum diterima) → `02-tab.png`.
 
 ### 3. Mode Cmd/Ctrl+K — Inline Edit (10')
 
@@ -232,20 +254,29 @@ Variabel CSS apa saja yang sudah disiapkan dan untuk apa?
 
 Mode paling kuat & paling sulit dikontrol: AI bisa **membuat/mengubah banyak file sekaligus** untuk menyelesaikan tugas yang Anda spec.
 
+Sekarang kita punya `index.html` dengan boilerplate dasar (dari Tab) dan `styles.css` dengan variables (dari Cmd+K). Tugas Agent: **lengkapi `index.html` dengan struktur semantic penuh** dan **isi `app.js`** sekaligus.
+
 5.1. Di panel yang sama, **ganti dropdown mode** dari `Ask` ke `Agent`. (Atau buka panel default Agent dengan `Cmd+I` / `Ctrl+I`.)
+
 5.2. Prompt (ringkas, fokus 1 tugas):
 
 ```
-Isi index.html dengan struktur semantic single-page portfolio:
-- <header> berisi <nav> dengan 4 link anchor (#hero, #skills, #projects, #contact)
-- <main> dengan 4 <section> kosong (id: hero, skills, projects, contact)
-- <footer> dengan copyright + social link placeholder
+Kerjakan dua file sekaligus:
 
-Link ke assets/styles.css dan assets/app.js yang sudah ada.
-Tidak perlu framework. Tidak perlu inline CSS/JS.
+1. index.html — lengkapi <body> dengan struktur semantic:
+   - <header> berisi <nav> dengan 4 link anchor: Home (#hero),
+     Skills (#skills), Projects (#projects), Contact (#contact)
+   - <main> dengan 4 <section> kosong (id: hero, skills, projects, contact)
+   - <footer> dengan teks copyright dan placeholder link GitHub/LinkedIn
+   Link ke assets/styles.css dan assets/app.js sudah ada, jangan ubah.
+   Tidak perlu framework, tidak perlu inline CSS/JS.
+
+2. assets/app.js — tambah fungsi smoothScrollTo(id) yang:
+   - Scroll halus ke section dengan id tersebut
+   - Cek null sebelum scroll (guard kalau id tidak ditemukan)
 ```
 
-5.3. **Review tiap perubahan** yang akan dibuat. Reject hal yang tidak Anda mengerti — minta penjelasan ulang via Chat.
+5.3. **Review tiap perubahan** yang akan dibuat sebelum accept. Reject hal yang tidak Anda mengerti — minta penjelasan ulang via Ask.
 
 5.4. Accept perubahan.
 
@@ -254,6 +285,8 @@ Tidak perlu framework. Tidak perlu inline CSS/JS.
 5.6. Test dark mode: System Settings macOS atau DevTools → Rendering → `prefers-color-scheme: dark`. Warna harus berubah.
 
 5.7. Screenshot panel Agent + halaman di browser → `05-agent.png`.
+
+> 💡 Perhatikan perbedaan Agent vs Tab dari langkah 2: Tab hanya menyarankan beberapa baris berikutnya dalam satu file, Agent bisa menyentuh banyak file sekaligus berdasarkan spec yang Anda tulis. Semakin kuat mode, semakin perlu Anda review hasilnya sebelum accept.
 
 ### 6. Commit & Submit (5')
 
