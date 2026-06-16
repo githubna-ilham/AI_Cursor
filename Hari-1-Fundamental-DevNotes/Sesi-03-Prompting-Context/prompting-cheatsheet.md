@@ -1,4 +1,4 @@
-# Prompting Cheatsheet — Cursor
+# Prompting Cheatsheet — SQL di Cursor
 
 Cetak / pin di samping monitor. Berlaku untuk Chat dan Composer.
 
@@ -9,70 +9,78 @@ Cetak / pin di samping monitor. Berlaku untuk Chat dan Composer.
 ### Template Universal
 
 ```
-[Role]    Sebagai <peran>,
-[Goal]    saya butuh <hasil> agar <alasan bisnis>.
-[Context] Bahan: @file ... @folder ... @docs ...
+[Role]       Sebagai <peran>,
+[Goal]       tulis query MySQL untuk <hasil yang diinginkan>.
+[Context]    Tabel: <nama_tabel> (<kolom1, kolom2, ...>)
+             Filter: <kondisi WHERE>
 [Constraint]
-  - Pakai <library/style>.
-  - Jangan <larangan>.
-  - Maks <ukuran/kompleksitas>.
+  - Dialect: MySQL 8.0
+  - Jangan pakai <subquery / CTE / fungsi tertentu>.
+  - Output kolom: <kolom apa saja yang diharapkan>
 [Acceptance]
-  - Lulus test di @file ...
-  - Contoh I/O: input=... output=...
+  - Hasil harus bisa langsung di-paste ke playground tanpa edit.
+  - Sebutkan asumsi sebelum query kalau ada.
 ```
 
-### Template Refactor
+### Template SELECT dengan JOIN
 
 ```
-Refactor @file <path> agar:
-1. <tujuan refactor>
-2. Tidak mengubah behavior publik (interface).
-3. Tetap lulus test eksisting (@file <test>).
-Tampilkan diff per fungsi sebelum saya accept.
+Tulis query MySQL untuk <tujuan laporan>.
+
+Tabel:
+- <tabel1> (<kolom-kolom>)
+- <tabel2> (<kolom-kolom>)
+
+Output: <kolom1>, <kolom2>, <agregasi jika ada>
+Filter: <kondisi WHERE>
+Urutkan: <ORDER BY>
+Batasi: <LIMIT jika perlu>
+
+Gunakan <INNER / LEFT> JOIN.
 ```
 
-### Template Bugfix
+### Template Agregasi
 
 ```
-Bug: <gejala satu kalimat>.
-Repro: <langkah-langkah / contoh input>.
-Expected: <output yang seharusnya>.
-Actual: <output sekarang>.
-Bahan: @file <file utama> @terminal (log error).
-Tugas: (a) jelaskan root cause, (b) usulkan fix minimal, (c) tambahkan test regresi.
+Tulis query MySQL untuk menghitung <metrik> per <dimensi>.
+
+Tabel: <nama tabel dan relasi>
+Agregasi: SUM / COUNT / AVG untuk <kolom>
+Group: per <kolom group>
+Filter sebelum group (WHERE): <kondisi>
+Filter setelah group (HAVING): <kondisi agregat jika ada>
+Urutan: <ORDER BY>
 ```
 
-### Template Test Generation
+### Template UPDATE / DELETE Aman
 
 ```
-Buat unit test untuk @code <fungsi>.
-Framework: <jest / pytest / go test / ...>.
-Cakup: happy path, edge case (null/empty/large), error path.
-Gaya: AAA (Arrange-Act-Assert), nama test deskriptif Bahasa Indonesia.
-Jangan mock yang tidak perlu.
+Saya ingin <update/delete> baris yang memenuhi kondisi: <kondisi>.
+
+Tulis DUA query berurutan:
+1. SELECT — tampilkan baris yang akan terpengaruh (<kolom yang relevan>)
+2. <UPDATE/DELETE> — eksekusi perubahan
+
+Kondisi WHERE harus identik di kedua query.
+Tambahkan komentar: "Jalankan SELECT dulu, verifikasi, baru eksekusi."
+
+Tabel: <nama> (<kolom-kolom>)
 ```
 
-### Template Code Review
+### Template Diagnosa Data
 
 ```
-Sebagai senior reviewer, review @git diff.
-Berikan komentar dalam format:
-[BLOCKER|MAJOR|MINOR|NIT] <file>:<line> — <komentar>
-Fokus: correctness, security, readability, performance.
-Akhiri dengan ringkasan keputusan: APPROVE / REQUEST CHANGES.
-```
+Berdasarkan schema dan sample data berikut, jawab pertanyaan:
 
-### Template Eksplorasi Codebase
+[paste schema]
+[paste sample data atau kondisi data]
 
-```
-Saya baru di repo ini. Berdasarkan @folder src/,
-jelaskan dalam maksimal 8 bullet:
-- Domain / tujuan project
-- Arsitektur layer
-- Entry point
-- 3 file paling kompleks dan mengapa
-- Konvensi penting (penamaan, struktur)
-Jangan menyentuh / mengubah file.
+Pertanyaan:
+1. <pertanyaan investigasi 1>
+2. <pertanyaan investigasi 2>
+
+Output: <jumlah> query terpisah dengan label A/B/C,
+plus penjelasan 1 kalimat untuk tiap query.
 ```
 
 ---
@@ -81,16 +89,16 @@ Jangan menyentuh / mengubah file.
 
 | Skenario | @-mention |
 |----------|-----------|
-| Edit 1 file presisi | `@file <path>` |
-| Pahami struktur arsitektur | `@folder <root>` |
-| Refactor 1 simbol di banyak file | `@code <symbol>` |
-| Pakai library/API tertentu dengan benar | `@docs <library>` |
-| Cari error message asing | `@web "<error string>"` |
-| Review PR / commit | `@git` atau `@commit <hash>` |
-| Bahas stack trace | `@terminal` |
-| Lanjut diskusi panjang | `@past chat` |
+| Paste file schema SQL sebagai konteks | `@file schema.sql` |
+| Referensi query yang sudah ada | `@file queries/report.sql` |
+| Tanya tentang migration / DDL | `@file migrations/` |
+| Cari contoh query di codebase | `@code <nama fungsi query>` |
+| Cari dokumentasi fungsi MySQL | `@docs MySQL` |
+| Cari solusi error SQL di internet | `@web "<pesan error>"` |
+| Lihat output error dari terminal / DB client | `@terminal` |
+| Lanjutkan diskusi schema sebelumnya | `@past chat` |
 
-> Untuk yang tidak yakin: mulai dari `@file`. Tambah lapis kalau perlu.
+> Untuk SQL: selalu mulai dengan paste schema di chat terlebih dahulu, baru gunakan @-mention untuk file pendukung.
 
 ---
 
@@ -98,99 +106,129 @@ Jangan menyentuh / mengubah file.
 
 ### Do
 
-- Tulis tujuan dalam 1 kalimat di baris pertama.
-- Sebut bahasa/framework eksplisit.
-- Sebut acceptance criteria atau test sebagai bukti selesai.
-- Tunjukkan contoh input/output kalau ada ambiguitas.
-- Pecah task besar jadi prompt kecil.
-- Reset chat saat ganti topik.
-- Pilih model yang sesuai (Auto untuk umum; model reasoning untuk task algoritmik).
+- Sebutkan **dialect** di setiap prompt awal: "MySQL 8.0" atau "PostgreSQL 16".
+- Sebutkan **nama tabel dan kolom** yang relevan — AI tidak tahu schema Anda.
+- **SELECT dulu sebelum UPDATE/DELETE** — minta AI tuliskan keduanya sekaligus.
+- Sebut **tipe JOIN** yang diinginkan (INNER / LEFT / RIGHT) agar AI tidak menebak.
+- Pecah query kompleks: mulai dari SELECT dasar, iterasi tambah JOIN / agregasi.
+- Minta AI **sebutkan asumsi** sebelum menulis query kalau ada bagian yang ambigu.
+- **Jalankan di playground** sebelum eksekusi ke database produksi.
+- Reset chat saat berganti schema atau topik berbeda.
 
 ### Don't
 
-- Jangan pakai pronoun ambigu ("ini", "itu", "tadi").
-- Jangan ngotot lebih dari 4 iterasi pada prompt yang sama.
-- Jangan kirim seluruh repo sebagai konteks (dilution).
-- Jangan minta "buatkan project lengkap" dalam 1 prompt.
-- Jangan accept Composer tanpa review per-file.
-- Jangan paste secret / kredensial sebagai konteks.
-- Jangan asumsikan AI tahu library versi terbaru tanpa `@docs`.
+- Jangan prompt tanpa schema: "tampilkan semua order customer" → AI akan menebak nama kolom.
+- Jangan campur banyak operasi dalam 1 prompt: SELECT + INSERT + UPDATE sekaligus.
+- Jangan langsung eksekusi ke produksi tanpa verifikasi di data dummy.
+- Jangan pakai pronoun ambigu ("tabel ini", "kolom itu", "yang tadi").
+- Jangan ngotot lebih dari 4 iterasi pada prompt yang sama — reset dengan konteks lebih lengkap.
+- Jangan asumsikan AI tahu data di tabel Anda — berikan sample data kalau hasilnya kritis.
+- Jangan lewati `EXPLAIN` untuk query dengan JOIN di tabel besar.
 
 ---
 
 ## 4. Contoh: Buruk vs Baik
 
-### Contoh 1 — Generate API endpoint
+### Contoh 1 — SELECT Laporan
 
 **Buruk**
 ```
-buatkan endpoint login
+buatkan laporan penjualan per kategori
 ```
 
 **Baik**
 ```
-Sebagai backend engineer Node/Express, buat endpoint POST /auth/login.
-Bahan: @file src/auth/user.repo.ts @file src/auth/jwt.util.ts
-Input body: { email, password }
-Output 200: { token, user: { id, name, email } }
-Output 401: { error: "INVALID_CREDENTIALS" }
-Pakai zod untuk validasi, bcrypt untuk compare password (sudah ada di repo).
-Jangan menambah dependency baru.
-Tambahkan unit test di @file src/auth/auth.controller.test.ts dengan minimal 4 case.
-```
+Tulis query MySQL untuk laporan penjualan per kategori bulan ini.
 
-### Contoh 2 — Refactor
+Tabel:
+- categories (id, name)
+- products (id, category_id, name)
+- order_items (id, order_id, product_id, qty, unit_price)
+- orders (id, status, created_at)
 
-**Buruk**
-```
-refactor file ini biar lebih bagus
-```
+Output: category_name, total_qty (SUM qty), total_revenue (SUM qty * unit_price)
+Filter: MONTH(orders.created_at) = bulan ini, YEAR = tahun ini, status = 'paid'
+Group: per categories.id
+Urutan: total_revenue DESC
 
-**Baik**
-```
-Refactor @file order.service.ts:
-- Pisahkan fungsi calculateTotal menjadi modul terpisah.
-- Hilangkan duplikasi loop di applyDiscount.
-- Pertahankan public API (signature OrderService.* tidak berubah).
-- Tetap lulus @file order.service.test.ts tanpa modifikasi test.
-Tampilkan ringkasan perubahan per fungsi sebelum diff.
-```
-
-### Contoh 3 — Debug
-
-**Buruk**
-```
-kenapa error ini?
-```
-
-**Baik**
-```
-Bug: setelah upgrade Node 18 → 20, test e2e gagal di CI dengan pesan:
-"ERR_REQUIRE_ESM: require() of ES Module ..." (lihat @terminal)
-Konteks: @file package.json @file jest.config.ts
-Pertanyaan: (1) apa root cause migrasi ini, (2) opsi fix dengan trade-off-nya,
-(3) rekomendasi fix paling minimal yang tidak ubah test code.
+Gunakan LEFT JOIN agar kategori tanpa penjualan tetap muncul.
+MySQL 8.0.
 ```
 
 ---
 
-## 5. Tips @-Mentions Lanjutan
+### Contoh 2 — UPDATE Aman
 
-- **Stack @-mentions**: gunakan beberapa sekaligus, urutkan dari paling penting.
-  Contoh: `@file primary.ts @file related.ts @docs library @web "exact error"`.
-- **Symbol-level lebih baik daripada file-level** kalau yang relevan hanya 1 fungsi.
-- **Folder-level hanya saat eksplorasi** — terlalu mahal token untuk task spesifik.
-- **`@docs` dulu sebelum @web** — docs resmi lebih reliable daripada hasil pencarian.
-- **`@past chat`** berguna untuk continuity di sesi panjang; tapi tetap reset saat ganti topik besar.
+**Buruk**
+```
+update harga semua produk elektronik jadi diskon 10%
+```
+
+**Baik**
+```
+Saya ingin memberi diskon 10% pada semua produk dengan category = 'Electronics'.
+
+Tulis DUA query berurutan:
+1. SELECT — tampilkan id, sku, name, price (sekarang) untuk produk yang akan terpengaruh
+2. UPDATE — set price = price * 0.9 untuk produk yang sama
+
+Kondisi WHERE harus identik di kedua query.
+Tambahkan komentar: "Jalankan SELECT dulu, verifikasi jumlah baris, baru UPDATE."
+
+Tabel: products (id, sku, name, category, price)
+MySQL 8.0.
+```
 
 ---
 
-## 6. Quick Self-check Sebelum Submit Prompt
+### Contoh 3 — Query Diagnostik
 
-- [ ] Tujuan dalam 1 kalimat?
-- [ ] @-mention konteks ada?
-- [ ] Constraint kritikal disebut?
-- [ ] Acceptance criteria jelas?
-- [ ] Bebas pronoun ambigu?
-- [ ] Mode tepat (Tab / K / Chat / Composer)?
-- [ ] Model sesuai tingkat reasoning?
+**Buruk**
+```
+kenapa produk ini tidak muncul di laporan?
+```
+
+**Baik**
+```
+Berdasarkan schema dan sample data berikut, bantu saya investigasi:
+
+[schema: products, orders, order_items seperti di latihan]
+
+Masalah: produk SKU-005 tidak muncul di ringkasan penjualan bulan Mei.
+
+Pertanyaan:
+1. Berapa kali SKU-005 muncul di order_items?
+2. Apa status order untuk tiap kemunculan tersebut?
+3. Apakah ada order SKU-005 yang statusnya 'cancelled' atau 'pending'?
+
+Tulis 3 query terpisah (A, B, C) dengan label dan penjelasan 1 kalimat.
+MySQL 8.0.
+```
+
+---
+
+## 5. Pola Iterasi SQL
+
+Ketika query hasil generate tidak sesuai harapan, gunakan umpan balik spesifik:
+
+| Masalah yang ditemukan | Contoh umpan balik ke AI |
+|------------------------|--------------------------|
+| JOIN salah (hasil duplikat) | "Hasil mengandung baris duplikat — kemungkinan CROSS JOIN. Periksa kondisi ON di JOIN antara orders dan order_items." |
+| WHERE salah | "Filter status belum ada. Tambahkan `WHERE orders.status IN ('paid', 'shipped')` sebelum GROUP BY." |
+| GROUP BY hilang kolom | "Ada error 'not in GROUP BY'. Tambahkan `categories.name` ke GROUP BY atau gunakan fungsi agregat." |
+| Masih pakai subquery | "Kamu masih pakai subquery di baris 5. Tulis ulang dengan murni JOIN tanpa SELECT bersarang." |
+| Dialect tidak sesuai | "Ini syntax PostgreSQL (`date_trunc`). Kita pakai MySQL — ganti dengan `DATE_FORMAT` atau `MONTH()`." |
+| Hasil 0 baris | "Query jalan tapi 0 baris. Cek filter tanggal — apakah MONTH() dan YEAR() sudah sesuai data sample?" |
+
+---
+
+## 6. Quick Self-check Sebelum Submit Prompt SQL
+
+- [ ] Sudah sebut **dialect** (MySQL 8.0)?
+- [ ] Sudah sebut **nama tabel dan kolom** yang relevan?
+- [ ] Sudah tentukan **tipe JOIN** (INNER / LEFT)?
+- [ ] Sudah sebut **kolom output** yang diharapkan?
+- [ ] Sudah sebut **filter WHERE** dan **ORDER BY**?
+- [ ] Untuk UPDATE/DELETE: sudah minta **SELECT verifikasi dulu**?
+- [ ] Bebas pronoun ambigu ("tabel ini", "kolom itu")?
+- [ ] Sudah siapkan **playground** untuk verifikasi hasil?
