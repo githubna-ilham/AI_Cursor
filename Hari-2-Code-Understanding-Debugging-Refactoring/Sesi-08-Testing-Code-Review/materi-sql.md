@@ -228,7 +228,53 @@ Apabila assertion tidak mendeteksi pelanggar tersebut, berarti terjadi *false ne
 
 ---
 
-## 7. Menjalankan Assertion Secara Otomatis (Bonus)
+## 7. Pola AAA untuk Assertion SQL
+
+Pola **AAA (Arrange–Act–Assert)** adalah cara menyusun setiap skenario pengujian menjadi tiga blok berurutan. Tujuannya: setiap assertion mudah dipahami dalam hitungan detik karena strukturnya selalu konsisten.
+
+| Blok | Artinya | Yang Dilakukan dalam Konteks SQL |
+|------|---------|----------------------------------|
+| **Arrange** | Siapkan | Sisipkan data uji — termasuk data yang valid maupun data yang sengaja melanggar aturan |
+| **Act** | Jalankan | Eksekusi assertion query (SELECT yang menerapkan aturan bisnis) |
+| **Assert** | Verifikasi | Periksa hasilnya: 0 baris berarti data valid, N baris berarti terdapat N pelanggar |
+
+**Contoh penerapan AAA pada assertion SQL:**
+
+```sql
+-- ==============================
+-- ARRANGE: siapkan data uji
+-- ==============================
+-- Data valid: stok bernilai positif
+INSERT INTO products (id, sku, name, price, stock) VALUES (901, 'TEST-001', 'Produk Uji A', 50000, 10);
+-- Data pelanggar: stok bernilai negatif (harus terdeteksi)
+INSERT INTO products (id, sku, name, price, stock) VALUES (902, 'TEST-002', 'Produk Uji B', 50000, -5);
+
+-- ==============================
+-- ACT: jalankan assertion
+-- ==============================
+SELECT id, sku, stock
+FROM products
+WHERE stock < 0;
+
+-- ==============================
+-- ASSERT: verifikasi hasil
+-- ==============================
+-- Ekspektasi: hanya id=902 yang muncul (1 baris)
+-- Apabila 0 baris → assertion tidak mendeteksi pelanggar (false negative)
+-- Apabila id=901 juga muncul → logika query salah (false positive)
+
+-- Bersihkan data uji setelah selesai
+DELETE FROM products WHERE id IN (901, 902);
+```
+
+**Manfaat pola AAA dalam konteks SQL:**
+- **Arrange** yang eksplisit memastikan kondisi awal selalu diketahui — tidak bergantung pada data yang ada sebelumnya.
+- **Act** yang terisolasi (satu query, satu aturan) memudahkan identifikasi penyebab kegagalan.
+- **Assert** yang tertulis sebagai komentar menjadi dokumentasi ekspektasi yang dapat dibaca oleh anggota tim lain.
+
+---
+
+## 9. Menjalankan Assertion Secara Otomatis (Bonus)
 
 Apabila proyek sudah berada di tahap yang lebih serius, assertion dapat dijalankan secara otomatis:
 
@@ -245,7 +291,7 @@ Panduan dasar:
 
 ---
 
-## 8. Anti-Pattern yang Perlu Dihindari
+## 10. Anti-Pattern yang Perlu Dihindari
 
 | ❌ Tidak Disarankan | ✅ Praktik yang Tepat |
 |---------------------|----------------------|
