@@ -10,7 +10,6 @@
 
 ## Referensi
 
-- BRD lengkap & wireframe: [`../../portfolio-brd.md`](../../portfolio-brd.md)
 - Perjalanan project: [`../../perjalanan-project.md`](../../perjalanan-project.md)
 
 ---

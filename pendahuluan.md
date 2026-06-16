@@ -28,7 +28,7 @@ Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak 
 
 ### Studi Kasus
 
-- **Hari 1 — Portfolio Personal + CRUD SQL**: Hari 1 berfokus pada fundamental Cursor. Anda membangun dua artefak: website portfolio Anda (HTML/CSS/JS) dan koleksi prompt CRUD SQL siap pakai. BRD portfolio di [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md), contoh prompt SQL di [`Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md`](./Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md).
+- **Hari 1 — Portfolio Personal + CRUD SQL**: Hari 1 berfokus pada fundamental Cursor. Anda membangun dua artefak: website portfolio Anda (HTML/CSS/JS) dan koleksi prompt CRUD SQL siap pakai. Contoh prompt SQL di [`Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md`](./Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md).
 - **Hari 2 — SQL Exploration**: Eksplorasi codebase SQL yang sudah ada — paham schema, debug query bermasalah, refactor query yang buruk, dan validasi dengan assertion query. Murni MySQL, tanpa framework.
 - **Hari 3 — Dashboard Laravel**: Aplikasi web Laravel + MySQL lokal via Laravel Herd. AI dipakai untuk scaffold project, menulis query Eloquent, dan memvisualisasikan data dalam dashboard yang siap dipresentasikan.
 
@@ -175,10 +175,6 @@ Repo ini ([github.com/githubna-ilham/AI_Cursor](https://github.com/githubna-ilha
   ```
 
 Anda **tidak** perlu menulis kode di repo ini — kode aplikasi (portfolio Hari 1, project Laravel Hari 3) ada di folder kerja Anda sendiri (langkah 3.5).
-
-### 3.7 Baca BRD
-
-- **Portfolio (Hari 1)** — [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md). Baca **Section 3 (Scope), Section 6 (Model Data), Section 9 (Wireframe)** sebelum Sesi 2. Total ~10 menit.
 
 ### 3.7 Persiapan Mental
 

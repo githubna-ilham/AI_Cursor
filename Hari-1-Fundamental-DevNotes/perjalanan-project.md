@@ -4,8 +4,6 @@ Hari 1 dirancang sebagai **satu perjalanan linear** membangun website portfolio 
 
 > Catatan: project ini **khusus Hari 1**. Hari 2 dan 3 melanjutkan project berbeda (DevNotes — backend & full-stack). Lihat [`../project-brd.md`](../project-brd.md) untuk konteks Hari 2-3.
 
-BRD lengkap portfolio: [`portfolio-brd.md`](./portfolio-brd.md).
-
 ---
 
 ## Peta 10 Tahap

@@ -69,7 +69,6 @@ flowchart LR
 ```
 Hari-1-Fundamental-DevNotes/
 ├── README.md                                  <- file ini
-├── portfolio-brd.md                           <- BRD portfolio Hari 1 (BACA DULU)
 ├── perjalanan-project.md                      <- panduan tahap-tahap build portfolio
 ├── contoh-prompt-sql-crud.md                  <- Sesi 3: prompt CRUD SQL siap pakai
 ├── Sesi-01-Introduction-AI-Coding/
