@@ -350,20 +350,26 @@ flowchart LR
 
 ---
 
-## 2. Praktik Mandiri
+## 2. Lanjut ke Latihan
 
-Buka file [`../../contoh-prompt-sql-crud.md`](../../contoh-prompt-sql-crud.md) dan pilih minimal **3 skenario** yang paling relevan dengan pekerjaan Anda sehari-hari.
+Setelah membaca materi ini, lanjut ke **[Latihan 03 — SQL Lanjutan](./latihan-03-build-feature/README.md)** (Tahap 5–8). Di sana Anda akan:
 
-Untuk setiap skenario:
-1. Baca prompt yang tersedia.
-2. **Adaptasi** ke schema atau konteks project Anda sendiri.
-3. Jalankan di Cursor (mode Chat atau Cmd+K).
-4. Review hasil: apakah ada bagian yang perlu dikoreksi?
-5. Jalankan EXPLAIN kalau query-nya SELECT dengan JOIN.
+- Menulis query agregasi (GROUP BY, SUM, COUNT, HAVING) menggunakan schema e-commerce yang sama dari Latihan 02.
+- Menggabungkan 3–4 tabel dengan multi-JOIN dan menemukan data yang "tidak ada" menggunakan LEFT JOIN + IS NULL.
+- Menyusun CTE (WITH clause) untuk memecah logika kompleks menjadi bagian yang bisa di-review satu per satu.
+- Mempraktikkan pola **SELECT → UPDATE → SELECT verifikasi** agar tidak ada data yang berubah di luar ekspektasi.
+
+Latihan 03 adalah kelanjutan langsung dari Latihan 02 — schema, data, dan playground yang sama, hanya kompleksitasnya bertingkat.
 
 ---
 
-## 3. Bacaan Lanjutan
+## 3. Referensi Prompt SQL
+
+Buka file [`../../contoh-prompt-sql-crud.md`](../../contoh-prompt-sql-crud.md) untuk koleksi prompt siap pakai per operasi SQL (CREATE, INSERT, SELECT, UPDATE, DELETE, query lanjutan). Pilih minimal **3 skenario** yang paling relevan dengan pekerjaan Anda sehari-hari dan adaptasi ke schema Anda sendiri.
+
+---
+
+## 4. Bacaan Lanjutan
 
 - MySQL — *EXPLAIN output format*: <https://dev.mysql.com/doc/refman/8.0/en/explain-output.html>
 - MySQL — *Optimization overview*: <https://dev.mysql.com/doc/refman/8.0/en/optimization.html>
