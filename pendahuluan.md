@@ -45,11 +45,12 @@ Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak 
 
 Anda **tidak perlu** ahli di semua hal di bawah ini, tapi minimal familiar:
 
-- Salah satu bahasa pemrograman modern (PHP paling membantu, tapi tidak wajib).
+- **Salah satu bahasa pemrograman modern** — PHP paling membantu untuk Hari 2–3, tapi tidak wajib. JavaScript atau Python pun cukup untuk mengikuti alur.
+- **OOP dasar**: paham konsep class, method, dan object — berguna saat masuk Laravel di Hari 2–3.
 - **SQL dasar**: SELECT, WHERE, JOIN, GROUP BY — paham konsep query dan tabel relasional.
 - **Git basic**: clone, add, commit, push, branch.
 - **Terminal/CLI basic**: navigasi folder, menjalankan perintah.
-- **HTML, CSS, JavaScript dasar**: tahu apa itu `<div>`, selektor CSS, event listener.
+- **HTML, CSS, JavaScript dasar**: cukup tahu apa itu `<div>`, selektor CSS, dan event listener — Cursor akan generate mayoritas kode Hari 1, Anda berperan sebagai reviewer.
 - **Konsep web**: HTTP request, JSON, query string.
 
 ### Yang Akan Anda Pelajari Sambil Jalan
@@ -60,6 +61,7 @@ Hal-hal ini boleh **belum** Anda kuasai — pelatihan akan memandu:
 - MySQL lokal via Laravel Herd — setup di Hari 2.
 - Query analytics & agregasi SQL untuk dashboard — dipraktikkan Hari 2–3.
 - Visualisasi data sederhana di Blade/dashboard — Hari 3.
+- HTML/CSS/JS tingkat lanjut (animasi, layout responsif, interaktivitas) — dipraktikkan sambil jalan di Hari 1.
 
 ### Perangkat & Akun
 
