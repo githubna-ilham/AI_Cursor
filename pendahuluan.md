@@ -80,14 +80,16 @@ Hal-hal ini boleh **belum** Anda kuasai — pelatihan akan memandu:
 
 > Laptop dengan RAM 8 GB masih bisa dipakai, namun Cursor + browser + terminal berjalan bersamaan bisa terasa berat. Tutup aplikasi lain selama pelatihan.
 
-#### Sistem Operasi & Software
+#### Software
 
-| Kategori | Minimum | Keterangan |
-| -------- | ------- | ---------- |
-| **OS** | Windows 10 (64-bit), macOS 12 Monterey, atau Ubuntu 20.04 | Windows 11 / macOS 14+ direkomendasikan untuk performa terbaik |
-| **Browser** | Chrome 110+, Edge 110+, atau Firefox 110+ | Dibutuhkan untuk DevTools, preview portfolio, dan login Cursor |
-| **Git** | Git 2.30+ | Wajib; setup sebelum Hari 1 (lihat `instalasi-checklist.md`) |
-| **Laravel Herd** | Versi terbaru (gratis) | Wajib sebelum Hari 3 — menyediakan PHP 8.2+, MySQL, Nginx lokal dalam satu installer |
+| Software | Versi Minimum | Direkomendasikan | Kapan Dibutuhkan |
+| -------- | ------------- | ---------------- | ---------------- |
+| **Sistem Operasi** | Windows 10 (64-bit), macOS 12, Ubuntu 20.04 | Windows 11 / macOS 14 ke atas | Sebelum Hari 1 |
+| **Cursor IDE** | Versi terbaru (download saat pelatihan) | Selalu update ke versi terbaru | Sebelum Hari 1 |
+| **Browser** | Chrome 110+ / Edge 110+ / Firefox 110+ | Chrome terbaru (DevTools paling lengkap) | Sebelum Hari 1 |
+| **Git** | Git 2.30+ | Git 2.44+ | Sebelum Hari 1 |
+| **Laravel Herd** | Versi terbaru (gratis) | Laravel Herd Pro (opsional) | Sebelum Hari 3 |
+| **MySQL Client / GUI** | DBeaver Community / Cursor DB Extension | Cursor Database Client Extension (cweijan) | Sebelum Hari 2 |
 
 #### Akun yang Dibutuhkan
 
