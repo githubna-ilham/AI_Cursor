@@ -67,14 +67,35 @@ Hal-hal ini boleh **belum** Anda kuasai — pelatihan akan memandu:
 
 ### Perangkat & Akun
 
-| Kategori     | Yang dibutuhkan                                                                          |
-| ------------ | ---------------------------------------------------------------------------------------- |
-| Laptop       | RAM minimum 8 GB (16 GB direkomendasikan), disk kosong ≥ 10 GB, internet stabil         |
-| OS           | macOS, Windows 10/11, atau Linux modern                                                  |
-| Akun GitHub  | Aktif, sudah login dari laptop Anda (bisa lewat browser atau GitHub CLI)                 |
-| Akun email   | Aktif (untuk login Cursor)                                                               |
-| Browser      | Chrome / Edge / Firefox versi terbaru (untuk DevTools & preview dashboard)               |
-| Laravel Herd | Diinstall sebelum Hari 3 — sudah termasuk PHP, MySQL, Nginx lokal (gratis)              |
+#### Hardware
+
+| Komponen | Minimum | Direkomendasikan |
+| -------- | ------- | ---------------- |
+| **RAM** | 8 GB | 16 GB atau lebih |
+| **Penyimpanan (free disk)** | 10 GB | 20 GB atau lebih |
+| **Prosesor** | Dual-core 2 GHz (Intel/AMD/Apple Silicon) | Quad-core 2.5 GHz ke atas |
+| **Layar** | 13 inci, resolusi 1280×800 | 14 inci ke atas, resolusi 1920×1080 (FHD) |
+| **Koneksi internet** | 5 Mbps stabil | 20 Mbps ke atas (untuk download model & Cursor indexing) |
+| **Baterai / daya** | Charger tersedia | Charger terhubung sepanjang hari (Cursor + AI cukup boros baterai) |
+
+> Laptop dengan RAM 8 GB masih bisa dipakai, namun Cursor + browser + terminal berjalan bersamaan bisa terasa berat. Tutup aplikasi lain selama pelatihan.
+
+#### Sistem Operasi & Software
+
+| Kategori | Minimum | Keterangan |
+| -------- | ------- | ---------- |
+| **OS** | Windows 10 (64-bit), macOS 12 Monterey, atau Ubuntu 20.04 | Windows 11 / macOS 14+ direkomendasikan untuk performa terbaik |
+| **Browser** | Chrome 110+, Edge 110+, atau Firefox 110+ | Dibutuhkan untuk DevTools, preview portfolio, dan login Cursor |
+| **Git** | Git 2.30+ | Wajib; setup sebelum Hari 1 (lihat `instalasi-checklist.md`) |
+| **Laravel Herd** | Versi terbaru (gratis) | Wajib sebelum Hari 3 — menyediakan PHP 8.2+, MySQL, Nginx lokal dalam satu installer |
+
+#### Akun yang Dibutuhkan
+
+| Akun | Keterangan |
+| ---- | ---------- |
+| **Email aktif** | Untuk login dan verifikasi Cursor |
+| **Akun Cursor** | Daftar di <https://cursor.com> — gunakan Pro Trial (gratis 14 hari) agar quota cukup selama 3 hari pelatihan |
+| **Akun GitHub** | Aktif dan sudah login dari laptop (via browser atau GitHub CLI) — untuk push portfolio Hari 1 |
 
 ---
 
