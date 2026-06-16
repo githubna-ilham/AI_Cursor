@@ -36,27 +36,31 @@ Setelah menyelesaikan Hari 1, peserta mampu:
 ```mermaid
 flowchart LR
     A[Sesi 1<br/>Introduction<br/>AI Coding] --> B[Sesi 2<br/>Getting Started Cursor<br/>+ Build Portfolio]
-    B --> C[Recap &<br/>Persiapan Hari 2]
+    B --> C[Sesi 3<br/>Contoh Prompt<br/>CRUD SQL]
+    C --> D[Recap &<br/>Persiapan Hari 2]
 ```
 
-| Sesi | Topik                              | Output utama yang Anda hasilkan                                              |
-| ---- | ---------------------------------- | ---------------------------------------------------------------------------- |
-| 1    | Introduction to AI-Assisted Coding | Pemahaman lanskap AI coding, belum ada praktik Cursor                        |
-| 2    | Getting Started with Cursor        | Repo `portfolio/` dengan halaman portfolio personal lengkap (HTML/CSS/JS)    |
+| Sesi | Topik                              | Output utama yang Anda hasilkan                                                         |
+| ---- | ---------------------------------- | --------------------------------------------------------------------------------------- |
+| 1    | Introduction to AI-Assisted Coding | Pemahaman lanskap AI coding, belum ada praktik Cursor                                   |
+| 2    | Getting Started with Cursor        | Repo `portfolio/` dengan halaman portfolio personal lengkap (HTML/CSS/JS)               |
+| 3    | Contoh Prompt CRUD SQL di Cursor   | Koleksi prompt siap pakai untuk CREATE, INSERT, SELECT, UPDATE, DELETE + query lanjutan |
 
 ---
 
 ## Jadwal Harian (contoh, dapat disesuaikan)
 
-| Waktu         | Kegiatan                                              | Durasi |
-| ------------- | ----------------------------------------------------- | ------ |
-| 08.30 – 09.00 | Registrasi & Pre-test singkat                         | 30'    |
-| 09.00 – 10.30 | **Sesi 1**: Introduction to AI-Assisted Coding        | 90'    |
-| 10.30 – 10.45 | Coffee break                                          | 15'    |
-| 10.45 – 12.15 | **Sesi 2**: Getting Started with Cursor (+ Latihan 01)| 90'    |
-| 12.15 – 13.15 | Lunch                                                 | 60'    |
-| 13.15 – 16.00 | **Lanjutan Sesi 2**: Build portfolio page             | 165'   |
-| 16.00 – 16.30 | Recap, Q&A, briefing Hari 2                           | 30'    |
+| Waktu         | Kegiatan                                               | Durasi |
+| ------------- | ------------------------------------------------------ | ------ |
+| 08.30 – 09.00 | Registrasi & Pre-test singkat                          | 30'    |
+| 09.00 – 10.30 | **Sesi 1**: Introduction to AI-Assisted Coding         | 90'    |
+| 10.30 – 10.45 | Coffee break                                           | 15'    |
+| 10.45 – 12.15 | **Sesi 2**: Getting Started with Cursor (+ Latihan 01) | 90'    |
+| 12.15 – 13.15 | Lunch                                                  | 60'    |
+| 13.15 – 15.15 | **Lanjutan Sesi 2**: Build portfolio page              | 120'   |
+| 15.15 – 15.30 | Coffee break                                           | 15'    |
+| 15.30 – 16.00 | **Sesi 3**: Contoh Prompt CRUD SQL di Cursor           | 30'    |
+| 16.00 – 16.30 | Recap, Q&A, briefing Hari 2                            | 30'    |
 
 ---
 
@@ -67,6 +71,7 @@ Hari-1-Fundamental-DevNotes/
 ├── README.md                                  <- file ini
 ├── portfolio-brd.md                           <- BRD portfolio Hari 1 (BACA DULU)
 ├── perjalanan-project.md                      <- panduan tahap-tahap build portfolio
+├── contoh-prompt-sql-crud.md                  <- Sesi 3: prompt CRUD SQL siap pakai
 ├── Sesi-01-Introduction-AI-Coding/
 │   └── materi.md
 └── Sesi-02-Getting-Started-Cursor/

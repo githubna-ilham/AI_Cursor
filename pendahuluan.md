@@ -21,13 +21,13 @@ Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak 
 
 | Hari | Topik utama                                  | Apa yang Anda hasilkan                                                                        |
 | ---- | -------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 1    | Fundamental Cursor & AI-Assisted Coding      | **Website portfolio personal** Anda (HTML/CSS/JS) dengan Hero, Skills, Projects, Contact form |
+| 1    | Fundamental Cursor & AI-Assisted Coding      | **Website portfolio personal** Anda (HTML/CSS/JS) + koleksi **contoh prompt CRUD SQL** siap pakai di Cursor |
 | 2    | Code Understanding, Debugging, Refactoring   | Project Laravel baru: setup Herd, koneksi MySQL, query AI-assisted, eksplorasi & debug data   |
 | 3    | Advanced Workflow, Dashboard & Capstone      | Dashboard data berbasis Laravel + MySQL: visualisasi query, refactor, security, presentasi     |
 
 ### Studi Kasus
 
-- **Hari 1 — Portfolio Personal**: Hari 1 berfokus pada fundamental Cursor. Anda membangun artefak yang langsung berguna: website portfolio Anda. BRD lengkap di [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md).
+- **Hari 1 — Portfolio Personal + CRUD SQL**: Hari 1 berfokus pada fundamental Cursor. Anda membangun dua artefak: website portfolio Anda (HTML/CSS/JS) dan koleksi prompt CRUD SQL siap pakai. BRD portfolio di [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md), contoh prompt SQL di [`Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md`](./Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md).
 - **Hari 2 & 3 — Dashboard Laravel**: Aplikasi dashboard data menggunakan Laravel + MySQL lokal via Laravel Herd. AI dipakai untuk menulis, memahami, dan memperbaiki query — hasilnya divisualisasikan sebagai dashboard yang bisa langsung didemonstrasikan.
 
 ### Filosofi Pelatihan
