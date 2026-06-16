@@ -4,7 +4,7 @@
 **Tipe**: Hands-on individual, project berkelanjutan
 **Output akhir**: Website portfolio personal Anda (HTML/CSS/JS vanilla) — siap deploy dan dipakai di CV / LinkedIn.
 
-> Latihan ini adalah **satu perjalanan linear 10 tahap**. Anda tidak mengerjakan latihan-latihan terpisah — setiap tahap menambah section atau kemampuan baru ke project yang sama.
+> Latihan ini adalah **satu perjalanan linear 6 tahap**. Anda tidak mengerjakan latihan-latihan terpisah — setiap tahap menambah section atau kemampuan baru ke project yang sama.
 
 ---
 
@@ -42,12 +42,6 @@ portfolio/
 │   ├── profile.jpg
 │   └── projects/
 │       └── *.png
-└── submissions/<nama>/
-    ├── 01-indexed.png
-    ├── 02-tab.png
-    ├── 03-inline-edit.png
-    ├── 04-agent.png
-    └── refleksi.md
 ```
 
 ---
@@ -67,7 +61,7 @@ git config user.email "email@anda.com"
 
 **File → Open Folder** → pilih folder `portfolio/`.
 
-Tunggu indexing selesai (< 30 detik untuk folder kosong). Screenshot status bar → `submissions/<nama>/01-indexed.png`.
+Tunggu indexing selesai (< 30 detik untuk folder kosong).
 
 ### 1.3 Buat Struktur File Awal
 
@@ -114,7 +108,6 @@ Setelah boilerplate diterima, ketik karakter pertama dari setiap baris berikut d
 <script src="assets/app.js"></script>
 ```
 
-Screenshot saran Tab yang muncul sebelum diterima → `02-tab.png`.
 
 ### 2b. Mode Cmd/Ctrl+K — CSS Variables
 
@@ -148,7 +141,6 @@ Tambah rules CSS yang memakai variables di atas:
 - h1, h2, h3: font-family --font-heading
 ```
 
-Screenshot diff sebelum accept → `03-inline-edit.png`.
 
 ### 2c. Mode Agent — Scaffold Struktur HTML
 
@@ -170,14 +162,7 @@ Kerjakan dua file sekaligus:
 
 Review setiap perubahan sebelum accept. Buka `index.html` di browser — harus tampil nav + 4 section + footer.
 
-Screenshot panel Agent + hasil di browser → `04-agent.png`.
 
-### Commit Tahap 2
-
-```bash
-git add .
-git commit -m "feat: scaffold portfolio skeleton + CSS variables (Tahap 1-2)"
-```
 
 ---
 
@@ -214,12 +199,6 @@ Ganti `assets/profile.jpg` dengan foto Anda, atau gunakan placeholder sementara:
 
 Buka browser — pastikan foto, nama, headline, bio, dan 2 tombol tampil.
 
-### Commit Tahap 3
-
-```bash
-git add .
-git commit -m "feat: add Hero section (Tahap 3)"
-```
 
 ---
 
@@ -268,12 +247,6 @@ border-radius 8px, hover transform scale(1.05) transition 0.2s
 
 Tambah skill Anda sendiri ke array SKILLS sesuai yang paling sering Anda pakai.
 
-### Commit Tahap 4
-
-```bash
-git add .
-git commit -m "feat: add Skills section dengan grid render (Tahap 4)"
-```
 
 ---
 
@@ -361,12 +334,6 @@ Tambah CSS untuk .projects-grid dan .project-card:
 
 Refresh browser — 3 kartu project harus tampil dalam grid.
 
-### Commit Tahap 5
-
-```bash
-git add .
-git commit -m "feat: add Projects section + data.js (Tahap 5)"
-```
 
 ---
 
@@ -407,90 +374,12 @@ Tambah CSS untuk modal:
 
 Test: klik kartu project → modal terbuka. Klik overlay atau tekan Escape → modal tutup.
 
-### Commit Tahap 6
-
-```bash
-git add .
-git commit -m "feat: add project card hover + modal detail (Tahap 6)"
-```
 
 ---
 
-## Tahap 7 — Section Contact Form + Validasi (25')
+## Tahap 6 — Navigation Sticky + Responsive Mobile (30')
 
-### 7.1 Buat Form HTML
-
-Di `index.html`, isi `<section id="contact">` via Agent:
-
-```
-Isi <section id="contact"> di index.html dengan:
-- <h2>Hubungi Saya</h2>
-- <form id="contact-form"> berisi:
-  - Field nama: <input type="text" id="name" name="name" placeholder="Nama Anda">
-    dengan <label> dan <span class="field-error" id="name-error">
-  - Field email: <input type="email" id="email" name="email" placeholder="Email Anda">
-    dengan <label> dan <span class="field-error" id="email-error">
-  - Field pesan: <textarea id="message" name="message" placeholder="Tulis pesan...">
-    dengan <label> dan <span class="field-error" id="message-error">
-  - <button type="submit">Kirim Pesan</button>
-Tidak ada framework. Tidak ada file baru.
-```
-
-### 7.2 Fungsi Validasi
-
-Di `assets/app.js` via Cmd+K:
-
-```
-Tambah fungsi validasi contact form:
-
-function validateField(name, value) {
-  // name bisa: 'name', 'email', 'message'
-  // return: { valid: boolean, error: string | null }
-  // Rules:
-  //   name: wajib, min 2 karakter
-  //   email: wajib, format email valid (regex sederhana)
-  //   message: wajib, min 10 karakter
-}
-
-function showFieldError(fieldId, message) {
-  // Tampilkan error di <span id="${fieldId}-error">
-  // Tambah class 'invalid' ke input/textarea
-}
-
-function clearFieldError(fieldId) {
-  // Hapus error dan class 'invalid'
-}
-```
-
-Tambah CSS untuk state invalid di `styles.css` via Cmd+K:
-
-```
-Tambah CSS untuk form contact:
-- form: display flex flex-col, gap --spacing-md, max-width 560px
-- label: font-weight 600, margin-bottom 4px
-- input, textarea: width 100%, padding --spacing-sm --spacing-md,
-  background rgba(255,255,255,0.08), border 1px solid transparent,
-  border-radius 8px, color --color-text, font-family --font-base
-- input:focus, textarea:focus: outline none, border-color --color-primary
-- input.invalid, textarea.invalid: border-color #ef4444
-- .field-error: color #ef4444, font-size 0.8rem, margin-top 4px, display block
-- textarea: min-height 120px, resize vertical
-```
-
-Test validasi: submit form kosong → semua field harus tampil error inline.
-
-### Commit Tahap 7
-
-```bash
-git add .
-git commit -m "feat: add Contact form + inline validation (Tahap 7)"
-```
-
----
-
-## Tahap 8 — Navigation Sticky + Responsive Mobile (30')
-
-### 8.1 Navigation Sticky
+### 6.1 Navigation Sticky
 
 Di `styles.css` via Cmd+K:
 
@@ -530,7 +419,7 @@ function initActiveNav() {
 // Panggil initActiveNav() di DOMContentLoaded
 ```
 
-### 8.2 Hamburger Menu Mobile
+### 6.2 Hamburger Menu Mobile
 
 Di `index.html` via Agent, tambah tombol hamburger di dalam `<nav>`:
 
@@ -589,23 +478,6 @@ function initMobileNav() {
 
 Test: DevTools → toggle device toolbar → nav harus berubah jadi hamburger di ≤ 768px.
 
-### Commit Tahap 8
-
-```bash
-git add .
-git commit -m "feat: nav sticky + active highlight + mobile hamburger (Tahap 8)"
-```
-
----
-
-## Refleksi & Submit
-
-Tulis `submissions/<nama>/refleksi.md` (5–8 kalimat):
-
-1. Mode Cursor mana yang paling membantu, dan untuk tugas apa?
-2. Momen mana ketika Anda menolak saran AI (`Esc`) dan kenapa?
-3. Kalau mengulang project ini, apa yang akan Anda lakukan berbeda?
-4. Skill apa yang terasa paling dibantu oleh AI, dan skill apa yang tetap harus Anda kerjakan manual?
 
 ---
 
