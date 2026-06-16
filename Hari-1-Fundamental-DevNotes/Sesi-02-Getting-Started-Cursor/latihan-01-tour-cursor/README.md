@@ -1,64 +1,48 @@
-# Latihan 01 — Tour Cursor + Scaffold Portfolio
+# Latihan 01 — Build Portfolio Website dengan Cursor
 
-> 🗺️ **Tahap 1–2 dari 10** di [Perjalanan Project Hari 1](../../perjalanan-project.md)
-> Sebelumnya: — | Setelah ini: Tahap 3 (Section Hero) di Sesi 3
+**Durasi**: ± 5–6 jam efektif (satu hari penuh Hari 1)
+**Tipe**: Hands-on individual, project berkelanjutan
+**Output akhir**: Website portfolio personal Anda (HTML/CSS/JS vanilla) — siap deploy dan dipakai di CV / LinkedIn.
 
-**Durasi**: 45 menit
-**Tipe**: Hands-on individual
-**Output**: Repo `portfolio/` lokal berisi `index.html` (skeleton semantic penuh), `assets/styles.css` (variabel CSS dasar), `assets/app.js` (fungsi `smoothScrollTo`), commit pertama, dan 5 screenshot bukti penggunaan 4 mode Cursor.
-
----
-
-## Konteks BRD
-
-Latihan ini menyelesaikan **FR-01 (parsial)** — fondasi struktur halaman portfolio. Mengacu wireframe **Section 9** di [`/Hari-1-Fundamental-DevNotes/portfolio-brd.md`](../../portfolio-brd.md).
+> Latihan ini adalah **satu perjalanan linear 10 tahap**. Anda tidak mengerjakan latihan-latihan terpisah — setiap tahap menambah section atau kemampuan baru ke project yang sama.
 
 ---
 
-## Tujuan
+## Referensi
 
-1. Mengalami **4 mode interaksi** Cursor (Tab, Cmd/Ctrl+K, Chat, Agent) pada konteks nyata.
-2. Menghasilkan **artefak permanen** yang akan dipakai di Sesi 3 & 4: repo `portfolio/` dengan skeleton HTML semantic + CSS variables siap pakai.
-
----
-
-## Prasyarat
-
-- Cursor terinstall, login berhasil (lihat `../instalasi-checklist.md`).
-- Smoke test poin #8 di checklist lulus.
-- Git terinstall + identitas global ter-set.
-- Akun GitHub aktif (repo bisa privat).
+- BRD lengkap & wireframe: [`../../portfolio-brd.md`](../../portfolio-brd.md)
+- Perjalanan project: [`../../perjalanan-project.md`](../../perjalanan-project.md)
 
 ---
 
 ## Empat Mode Cursor — Pengantar Singkat
 
-Sebelum langkah praktik, pahami dulu **kapan masing-masing mode dipakai**. Urutan latihan ini sengaja dari yang paling **sederhana & lokal** ke yang paling **kompleks & agentik**:
+Sebelum mulai, pahami kapan masing-masing mode dipakai:
 
-| # | Mode | Cara aktifkan | Cocok untuk | Risiko utama |
-|---|------|---------------|-------------|--------------|
-| 1 | **Tab** | Ketik kode → tombol `Tab` | Autocomplete 1–10 baris berdasarkan konteks file aktif | Saran "kelihatan benar" tapi pakai API yang tidak ada |
-| 2 | **Cmd/Ctrl + K** (Inline Edit) | Highlight kode → `Cmd/Ctrl+K` | Modifikasi blok kode yang sudah ada (ubah, tambah, refactor kecil) | Mengubah lebih banyak dari yang Anda kira — wajib baca diff |
-| 3 | **Ask** (Chat) | Buka panel (`Cmd/Ctrl + L`) → dropdown mode = `Ask`. Pakai `@` untuk attach context | Tanya jawab tentang codebase, brainstorming, tanpa langsung mengubah file | Jawaban tidak otomatis ter-apply — Anda harus tekan "Apply" atau copy-paste |
-| 4 | **Agent** | Panel yang sama → dropdown mode = `Agent` (atau langsung `Cmd/Ctrl + I` untuk buka panel default ke mode Agent) | Tugas multi-file: scaffold, refactor lintas file, bikin fitur dari spec | Bisa bikin/ubah banyak file sekaligus — paling sulit di-review |
+| # | Mode | Cara aktifkan | Cocok untuk |
+|---|------|---------------|-------------|
+| 1 | **Tab** | Ketik kode → `Tab` | Autocomplete 1–10 baris berdasarkan konteks file aktif |
+| 2 | **Cmd/Ctrl+K** | Highlight kode → `Cmd/Ctrl+K` | Modifikasi blok kode yang sudah ada, refactor kecil |
+| 3 | **Ask (Chat)** | `Cmd/Ctrl+L` → pilih mode `Ask` | Tanya jawab tentang codebase, brainstorming, tanpa langsung ubah file |
+| 4 | **Agent** | Panel yang sama → pilih mode `Agent` (atau `Cmd/Ctrl+I`) | Tugas multi-file: scaffold, fitur dari spec |
 
-> ℹ️ **Catatan versi**: Cursor versi sekarang menyatukan Chat dan Agent ke **satu panel**, dengan dropdown mode (`Ask` / `Agent` / kadang `Edit`) di bagian bawah. Shortcut `Cmd+L` dan `Cmd+I` hanya menentukan mode default saat panel terbuka. Dulu (Cursor <0.40) kedua mode terpisah panel.
-
-**Aturan praktis**: pakai mode yang **paling kecil** yang masih bisa menyelesaikan tugas. Kalau Tab cukup, tidak perlu Ask. Kalau Inline Edit cukup, tidak perlu Agent. Mode lebih agentik = lebih cepat, tapi lebih sulit dikontrol.
+**Aturan praktis**: pakai mode yang **paling kecil** yang masih cukup. Tab dulu, baru Cmd+K, baru Chat, baru Agent.
 
 ---
 
-## Output yang Diharapkan
-
-Struktur akhir folder peserta:
+## Struktur Output Akhir
 
 ```
 portfolio/
 ├── README.md
-├── index.html              ← skeleton semantic (header, nav, main dengan 4 section, footer)
+├── index.html
 ├── assets/
-│   ├── styles.css          ← CSS variables (warna, font, spacing) + dark mode
-│   └── app.js              ← fungsi smoothScrollTo (akan dipakai di Tahap 9)
+│   ├── styles.css
+│   ├── app.js
+│   ├── data.js
+│   ├── profile.jpg
+│   └── projects/
+│       └── *.png
 └── submissions/<nama>/
     ├── 01-indexed.png
     ├── 02-tab.png
@@ -68,82 +52,61 @@ portfolio/
     └── refleksi.md
 ```
 
-`index.html` harus punya:
-
-- Boilerplate HTML5 (`<!DOCTYPE html>`, `<meta charset>`, `<meta viewport>`, `<title>`)
-- Link ke `assets/styles.css` di `<head>` dan `<script src="assets/app.js">` sebelum `</body>`
-- `<header>` dengan `<nav>` berisi 4 link anchor (Home / Skills / Projects / Contact)
-- `<main>` dengan 4 `<section>` kosong (id: hero, skills, projects, contact)
-- `<footer>` dengan copyright & social link placeholder
-
-`assets/styles.css` harus punya CSS variables di `:root`:
-
-- `--color-primary`, `--color-bg`, `--color-text`, `--color-muted`
-- `--font-base`, `--font-heading`
-- `--spacing-sm`, `--spacing-md`, `--spacing-lg`
-
-`assets/app.js` harus punya fungsi `smoothScrollTo(id)` dengan null-check.
-
 ---
 
-## Langkah
+## Tahap 1 — Setup Repo & Struktur File (15')
 
-### 1. Setup Repo (5')
+### 1.1 Buat Folder & Git Init
 
-1.1. Buat folder: `mkdir portfolio && cd portfolio && git init`.
+```bash
+mkdir portfolio && cd portfolio
+git init
+git config user.name "Nama Anda"
+git config user.email "email@anda.com"
+```
 
-1.2. Buka di Cursor: **File → Open Folder**.
+### 1.2 Buka di Cursor
 
-1.3. Tunggu indexing selesai (< 30 detik untuk repo kosong).
+**File → Open Folder** → pilih folder `portfolio/`.
 
-1.4. Buat 3 file kosong manual (lewat File Explorer Cursor):
+Tunggu indexing selesai (< 30 detik untuk folder kosong). Screenshot status bar → `submissions/<nama>/01-indexed.png`.
+
+### 1.3 Buat Struktur File Awal
+
+Buat file dan folder berikut lewat File Explorer Cursor (klik kanan → New File / New Folder):
 
 ```
 portfolio/
-├── index.html             (kosong)
+├── index.html          (kosong)
 └── assets/
-    ├── styles.css         (kosong)
-    └── app.js             (kosong)
+    ├── styles.css      (kosong)
+    └── app.js          (kosong)
 ```
 
-1.5. Screenshot status bar yang menunjukkan project terindex → `submissions/<nama>/01-indexed.png`.
+> File sengaja kosong dulu — Anda akan isi dengan masing-masing mode Cursor di tahap berikutnya.
 
-> 💡 File sengaja dibuat kosong dulu supaya Anda **merasakan** apa yang masing-masing mode tambahkan ke file.
+### 1.4 Commit Pertama
 
-### 2. Mode Tab — Autocomplete (5')
+```bash
+git add .
+git commit -m "chore: init portfolio structure"
+```
 
-Mode paling sederhana: AI melihat konteks file aktif dan menyarankan beberapa baris berikut. Tidak perlu dialog, tidak perlu prompt.
+---
 
-Kita mulai dari `index.html` — file yang paling pertama dibuka browser dan fondasi dari seluruh project.
+## Tahap 2 — Tour 4 Mode Cursor (30')
 
-2.1. Buka `index.html`. Ketik karakter pertama ini lalu tekan Enter:
+### 2a. Mode Tab — Boilerplate HTML
+
+Buka `index.html`. Ketik baris pertama lalu biarkan Tab melengkapi:
 
 ```html
 <!DOCTYPE html>
 ```
 
-2.2. Tab akan menyarankan boilerplate HTML5 awal — biasanya seperti ini:
+Tab akan menyarankan boilerplate HTML5. Baca sebelum terima (`Tab` = accept, `Esc` = tolak).
 
-```html
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
-</head>
-<body>
-    
-</body>
-</html>
-```
-
-> ℹ️ Saran Tab bervariasi antar mesin — bisa satu baris, bisa langsung blok penuh. Kalau hanya satu baris yang disarankan, tekan Enter dan tunggu saran berikutnya muncul.
-
-2.3. **Baca dulu** saran sebelum terima:
-   - `Tab` untuk accept
-   - `Esc` untuk tolak dan ketik sendiri
-
-2.4. Setelah boilerplate diterima, tambahkan link ke stylesheet dan script di dalam `<head>` dan sebelum `</body>`. Ketik karakter pertama dan biarkan Tab melengkapi:
+Setelah boilerplate diterima, ketik karakter pertama dari setiap baris berikut dan biarkan Tab melengkapi:
 
 ```html
 <!-- di dalam <head> -->
@@ -153,171 +116,697 @@ Kita mulai dari `index.html` — file yang paling pertama dibuka browser dan fon
 <script src="assets/app.js"></script>
 ```
 
-> 💡 Perhatikan: Tab menyarankan berdasarkan konteks — nama file `assets/styles.css` dan `assets/app.js` disugestikan karena sudah ada di folder project yang terindex.
+Screenshot saran Tab yang muncul sebelum diterima → `02-tab.png`.
 
-2.5. Screenshot saran Tab yang muncul (sebelum diterima) → `02-tab.png`.
+### 2b. Mode Cmd/Ctrl+K — CSS Variables
 
-### 3. Mode Cmd/Ctrl+K — Inline Edit (10')
-
-Lebih kuat dari Tab: Anda highlight kode, lalu beri instruksi natural language untuk modifikasi. Anda akan pakai Cmd+K **tiga kali** di langkah ini:
-
-1. Definisikan **CSS variables** di `:root`.
-2. Buat **rule** yang **memakai** variables itu di elemen body/nav/footer.
-3. Tambah **dark mode** override.
-
-> 💡 Tahap ini sengaja dipecah supaya peserta sadar: *variables saja tidak cukup* — harus ada rule yang `var(--xxx)` baru warnanya kelihatan di browser.
-
-#### 3a. Definisikan Variables
-
-3.1. Buka `assets/styles.css`. Tulis manual blok kosong:
+Buka `assets/styles.css`. Tulis blok kosong:
 
 ```css
 :root {
 }
 ```
 
-3.2. Highlight blok `:root { ... }`.
-
-3.3. Tekan `Cmd+K` / `Ctrl+K`. Ketik:
+Highlight blok `:root { }` → tekan `Cmd+K` → ketik:
 
 ```
-Isi dengan CSS variables: warna (--color-primary, --color-bg,
---color-text, --color-muted), font (--font-base, --font-heading),
-dan spacing (--spacing-sm/md/lg). Pilih palette clean dark mode.
+Isi dengan CSS variables:
+- Warna: --color-primary, --color-bg, --color-text, --color-muted
+- Font: --font-base, --font-heading
+- Spacing: --spacing-sm (8px), --spacing-md (16px), --spacing-lg (32px)
+Gunakan palette dark modern (background gelap, accent biru/ungu).
 ```
 
-3.4. Tunggu diff muncul. **Baca seluruh diff**, lalu:
-   - `Enter` untuk terima
-   - `Esc` untuk tolak
-
-> ⚠️ **Cek di browser sekarang**: refresh `index.html`. Halaman **masih putih default** — itu **benar**, bukan bug. Variables hanya mendefinisikan token, belum apply ke elemen. Itulah kenapa kita lanjut ke 3b.
-
-#### 3b. Buat Rule yang Memakai Variables
-
-3.5. Di file yang sama, taruh cursor di bawah blok `:root { ... }`. Tekan `Cmd+K` lagi. Ketik:
+Baca diff sebelum accept. Lalu Cmd+K lagi di bawah blok `:root` untuk tambah rules yang memakai variables:
 
 ```
-Tambah rules yang memakai variables di atas:
-- body: background --color-bg, color --color-text, font-family --font-base,
-  margin 0
-- nav: flex row, gap --spacing-md, padding --spacing-md
+Tambah rules CSS yang memakai variables di atas:
+- body: background --color-bg, color --color-text, font-family --font-base, margin 0
+- nav: display flex, gap --spacing-md, padding --spacing-md
 - nav a: color --color-primary, text-decoration none, font-weight 600
 - nav a:hover: opacity 0.8
 - main section: min-height 60vh, padding --spacing-lg
-- footer: padding --spacing-lg, color --color-muted,
-  border-top 1px solid --color-muted
+- footer: padding --spacing-md, color --color-muted, border-top 1px solid --color-muted
 - h1, h2, h3: font-family --font-heading
 ```
 
-3.6. Refresh `index.html`. Sekarang background dark, text putih, link nav berwarna primary tanpa underline. Ini bukti variables sudah "dipakai".
+Screenshot diff sebelum accept → `03-inline-edit.png`.
 
-#### 3c. Tambah Dark Mode Override
+### 2c. Mode Ask — Tanya Codebase
 
-3.7. Highlight blok `:root` lagi → `Cmd+K` → ketik:
-
-```
-Tambah variant @media (prefers-color-scheme: light) yang override
---color-bg jadi #ffffff dan --color-text jadi #1a1a2e. Variabel lain
-biarkan.
-```
-
-> ℹ️ Kita sengaja override **light mode** karena baseline kita sudah dark. Kalau baseline Anda light, balik logikanya: pakai `(prefers-color-scheme: dark)`.
-
-3.8. Test: System Settings → ganti appearance, atau DevTools → Rendering → emulate `prefers-color-scheme`. Background harus berubah.
-
-3.9. Screenshot diff salah satu langkah (sebelum accept) → `03-inline-edit.png`.
-
-### 4. Mode Ask — Tanya Codebase (7')
-
-Sekarang ada konten di project. Mode **Ask** untuk **tanya jawab tanpa langsung mengubah file**.
-
-4.1. Buka panel sidebar (`Cmd+L` / `Ctrl+L`).
-
-4.2. Di **dropdown mode** (bagian bawah panel), pilih `Ask`.
-
-4.3. Ketik `@` → pilih `Folder` → arahkan ke folder `portfolio/`.
-
-4.4. Prompt:
+Buka panel `Cmd+L` → pilih mode `Ask` → ketik `@` → pilih folder `portfolio/`.
 
 ```
 Jelaskan struktur project ini dalam 5 bullet.
-Variabel CSS apa saja yang sudah disiapkan dan untuk apa?
+CSS variables apa yang sudah disiapkan?
 ```
 
-4.5. Baca jawaban. Tanya follow-up: *"Kalau saya mau ganti warna primary jadi #2563eb, cukup ubah di mana saja?"*
+Tanya follow-up: *"Kalau saya ingin ganti warna primary jadi #2563eb, cukup ubah di mana?"*
 
-4.6. Screenshot percakapan → `04-chat.png`.
+Screenshot percakapan → `04-chat.png`.
 
-> 💡 Perhatikan: di mode **Ask**, AI **tidak otomatis** ubah file. Kalau jawabannya mau di-apply, tekan tombol "Apply" di tiap snippet kode atau copy-paste manual. Ini bedanya dengan mode **Agent** di langkah berikutnya.
+### 2d. Mode Agent — Scaffold Struktur HTML
 
-### 5. Mode Agent — Scaffold Multi-file (10')
-
-Mode paling kuat & paling sulit dikontrol: AI bisa **membuat/mengubah banyak file sekaligus** untuk menyelesaikan tugas yang Anda spec.
-
-Sekarang kita punya `index.html` dengan boilerplate dasar (dari Tab) dan `styles.css` dengan variables (dari Cmd+K). Tugas Agent: **lengkapi `index.html` dengan struktur semantic penuh** dan **isi `app.js`** sekaligus.
-
-5.1. Di panel yang sama, **ganti dropdown mode** dari `Ask` ke `Agent`. (Atau buka panel default Agent dengan `Cmd+I` / `Ctrl+I`.)
-
-5.2. Prompt (ringkas, fokus 1 tugas):
+Ganti mode ke `Agent`. Prompt:
 
 ```
 Kerjakan dua file sekaligus:
 
-1. index.html — lengkapi <body> dengan struktur semantic:
-   - <header> berisi <nav> dengan 4 link anchor: Home (#hero),
-     Skills (#skills), Projects (#projects), Contact (#contact)
+1. index.html — lengkapi <body>:
+   - <header> dengan <nav> berisi 4 link anchor: Home (#hero), Skills (#skills), Projects (#projects), Contact (#contact)
    - <main> dengan 4 <section> kosong (id: hero, skills, projects, contact)
-   - <footer> dengan teks copyright dan placeholder link GitHub/LinkedIn
-   Link ke assets/styles.css dan assets/app.js sudah ada, jangan ubah.
-   Tidak perlu framework, tidak perlu inline CSS/JS.
+   - <footer> dengan copyright dan placeholder link GitHub/LinkedIn
+   Jangan ubah <link> dan <script> yang sudah ada.
 
-2. assets/app.js — tambah fungsi smoothScrollTo(id) yang:
+2. assets/app.js — tambah fungsi smoothScrollTo(id):
    - Scroll halus ke section dengan id tersebut
-   - Cek null sebelum scroll (guard kalau id tidak ditemukan)
+   - Guard: cek null sebelum scroll
 ```
 
-5.3. **Review tiap perubahan** yang akan dibuat sebelum accept. Reject hal yang tidak Anda mengerti — minta penjelasan ulang via Ask.
+Review setiap perubahan sebelum accept. Buka `index.html` di browser — harus tampil nav + 4 section + footer.
 
-5.4. Accept perubahan.
+Screenshot panel Agent + hasil di browser → `05-agent.png`.
 
-5.5. Buka `index.html` di browser. Harusnya muncul halaman dengan nav di atas, 4 section kosong (masing-masing setinggi 60vh), footer di bawah, warna mengikuti rules dari langkah 3b.
+### Commit Tahap 2
 
-5.6. Test dark mode: System Settings macOS atau DevTools → Rendering → `prefers-color-scheme: dark`. Warna harus berubah.
+```bash
+git add .
+git commit -m "feat: scaffold portfolio skeleton + CSS variables (Tahap 1-2)"
+```
 
-5.7. Screenshot panel Agent + halaman di browser → `05-agent.png`.
+---
 
-> 💡 Perhatikan perbedaan Agent vs Tab dari langkah 2: Tab hanya menyarankan beberapa baris berikutnya dalam satu file, Agent bisa menyentuh banyak file sekaligus berdasarkan spec yang Anda tulis. Semakin kuat mode, semakin perlu Anda review hasilnya sebelum accept.
+## Tahap 3 — Section Hero / About (30')
 
-### 6. Commit & Submit (5')
+Section pertama yang dilihat visitor — perkenalkan diri Anda.
 
-6.1. `git add . && git commit -m "feat: scaffold portfolio skeleton + CSS variables (Tahap 1-2)"`.
+Buka Chat (`Cmd+L`) → mode `Agent` → attach `@file index.html` dan `@file assets/styles.css`.
 
-6.2. (Opsional) Buat repo di GitHub dan push.
+```
+Isi <section id="hero"> di index.html dengan:
+- Container flex row (foto kiri, teks kanan) di desktop
+- <img> untuk foto profil (src="assets/profile.jpg", alt="Foto [Nama Anda]")
+- <h1> nama lengkap Anda
+- <p class="headline"> role / tagline 1 kalimat
+- <p class="bio"> 2–3 kalimat tentang Anda
+- Dua tombol CTA: <a href="#contact"> "Hubungi Saya" dan <a href="#projects"> "Lihat Project"
 
-6.3. Tulis `submissions/<nama>/refleksi.md` (3–5 kalimat):
-   - Mode mana paling intuitif?
-   - Mode mana paling mengagetkan output-nya?
-   - 1 hal yang akan Anda lakukan berbeda kalau mengulang scaffold ini.
+Tambah CSS yang dibutuhkan di assets/styles.css:
+- .hero: display flex, align-items center, gap --spacing-lg
+- .hero img: border-radius 50%, width 200px, height 200px, object-fit cover
+- .headline: color --color-primary, font-size 1.25rem
+- .btn: style tombol dengan --color-primary sebagai background, padding, border-radius
+- .btn-outline: variant outline (border --color-primary, background transparent)
+
+Tidak perlu file baru.
+```
+
+Ganti `assets/profile.jpg` dengan foto Anda, atau gunakan placeholder sementara:
+
+```html
+<img src="https://i.pravatar.cc/200" alt="Foto [Nama Anda]">
+```
+
+Buka browser — pastikan foto, nama, headline, bio, dan 2 tombol tampil.
+
+### Commit Tahap 3
+
+```bash
+git add .
+git commit -m "feat: add Hero section (Tahap 3)"
+```
+
+---
+
+## Tahap 4 — Section Skills (20')
+
+Tampilkan tech stack Anda dalam grid.
+
+Buka `assets/app.js`. Tambah array skills dan fungsi render via `Cmd+K`:
+
+```
+Tambah di bawah smoothScrollTo:
+
+const SKILLS = [
+  { name: "JavaScript", emoji: "🟨" },
+  { name: "PHP", emoji: "🐘" },
+  { name: "Python", emoji: "🐍" },
+  { name: "MySQL", emoji: "🗄️" },
+  { name: "Git", emoji: "🌿" },
+  { name: "Laravel", emoji: "🔴" }
+];
+
+function renderSkills() {
+  // Cari <section id="skills">, buat <ul class="skills-grid">,
+  // tiap <li> berisi emoji + nama skill. Guard jika section tidak ada.
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderSkills();
+});
+```
+
+Setelah AI generate, periksa hasilnya dan jalankan manual di browser console untuk verifikasi.
+
+Tambah CSS di `styles.css` via Cmd+K:
+
+```
+Tambah CSS untuk .skills-grid:
+- display grid, grid-template-columns repeat(auto-fill, minmax(120px, 1fr))
+- gap --spacing-md
+- list-style none, padding 0
+
+Tiap li: display flex flex-col align-items center, gap --spacing-sm,
+padding --spacing-md, background rgba(255,255,255,0.05),
+border-radius 8px, hover transform scale(1.05) transition 0.2s
+```
+
+Tambah skill Anda sendiri ke array SKILLS sesuai yang paling sering Anda pakai.
+
+### Commit Tahap 4
+
+```bash
+git add .
+git commit -m "feat: add Skills section dengan grid render (Tahap 4)"
+```
+
+---
+
+## Tahap 5 — Section Projects + data.js (30')
+
+Data project dipisah ke file tersendiri agar mudah diupdate.
+
+### 5.1 Buat assets/data.js
+
+Buat file `assets/data.js` (File Explorer Cursor → klik kanan → New File).
+
+Isi via Chat → mode `Ask` dulu untuk diskusi struktur, lalu switch ke `Agent` untuk generate:
+
+```
+Buat file assets/data.js berisi:
+
+const PROFILE = {
+  name: "[Nama Anda]",
+  headline: "[Role / Tagline Anda]",
+  bio: "[Bio singkat 2-3 kalimat]",
+  photo: "assets/profile.jpg",
+  social: {
+    github: "https://github.com/[username]",
+    linkedin: "https://linkedin.com/in/[username]",
+    email: "[email@anda.com]"
+  }
+};
+
+const PROJECTS = [
+  {
+    id: "project-1",
+    title: "[Judul Project 1]",
+    description: "[Deskripsi singkat 1-2 kalimat]",
+    thumbnail: "assets/projects/project-1.png",
+    tags: ["JavaScript", "HTML"],
+    demo: "#",
+    repo: "#"
+  },
+  // buat 2 project lagi dengan struktur yang sama
+];
+
+// Export via window agar bisa diakses dari app.js
+window.PROFILE = PROFILE;
+window.PROJECTS = PROJECTS;
+```
+
+Ganti placeholder dengan data Anda sendiri (boleh fiksi yang masuk akal).
+
+### 5.2 Link data.js ke HTML
+
+Tambah script tag di `index.html` sebelum `app.js`:
+
+```html
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+```
+
+### 5.3 Render Projects
+
+Di `assets/app.js`, tambah fungsi `renderProjects()` via `Cmd+K`:
+
+```
+Tambah fungsi renderProjects() di app.js:
+- Ambil data dari window.PROJECTS
+- Cari <section id="projects">, tambah <h2>Projects</h2> dan <div class="projects-grid">
+- Tiap project: kartu dengan thumbnail, title, description, tags (sebagai <span>),
+  link demo dan repo
+- Guard: tampilkan pesan "Belum ada project" jika array kosong
+- Panggil renderProjects() di dalam DOMContentLoaded yang sudah ada
+```
+
+Tambah CSS untuk grid project di `styles.css` via Cmd+K:
+
+```
+Tambah CSS untuk .projects-grid dan .project-card:
+- Grid 3 kolom auto-fill minmax(280px, 1fr), gap --spacing-md
+- Kartu: background rgba(255,255,255,0.05), border-radius 12px, overflow hidden,
+  hover transform translateY(-4px) transition 0.2s, cursor pointer
+- Thumbnail: width 100%, height 180px, object-fit cover
+- Konten kartu: padding --spacing-md
+- Tags: flex wrap, gap 8px, margin-top --spacing-sm
+- Tag item: background --color-primary dengan opacity 0.2, padding 2px 8px, border-radius 4px, font-size 0.75rem
+- Link demo & repo: inline-flex, gap 8px, margin-top --spacing-sm
+```
+
+Refresh browser — 3 kartu project harus tampil dalam grid.
+
+### Commit Tahap 5
+
+```bash
+git add .
+git commit -m "feat: add Projects section + data.js (Tahap 5)"
+```
+
+---
+
+## Tahap 6 — Project Detail / Hover State (20')
+
+Tambahkan interaksi: hover effect dan modal saat kartu diklik.
+
+Di `assets/app.js` via `Cmd+K`:
+
+```
+Tambah fungsi modal project di app.js:
+
+function openProjectModal(project) {
+  // Buat <div class="modal-overlay"> yang menutupi layar
+  // Di dalamnya: <div class="modal-content"> berisi
+  //   - thumbnail, title, description lengkap, tags, link demo & repo
+  //   - tombol close (×) di pojok kanan atas
+  // Klik overlay di luar modal = tutup modal
+  // Tekan Escape = tutup modal
+  // append ke document.body
+}
+
+// Pasang event klik ke setiap .project-card di renderProjects()
+// sehingga klik kartu memanggil openProjectModal(project)
+```
+
+Tambah CSS modal di `styles.css` via Cmd+K:
+
+```
+Tambah CSS untuk modal:
+- .modal-overlay: position fixed, inset 0, background rgba(0,0,0,0.7),
+  display flex, align-items center, justify-content center, z-index 1000
+- .modal-content: background --color-bg, border-radius 12px, max-width 600px,
+  width 90%, max-height 80vh, overflow-y auto, padding --spacing-lg, position relative
+- .modal-close: position absolute, top --spacing-md, right --spacing-md,
+  background none, border none, color --color-text, font-size 1.5rem, cursor pointer
+```
+
+Test: klik kartu project → modal terbuka. Klik overlay atau tekan Escape → modal tutup.
+
+### Commit Tahap 6
+
+```bash
+git add .
+git commit -m "feat: add project card hover + modal detail (Tahap 6)"
+```
+
+---
+
+## Tahap 7 — Section Contact Form + Validasi (25')
+
+### 7.1 Buat Form HTML
+
+Di `index.html`, isi `<section id="contact">` via Agent:
+
+```
+Isi <section id="contact"> di index.html dengan:
+- <h2>Hubungi Saya</h2>
+- <form id="contact-form"> berisi:
+  - Field nama: <input type="text" id="name" name="name" placeholder="Nama Anda">
+    dengan <label> dan <span class="field-error" id="name-error">
+  - Field email: <input type="email" id="email" name="email" placeholder="Email Anda">
+    dengan <label> dan <span class="field-error" id="email-error">
+  - Field pesan: <textarea id="message" name="message" placeholder="Tulis pesan...">
+    dengan <label> dan <span class="field-error" id="message-error">
+  - <button type="submit">Kirim Pesan</button>
+Tidak ada framework. Tidak ada file baru.
+```
+
+### 7.2 Fungsi Validasi
+
+Di `assets/app.js` via Cmd+K:
+
+```
+Tambah fungsi validasi contact form:
+
+function validateField(name, value) {
+  // name bisa: 'name', 'email', 'message'
+  // return: { valid: boolean, error: string | null }
+  // Rules:
+  //   name: wajib, min 2 karakter
+  //   email: wajib, format email valid (regex sederhana)
+  //   message: wajib, min 10 karakter
+}
+
+function showFieldError(fieldId, message) {
+  // Tampilkan error di <span id="${fieldId}-error">
+  // Tambah class 'invalid' ke input/textarea
+}
+
+function clearFieldError(fieldId) {
+  // Hapus error dan class 'invalid'
+}
+```
+
+Tambah CSS untuk state invalid di `styles.css` via Cmd+K:
+
+```
+Tambah CSS untuk form contact:
+- form: display flex flex-col, gap --spacing-md, max-width 560px
+- label: font-weight 600, margin-bottom 4px
+- input, textarea: width 100%, padding --spacing-sm --spacing-md,
+  background rgba(255,255,255,0.08), border 1px solid transparent,
+  border-radius 8px, color --color-text, font-family --font-base
+- input:focus, textarea:focus: outline none, border-color --color-primary
+- input.invalid, textarea.invalid: border-color #ef4444
+- .field-error: color #ef4444, font-size 0.8rem, margin-top 4px, display block
+- textarea: min-height 120px, resize vertical
+```
+
+Test validasi: submit form kosong → semua field harus tampil error inline.
+
+### Commit Tahap 7
+
+```bash
+git add .
+git commit -m "feat: add Contact form + inline validation (Tahap 7)"
+```
+
+---
+
+## Tahap 8 — Submit Form → localStorage + Toast (20')
+
+### 8.1 Handler Submit
+
+Di `assets/app.js` via Cmd+K:
+
+```
+Tambah fungsi-fungsi berikut di app.js:
+
+const STORAGE_KEY = 'portfolio:messages';
+
+function getMessages() {
+  // Return array pesan dari localStorage, [] kalau kosong
+  // Pakai try/catch untuk JSON.parse
+}
+
+function saveMessage(data) {
+  // data: { name, email, message }
+  // Buat object message: { id: 'msg-' + Date.now(), ...data, receivedAt: new Date().toISOString() }
+  // Push ke array getMessages(), save ke localStorage
+  // Return message object
+}
+
+function showToast(text, type = 'success') {
+  // Buat <div class="toast toast-{type}"> dengan teks
+  // Append ke body
+  // Auto-remove setelah 3000ms
+  // Tambah class 'toast-visible' setelah 10ms (untuk CSS transition)
+}
+
+function attachContactForm() {
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // Validasi semua field (name, email, message)
+    // Jika ada yang tidak valid: tampilkan semua error, return
+    // Jika semua valid: saveMessage, showToast('Pesan terkirim, terima kasih!'), form.reset(), clearAllErrors()
+  });
+}
+
+// Panggil attachContactForm() di dalam DOMContentLoaded
+```
+
+### 8.2 CSS Toast
+
+Di `styles.css` via Cmd+K:
+
+```
+Tambah CSS untuk toast notification:
+- .toast: position fixed, bottom --spacing-lg, right --spacing-lg, z-index 9999
+  background --color-primary, color white, padding --spacing-sm --spacing-md,
+  border-radius 8px, opacity 0, transform translateY(8px),
+  transition opacity 0.3s, transform 0.3s
+- .toast.toast-visible: opacity 1, transform translateY(0)
+```
+
+Test: isi form dengan data valid → submit → toast muncul 3 detik → form kosong kembali.
+
+Verifikasi di DevTools → Application → Local Storage → key `portfolio:messages` ada.
+
+### Commit Tahap 8
+
+```bash
+git add .
+git commit -m "feat: form submit → localStorage + toast notification (Tahap 8)"
+```
+
+---
+
+## Tahap 9 — Navigation Sticky + Responsive Mobile (30')
+
+### 9.1 Navigation Sticky
+
+Di `styles.css` via Cmd+K:
+
+```
+Update styles header/nav:
+- header: position sticky, top 0, z-index 100,
+  background --color-bg dengan backdrop-filter blur(8px),
+  border-bottom 1px solid rgba(255,255,255,0.1)
+- nav: display flex, justify-content space-between, align-items center,
+  padding --spacing-sm --spacing-lg
+- .nav-logo: font-weight 700, color --color-primary, text-decoration none, font-size 1.2rem
+- .nav-links: display flex, gap --spacing-md, list-style none
+- .nav-links a.active: border-bottom 2px solid --color-primary
+```
+
+Di `assets/app.js` via Cmd+K:
+
+```
+Tambah fungsi highlight nav link aktif saat scroll:
+
+function initActiveNav() {
+  const sections = document.querySelectorAll('main section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  sections.forEach(s => observer.observe(s));
+}
+// Panggil initActiveNav() di DOMContentLoaded
+```
+
+### 9.2 Hamburger Menu Mobile
+
+Di `index.html` via Agent, tambah tombol hamburger di dalam `<nav>`:
+
+```
+Tambah tombol hamburger di dalam <nav>, setelah .nav-logo:
+<button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+
+Tombol ini hanya tampil di mobile (hidden di desktop via CSS).
+```
+
+Di `styles.css` via Cmd+K:
+
+```
+Tambah responsive CSS untuk mobile (max-width: 768px):
+- .nav-toggle: display block, background none, border none, cursor pointer, padding 8px
+  Tiap <span>: display block, width 24px, height 2px, background --color-text,
+  margin 5px 0, transition 0.3s
+- .nav-links: display none secara default di mobile
+- .nav-links.open: display flex, flex-direction column, position absolute,
+  top 100%, left 0, right 0, background --color-bg, padding --spacing-md,
+  border-bottom 1px solid rgba(255,255,255,0.1)
+- Hero: flex-direction column, text-align center di mobile
+- .projects-grid: grid-template-columns 1fr di mobile
+- .hero img: width 140px, height 140px di mobile
+
+Di desktop (min-width: 769px): .nav-toggle display none
+```
+
+Di `assets/app.js` via Cmd+K:
+
+```
+Tambah fungsi toggle hamburger menu:
+
+function initMobileNav() {
+  const toggle = document.querySelector('.nav-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  if (!toggle || !navLinks) return;
+
+  toggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen);
+  });
+
+  // Tutup menu saat klik link
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      toggle.setAttribute('aria-expanded', false);
+    });
+  });
+}
+// Panggil initMobileNav() di DOMContentLoaded
+```
+
+Test: DevTools → toggle device toolbar → nav harus berubah jadi hamburger di ≤ 768px.
+
+### Commit Tahap 9
+
+```bash
+git add .
+git commit -m "feat: nav sticky + active highlight + mobile hamburger (Tahap 9)"
+```
+
+---
+
+## Tahap 10 — Polish + Lighthouse Audit (20')
+
+### 10.1 Smooth Scroll Global
+
+Di `styles.css`, tambah di bagian atas setelah `:root`:
+
+```css
+html {
+  scroll-behavior: smooth;
+}
+```
+
+### 10.2 Animasi Halus (Opsional)
+
+Di `styles.css` via Cmd+K:
+
+```
+Tambah animasi fade-in untuk section:
+- @keyframes fadeInUp: from opacity 0 translateY(20px), to opacity 1 translateY(0)
+- .section-animate: animation fadeInUp 0.5s ease forwards
+- opacity 0 by default (sebelum animasi jalan)
+```
+
+Di `app.js` via Cmd+K:
+
+```
+Tambah IntersectionObserver untuk animasi section:
+- Observe semua <section>
+- Saat masuk viewport: tambahkan class 'section-animate'
+- Threshold: 0.15
+```
+
+### 10.3 Accessibility Fixes
+
+Pakai mode `Ask` di Cursor:
+
+```
+Review @file index.html untuk accessibility:
+- Apakah semua <img> punya alt text?
+- Apakah semua form input punya <label> yang terhubung via for/id?
+- Apakah ada heading hierarchy yang benar (h1 → h2 → h3)?
+- Apakah tombol dan link punya text yang deskriptif?
+
+Berikan daftar isu yang perlu diperbaiki.
+```
+
+Perbaiki isu yang ditemukan satu per satu via Cmd+K.
+
+### 10.4 Lighthouse Audit
+
+1. Buka `index.html` di Chrome.
+2. DevTools → **Lighthouse** tab.
+3. Pilih: Desktop, categories: Performance + Accessibility + Best Practices.
+4. Klik **Analyze page load**.
+
+Target minimum:
+
+| Kategori | Target |
+|---|---|
+| Performance | ≥ 85 |
+| Accessibility | ≥ 90 |
+| Best Practices | ≥ 90 |
+
+Jika ada skor di bawah target, copy pesan error Lighthouse → paste ke Chat Cursor:
+
+```
+Lighthouse memberi skor Accessibility 78 dengan isu berikut:
+[paste isu dari Lighthouse]
+
+Tolong tunjukkan perbaikan spesifik di @file index.html untuk menaikkan skor ini.
+```
+
+### Commit Tahap 10
+
+```bash
+git add .
+git commit -m "feat: polish, accessibility fix, Lighthouse audit (Tahap 10)"
+```
+
+---
+
+## Refleksi & Submit
+
+Tulis `submissions/<nama>/refleksi.md` (5–8 kalimat):
+
+1. Mode Cursor mana yang paling membantu, dan untuk tugas apa?
+2. Momen mana ketika Anda menolak saran AI (`Esc`) dan kenapa?
+3. Kalau mengulang project ini, apa yang akan Anda lakukan berbeda?
+4. Skill apa yang terasa paling dibantu oleh AI, dan skill apa yang tetap harus Anda kerjakan manual?
+
+---
+
+## (Bonus) Deploy ke GitHub Pages
+
+```bash
+# Push ke GitHub dulu
+git remote add origin https://github.com/<username>/portfolio.git
+git push -u origin main
+```
+
+Di GitHub → Settings → Pages → Source: Deploy from branch `main`, folder `/` (root).
+
+URL portfolio Anda akan aktif di: `https://<username>.github.io/portfolio/`
 
 ---
 
 ## Tips
 
-- **Mulai dari mode terkecil.** Kalau Tab cukup, jangan langsung Agent. Latihan ini sengaja diatur dari sederhana ke kompleks supaya intuisi "kapan pakai apa" terbentuk.
-- Jangan tergesa-gesa accept Tab/Agent. Baca dulu — terutama selector CSS dan struktur HTML, mudah di-hallucinate.
-- Pakai `Esc` tanpa rasa bersalah. Menolak saran adalah skill.
-- Simpan **palette warna pilihan Anda** dengan baik — akan dipakai konsisten di tahap-tahap berikutnya.
-- Pakai semantic HTML (`<section>`, `<header>`, `<nav>`, `<footer>`) sejak awal — akan mempermudah accessibility audit di Tahap 10.
+- **Mulai dari mode terkecil.** Tab dulu, baru Cmd+K, baru Agent. Bukan sebaliknya.
+- **Baca diff sebelum accept.** Terutama Agent yang bisa menyentuh banyak file sekaligus.
+- **Commit kecil, sering.** Mudah revert kalau AI menghasilkan perubahan tidak diinginkan.
+- **Data milik Anda.** Isi dengan project, skill, dan bio nyata Anda — bukan placeholder — agar portfolio ini benar-benar siap dipakai.
+- **Pakai `Esc` tanpa rasa bersalah.** Menolak saran AI adalah skill, bukan kegagalan.
 
 ---
 
 ## Common Issues
 
-| Issue                                  | Solusi                                                              |
-| -------------------------------------- | ------------------------------------------------------------------- |
-| Agent bikin package.json / build       | Tolak. Tegaskan di prompt: "no build tool, no package.json"         |
-| Tab tidak muncul                       | Cek Settings → Features → Cursor Tab; restart Cursor                |
-| Chat "no context found"                | Folder belum selesai diindex; tunggu / re-index                     |
-| Halaman blank putih di browser         | Buka DevTools console; biasanya path `assets/styles.css` salah      |
-| Dark mode tidak switch                 | Cek `@media (prefers-color-scheme: dark)` ada di CSS; cek emulator   |
-| Screenshot terpotong                   | Gunakan tool screenshot OS bawaan, full window                      |
+| Issue | Solusi |
+|---|---|
+| Agent bikin `package.json` atau `node_modules/` | Tolak. Tambahkan ke prompt: "no build tool, no npm" |
+| Tab tidak muncul | Settings → Features → Cursor Tab → aktifkan; restart Cursor |
+| Halaman blank putih | DevTools console → biasanya path `assets/styles.css` salah |
+| Modal tidak menutup saat tekan Escape | Pastikan `keydown` listener di `document`, bukan di elemen modal |
+| Lighthouse skor rendah di Performance | Kompres foto (< 200KB), tambah `loading="lazy"` di `<img>` |
+| localStorage tidak tersimpan | Buka via server lokal (bukan file://) — gunakan Live Server extension |
