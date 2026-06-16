@@ -100,7 +100,6 @@ Tabel: customers (id, name, email, city)
 Output: id, name, email
 Filter: city = 'Jakarta'
 Urutan: name ASC
-MySQL 8.0.
 ```
 
 ---
@@ -137,7 +136,6 @@ Group: per categories.id
 Urutan: total_revenue DESC
 
 Gunakan LEFT JOIN agar kategori tanpa penjualan tetap muncul.
-MySQL 8.0.
 ```
 
 ---
@@ -174,7 +172,6 @@ Tabel:
 Output: name, total_spent (SUM qty * unit_price), tier (CASE WHEN)
 Filter: hanya orders.status = 'paid'
 Urutan: total_spent DESC
-MySQL 8.0.
 ```
 
 ---
