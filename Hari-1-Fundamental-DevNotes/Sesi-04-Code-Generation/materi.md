@@ -1,6 +1,6 @@
-# Sesi 4 — Code Generation Fundamentals
+# Sesi 4 — Code Generation untuk SQL dengan Cursor
 
-Setelah menguasai cara berbicara dengan Cursor di Sesi 3, sekarang waktunya merangkai banyak prompt menjadi **fitur fungsional**. Di sesi ini Anda akan menutup Hari 1 dengan menambahkan Contact form (validasi + submit ke localStorage), navigation sticky responsive, dan polish accessibility ke portfolio Anda — portfolio siap dipakai di akhir hari.
+Setelah Sesi 3 memperkenalkan koleksi prompt CRUD SQL siap pakai, sesi ini membahas **cara berpikir** di balik prompt yang baik untuk SQL — bagaimana memecah kebutuhan, menyusun prompt yang presisi, dan memvalidasi query hasil generate sebelum dijalankan ke database.
 
 ---
 
@@ -8,228 +8,364 @@ Setelah menguasai cara berbicara dengan Cursor di Sesi 3, sekarang waktunya mera
 
 Setelah membaca materi ini, Anda akan mampu:
 
-1. **Menerjemahkan** user story / requirement menjadi prompt produksi untuk Cursor secara terstruktur.
-2. **Menghasilkan** fungsi, class, dan modul yang konsisten dengan style codebase eksisting.
-3. **Mengkonversi** pseudocode menjadi implementasi runnable dalam bahasa target.
-4. **Membangun** 1 fitur CRUD sederhana end-to-end (data → service → endpoint/UI → test) menggunakan kombinasi Tab / Cmd-K / Chat / Composer.
-5. **Memvalidasi** kualitas kode hasil generate dengan checklist (correctness, security, style, test coverage).
+1. **Menerjemahkan** kebutuhan bisnis atau user story menjadi prompt SQL yang terstruktur untuk Cursor.
+2. **Memilih** mode Cursor yang tepat sesuai kompleksitas query yang diminta.
+3. **Menggunakan** pseudocode sebagai jembatan antara logika bisnis dan query SQL.
+4. **Memvalidasi** query hasil generate sebelum dieksekusi — correctness, performance, dan keamanan.
+5. **Menerapkan** loop kerja yang aman: generate → review → test di data dummy → commit.
 
 ---
 
 ## 1. Konsep Inti
 
-### 1.1 Spektrum Code Generation
+### 1.1 Spektrum Kompleksitas Query SQL
 
-"Code generation" itu bukan satu hal — ada **tingkatan ukuran kode** yang Anda minta AI buatkan, dari yang kecil (1 baris) sampai yang besar (1 service utuh). Setiap tingkatan punya **mode Cursor yang optimal**, **tingkat risiko**, dan **effort review yang dibutuhkan** berbeda.
+Seperti code generation pada umumnya, SQL punya **tingkatan kompleksitas** — dari yang sederhana sampai yang berisiko tinggi jika salah. Setiap level butuh mode Cursor yang berbeda dan porsi review yang berbeda.
 
 ```mermaid
 flowchart LR
-    A[Snippet<br/>1 baris/blok] --> B[Function<br/>1 unit logika]
-    B --> C[Module<br/>kumpulan unit]
-    C --> D[Feature<br/>fitur utuh]
-    D --> E[Service<br/>boundary]
+    A[Snippet<br/>1 ekspresi/kondisi] --> B[Query<br/>1 SELECT/INSERT/UPDATE/DELETE]
+    B --> C[Query Kompleks<br/>JOIN + subquery + agregasi]
+    C --> D[Skema + Migration<br/>DDL + perubahan struktur]
+    D --> E[Prosedur / View<br/>logic tersimpan di DB]
     style A fill:#dff
     style E fill:#fdd
 ```
 
-Warna di diagram: **biru muda** = risiko rendah, **merah muda** = risiko tinggi. Semakin besar unit kerja, semakin besar pula peluang AI salah arah karena harus menjaga konsistensi antar banyak bagian.
+| Level | Contoh | Mode Cursor Optimal | Risiko | Review effort |
+|-------|--------|---------------------|--------|---------------|
+| **Snippet** | Satu kondisi WHERE, satu ekspresi CASE | **Tab** | Rendah | Detik |
+| **Query** | SELECT dengan JOIN sederhana, INSERT satu tabel | **Cmd/Ctrl+K** | Rendah–sedang | Menit |
+| **Query Kompleks** | Laporan dengan multi-JOIN, subquery, CTE, agregasi | **Chat** | Sedang | 10–20 menit |
+| **Skema / Migration** | CREATE TABLE, ALTER TABLE, tambah index | **Agent** | Tinggi | 30+ menit |
+| **Prosedur / View** | Stored procedure, trigger, materialized view | **Agent bertahap** | Sangat tinggi | Jam |
 
-#### Penjelasan tiap level
+**Tiga pola yang perlu diingat:**
 
-| Level        | Apa itu (contoh portfolio Hari 1)                                                            | Mode Cursor Optimal              | Risiko        | Review effort |
-| ------------ | -------------------------------------------------------------------------------------------- | -------------------------------- | ------------- | ------------- |
-| **Snippet**  | 1 baris atau blok kecil — mis. `const STORAGE_KEY = 'portfolio:messages';`                   | **Tab** (autocomplete)           | Rendah        | Detik         |
-| **Function** | 1 unit logika utuh — mis. `validateEmail(s)` atau `smoothScrollTo(id)`                       | **Cmd/Ctrl+K** (inline edit)     | Rendah–sedang | Menit         |
-| **Module**   | Kumpulan fungsi terkait — mis. modul form validation (validate per field + submit handler)   | **Chat** atau Cmd/Ctrl+K bertahap | Sedang       | 10+ menit     |
-| **Feature**  | Fitur utuh end-to-end (UI sampai data) — mis. section Contact (form + validasi + submit + toast + storage) | **Agent**                        | Tinggi        | 30+ menit     |
-| **Service**  | Sistem dengan boundary jelas — mis. seluruh BE DevNotes Hari 2 (Supabase + auth + RLS)       | Agent **bertahap** + desain manual | Sangat tinggi | Jam        |
+1. **Semakin kompleks query → semakin tinggi risiko.** Snippet WHERE sulit salah fatal. UPDATE tanpa WHERE yang tepat bisa merusak seluruh tabel.
+2. **Mode disesuaikan dengan kompleksitas.** Tab untuk melengkapi kondisi, Cmd+K untuk satu query utuh, Agent untuk multi-file (migration + seeder + test).
+3. **Review effort untuk SQL tidak linier.** Query SELECT 10 baris mudah di-review. Stored procedure 100 baris dengan kondisi bercabang butuh waktu jauh lebih lama — dan lebih bahaya kalau salah.
 
-#### Tiga pola yang muncul di tabel
-
-**1. Semakin besar unit → semakin tinggi risiko.** Snippet sulit salah secara fatal (mis. autocomplete `console.log`). Service mudah salah secara fatal (mis. RLS policy bocor → semua user lihat data orang lain).
-
-**2. Mode Cursor disesuaikan dengan ukuran.** Tab untuk yang reflex, Cmd+K untuk yang fokus, Chat untuk yang butuh diskusi, Composer untuk yang sentuh banyak file. Pakai Composer untuk snippet = overkill; pakai Tab untuk feature = di luar kemampuan.
-
-**3. Review effort tumbuh non-linear.** Function 20-baris cukup 2 menit review. Feature 200-baris di 4 file butuh 30+ menit review. **Bukan karena baris-nya 10× lebih banyak, tapi interaksi antar bagian-nya** yang perlu divalidasi.
-
-#### Implikasi untuk Anda
-
-- **Mulai dari yang kecil**. Untuk fitur baru, pecah dulu jadi module → function → snippet sebelum minta AI generate. Jangan langsung Composer "buat semua".
-- **Pasangkan mode dengan unit yang benar**. Snippet pakai Tab; jangan paksakan Cmd+K untuk 1 baris.
-- **Investasi review proporsional**. Untuk feature/service, alokasikan waktu review yang setara dengan waktu generate. AI 5 menit + review 30 menit lebih aman daripada AI 5 menit + review 1 menit.
-
-> **Aturan ringkas**: *semakin tinggi level di spektrum, semakin penting spesifikasi (sebelum) & review (sesudah).*
-
-### 1.2 Dari User Story ke Prompt
-
-User story klasik:
-
-> Sebagai *user*, saya ingin *mendaftar dengan email & password* sehingga *saya bisa login kemudian*.
->
-> **Acceptance**:
-> - Email valid (format + belum terdaftar).
-> - Password ≥ 8 karakter, ada angka.
-> - Sukses → return 201 + user.id.
-> - Gagal validasi → 400 + pesan.
-
-Strategi penerjemahan:
-
-1. **Pecah ke task teknis** (route, controller, service, repository, schema, test).
-2. **Petakan ke file** yang sudah ada di repo (pakai konvensi).
-3. **Susun prompt per task**, atau 1 prompt Composer untuk fitur kecil dengan scope tegas.
-
-### 1.3 Menulis Fungsi / Class / Module
-
-#### Fungsi (≤30 baris)
-- Gunakan **Cmd/Ctrl+K** di file target.
-- Sebut signature, behavior, edge case, error mode.
-- Selalu generate test pada langkah berikutnya — jangan tunggu nanti.
-
-Contoh prompt (untuk portfolio — fungsi `validateEmail`):
-
-```
-Buat fungsi validateEmail(value: string): { valid: boolean, error: string | null }
-- valid: true kalau format email RFC-5322 simple (regex /^[^\s@]+@[^\s@]+\.[^\s@]+$/),
-  panjang ≤ 254 karakter
-- Edge case: value null/undefined/"" → { valid: false, error: "Email wajib diisi" }
-- value valid → { valid: true, error: null }
-- value tidak match regex → { valid: false, error: "Format email tidak valid" }
-- Vanilla JS, tidak melempar exception
-- Konsisten dengan style fungsi lain di @file assets/app.js
-```
-
-#### Class
-- Sebut **single responsibility** secara eksplisit.
-- Sebut dependency yang di-inject (DI).
-- Sebut pola yang dipakai di repo (mis. repository pattern).
-
-Contoh prompt (pseudo, agnostik stack):
-```
-Buat class UserService dengan:
-- Dependency: UserRepository, PasswordHasher, Logger
-- Method: register(input), findById(id)
-- register: validasi input, cek email unique, hash password, simpan, return user (tanpa password)
-- Lempar DomainError untuk pelanggaran rule
-- Konsisten dengan style class lain di @folder src/services/
-```
-
-#### Module / Folder
-- Gunakan **Agent** dengan scope file/folder eksplisit.
-- Wajib **list file yang akan dibuat** sebelum accept.
-- Wajib **review per-file**, bukan accept-all.
-
-Contoh prompt (untuk portfolio — modul Contact form):
-
-```
-Buat modul Contact form di assets/app.js (jangan bikin file baru):
-- Konstanta STORAGE_KEY = 'portfolio:messages'
-- validateField(name, value): { valid, error } — name = 'name'|'email'|'message'
-- getMessages(): Message[] — return [] kalau kosong, try/catch JSON.parse
-- saveMessage(msg): Message — push ke array, save, return msg dengan id+receivedAt
-- showToast(text, type): void — buat <div.toast>, append body, auto-remove 3 detik
-- attachContactForm(formEl): void — bind submit handler yang validate semua field,
-  kalau valid: saveMessage, showToast sukses, form.reset
-
-Constraints: vanilla JS, no library, export via window.ContactForm.
-List dulu fungsi yang akan ditambah sebelum apply — saya mau review.
-```
-
-### 1.4 Pseudocode → Kode
-
-Pseudocode adalah jembatan antara desain dan implementasi yang sangat cocok untuk AI. Format yang baik:
-
-```
-INPUT: list of order (id, amount, status)
-OUTPUT: total amount of orders with status="PAID" in last 30 days
-
-ALGORITHM:
-1. now = currentDate()
-2. cutoff = now - 30 days
-3. filter orders where status="PAID" AND createdAt >= cutoff
-4. sum amount
-5. return rounded to 2 decimals
-```
-
-Lalu prompt:
-```
-Implementasi pseudocode berikut dalam <bahasa> sesuai style @folder src/.
-Tambahkan unit test 4 case (happy, empty, all unpaid, tanggal batas).
-[paste pseudocode]
-```
-
-### 1.5 Konsistensi dengan Codebase
-
-AI **tidak otomatis** mengikuti style repo Anda. Pastikan dengan:
-
-- `@folder` referensi ke folder dengan style yang ingin di-mirror.
-- `@file` ke file *contoh acuan* — contoh "begini cara kami menulis service".
-- Project rules (`.cursor/rules/*.mdc`) yang menjelaskan konvensi (akan dipakai Hari 2).
-- Selalu **jalankan linter/formatter** setelah generate.
-
-### 1.6 Validasi Kualitas Output
-
-Checklist minimal sebelum commit:
-
-| Aspek | Cek |
-|-------|-----|
-| Correctness | Lulus test (eksisting + baru) |
-| Style | Lulus linter/formatter |
-| Security | Tidak ada SQL injection / XSS / kebocoran secret |
-| Performance | Tidak ada N+1 query, loop boros |
-| Readability | Nama variabel/fungsi jelas, komentar seperlunya |
-| Boundary | Edge case (null, empty, very large) terhandle |
-| Dependency | Tidak menambah library tanpa perlu |
-
-### 1.7 Anti-pattern Code Generation
-
-- **Accept-all Composer** tanpa baca diff.
-- **Build feature di-1-prompt** padahal estimasi 1 hari kerja.
-- **Skip test** karena "AI sudah pasti benar".
-- **Asumsi style** tanpa contoh acuan.
-- **Tidak menjalankan code** setelah generate (kompilasi/lint/test).
-- **Commit dengan pesan default AI** tanpa review.
-
-### 1.8 Loop Kerja Rekomendasi (Build Feature)
-
-```mermaid
-flowchart LR
-    S[User story] --> P[Pecah ke task]
-    P --> X[Tulis prompt task-1]
-    X --> G[Generate]
-    G --> R[Review diff]
-    R -->|OK| T[Test lokal]
-    R -->|tidak OK| X
-    T -->|hijau| C[Commit kecil]
-    T -->|merah| X
-    C --> N{Task berikut?}
-    N -->|ya| X
-    N -->|tidak| D[Done]
-```
-
-Karakter loop: **commit kecil, sering, dengan test**. Hindari mega-commit "feature X done".
+> **Aturan paling penting untuk SQL**: **Selalu jalankan SELECT dulu sebelum UPDATE/DELETE.** Pastikan baris yang akan terpengaruh sudah benar sebelum eksekusi destruktif.
 
 ---
 
-## 2. Lanjut ke Latihan
+### 1.2 Dari User Story ke Prompt SQL
 
-Setelah membaca materi ini, lanjut ke **[Latihan 03 — Build Feature: Contact Form + Polish Portfolio](./latihan-03-build-feature/README.md)**. Di sana Anda akan:
+Kebutuhan bisnis sering datang dalam bentuk **user story** — format standar yang dipakai tim product. Tugas Anda adalah **membongkar** user story menjadi elemen SQL, lalu merangkainya menjadi prompt yang presisi untuk Cursor.
 
-- Menambahkan section Contact dengan form, validasi inline, dan submit ke `localStorage` ke portfolio Anda.
-- Membuat navigation sticky responsive (desktop nav + mobile hamburger).
-- Run Lighthouse audit dan fix isu accessibility/performance.
-- Menerapkan loop *prompt → review diff → test → commit* sebanyak ≥ 4 iterasi commit bermakna.
-- Memakai semua 4 mode interaksi Cursor (Tab, Cmd/Ctrl+K, Chat, Agent) minimal sekali.
+#### Format User Story
 
-Output akhir Hari 1: website portfolio personal Anda yang siap di-deploy & dipakai untuk apply kerja / freelance.
+```
+Sebagai [peran],
+saya ingin [melihat / mendapatkan / melakukan X],
+agar [manfaat bisnis].
+```
+
+#### Peta Terjemahan: User Story → SQL
+
+| Elemen User Story | Diterjemahkan ke SQL |
+|---|---|
+| **Saya ingin melihat** [kolom apa] | Kolom di `SELECT` |
+| **Dari** [sumber data] | Tabel di `FROM` + relasi `JOIN` |
+| **Yang memenuhi** [kondisi] | Klausa `WHERE` |
+| **Dikelompokkan per** [dimensi] | `GROUP BY` |
+| **Diurutkan berdasarkan** [metrik] | `ORDER BY` |
+| **Hanya** [N] teratas | `LIMIT` |
+| **Total / jumlah / rata-rata** | `SUM` / `COUNT` / `AVG` |
+| **Hanya yang sudah** [status] | Filter `WHERE status = '...'` |
+
+---
+
+#### Contoh 1 — User Story Sederhana (SELECT + filter)
+
+**User Story:**
+> "Sebagai manajer sales, saya ingin melihat daftar customer yang berdomisili di Jakarta, diurutkan berdasarkan nama, agar saya bisa menghubungi mereka untuk promo bulan ini."
+
+**Proses dekomposisi:**
+
+| Elemen | Nilai |
+|--------|-------|
+| Ingin melihat | id, name, email → kolom SELECT |
+| Dari | tabel `customers` |
+| Yang memenuhi | city = 'Jakarta' → WHERE |
+| Diurutkan | berdasarkan nama → ORDER BY name ASC |
+
+**Prompt ke Cursor:**
+
+```
+Tulis query MySQL untuk menampilkan customer yang berdomisili di Jakarta.
+
+Tabel: customers (id, name, email, city)
+Output: id, name, email
+Filter: city = 'Jakarta'
+Urutan: name ASC
+MySQL 8.0.
+```
+
+---
+
+#### Contoh 2 — User Story dengan Agregasi (GROUP BY + JOIN)
+
+**User Story:**
+> "Sebagai direktur, saya ingin tahu total revenue per kategori produk bulan ini dari order yang sudah dibayar, diurutkan dari yang tertinggi, agar saya bisa memutuskan fokus promosi bulan depan."
+
+**Proses dekomposisi:**
+
+| Elemen | Nilai |
+|--------|-------|
+| Ingin melihat | nama kategori + total revenue → SELECT + SUM |
+| Dari | categories, products, order_items, orders → JOIN 4 tabel |
+| Yang memenuhi | bulan ini + status 'paid' → WHERE |
+| Dikelompokkan | per kategori → GROUP BY |
+| Diurutkan | revenue tertinggi dulu → ORDER BY DESC |
+
+**Prompt ke Cursor:**
+
+```
+Tulis query MySQL untuk laporan revenue per kategori produk bulan ini.
+
+Tabel:
+- categories (id, name)
+- products (id, category_id)
+- order_items (order_id, product_id, qty, unit_price)
+- orders (id, status, created_at)
+
+Output: category_name, total_revenue (SUM qty * unit_price)
+Filter: MONTH(orders.created_at) = bulan ini, YEAR = tahun ini, orders.status = 'paid'
+Group: per categories.id
+Urutan: total_revenue DESC
+
+Gunakan LEFT JOIN agar kategori tanpa penjualan tetap muncul.
+MySQL 8.0.
+```
+
+---
+
+#### Contoh 3 — User Story dengan Kondisi Berjenjang (CASE WHEN)
+
+**User Story:**
+> "Sebagai tim CRM, saya ingin mengklasifikasikan customer ke dalam tier belanja (Regular / Silver / Gold) berdasarkan total pembelian sepanjang waktu, agar saya bisa menentukan program loyalty yang sesuai."
+
+**Proses dekomposisi:**
+
+| Elemen | Nilai |
+|--------|-------|
+| Ingin melihat | nama customer + total belanja + tier |
+| Dari | users / customers JOIN orders JOIN order_items |
+| Klasifikasi tier | CASE WHEN → kondisi berjenjang |
+| Filter | hanya order status 'paid' |
+
+**Prompt ke Cursor:**
+
+```
+Tulis query MySQL untuk mengklasifikasikan customer berdasarkan total belanja.
+
+Tier:
+- total_spent < 500.000 → 'Regular'
+- 500.000 ≤ total_spent ≤ 2.000.000 → 'Silver'
+- total_spent > 2.000.000 → 'Gold'
+
+Tabel:
+- customers (id, name)
+- orders (id, customer_id, status)
+- order_items (order_id, qty, unit_price)
+
+Output: name, total_spent (SUM qty * unit_price), tier (CASE WHEN)
+Filter: hanya orders.status = 'paid'
+Urutan: total_spent DESC
+MySQL 8.0.
+```
+
+---
+
+**Pola yang perlu diingat:** semakin kompleks user story (lebih banyak kondisi, lebih banyak tabel), semakin penting menulis dekomposisi dulu sebelum langsung ke Cursor. Dekomposisi membantu Anda *tahu apa yang diminta* sebelum AI mulai menebak.
+
+---
+
+### 1.3 Pseudocode sebagai Jembatan ke SQL
+
+Untuk query yang logikanya kompleks, tulis pseudocode dulu sebelum minta AI generate SQL. Ini membantu Anda memastikan logika sudah benar sebelum AI menerjemahkannya.
+
+**Contoh pseudocode untuk query ranking:**
+
+```
+INPUT: tabel orders, order_items, users
+OUTPUT: top 5 customer berdasarkan total belanja sepanjang waktu
+
+ALGORITMA:
+1. Hitung total_spent per user_id dari orders (status = PAID)
+2. JOIN ke tabel users untuk dapat nama dan email
+3. Rank berdasarkan total_spent DESC
+4. Ambil 5 teratas
+```
+
+**Prompt ke Cursor:**
+
+```
+Implementasi pseudocode berikut sebagai query MySQL:
+[paste pseudocode]
+
+Gunakan CTE (WITH clause) untuk total_spent per user.
+Tampilkan: user_id, name, email, total_spent.
+Format angka total_spent dengan 2 desimal.
+```
+
+Pendekatan pseudocode sangat berguna saat:
+- Logika melibatkan lebih dari 2 tabel.
+- Ada kondisi bercabang (CASE WHEN).
+- Anda ingin memastikan urutan JOIN sudah tepat sebelum AI menulis sintaks.
+
+---
+
+### 1.4 Contoh Prompt per Skenario
+
+#### SELECT — laporan sederhana
+
+```
+Tulis SELECT untuk mengambil 10 produk terlaris bulan lalu:
+- Tabel: products (id, name), order_items (product_id, quantity), orders (id, created_at, status)
+- Filter: MONTH/YEAR bulan lalu, status = 'PAID'
+- Output: product_name, total_sold (SUM quantity)
+- Order: total_sold DESC
+- Limit: 10
+```
+
+#### SELECT — dengan kondisi dinamis (CASE WHEN)
+
+```
+Tulis query untuk mengklasifikasikan pelanggan berdasarkan total belanja:
+- < 500.000 → 'Regular'
+- 500.000 – 2.000.000 → 'Silver'
+- > 2.000.000 → 'Gold'
+
+Tabel: users (id, name), orders (user_id, total_amount, status='PAID')
+Output: name, total_spent, tier
+```
+
+#### INSERT — dengan validasi duplikat
+
+```
+Tulis INSERT INTO untuk menambah produk baru ke tabel products.
+Sertakan pengecekan duplikat: jika produk dengan name yang sama sudah ada,
+gunakan INSERT IGNORE atau ON DUPLICATE KEY UPDATE stock = stock + [nilai baru].
+
+Kolom: name, price, stock, category_id, created_at (NOW()).
+```
+
+#### UPDATE — aman dengan WHERE spesifik
+
+```
+Tulis dua query:
+1. SELECT dulu — tampilkan semua produk yang stock = 0 dan tidak ada order dalam 90 hari
+2. UPDATE — set is_active = 0 untuk produk yang sama
+
+Pastikan kondisi WHERE identik di kedua query.
+Tambahkan komentar: "Jalankan SELECT dulu, verifikasi hasilnya, baru jalankan UPDATE."
+```
+
+#### DELETE — soft delete
+
+```
+Tulis soft delete untuk orders yang status = 'CANCELLED' dan created_at > 1 tahun lalu.
+Soft delete = set deleted_at = NOW(), bukan hapus baris.
+
+Sertakan:
+1. SELECT verifikasi (berapa baris yang akan terpengaruh)
+2. UPDATE soft delete
+3. SELECT konfirmasi (pastikan deleted_at sudah terisi)
+```
+
+---
+
+### 1.5 Validasi Query Hasil Generate
+
+Jangan langsung eksekusi query dari AI ke database produksi. Gunakan checklist ini:
+
+| Aspek | Yang dicek | Cara cek |
+|-------|-----------|----------|
+| **Correctness** | Apakah output sesuai yang diharapkan? | Jalankan di data dummy / staging |
+| **WHERE clause** | Apakah UPDATE/DELETE punya WHERE yang tepat? | Baca ulang baris per baris |
+| **JOIN type** | INNER vs LEFT — sudah sesuai kebutuhan? | Cek apakah baris yang hilang itu expected |
+| **Performance** | Apakah ada full table scan? | Jalankan `EXPLAIN` sebelum eksekusi |
+| **SQL Injection** | Apakah ada input user yang langsung diconcat ke query? | Pastikan pakai parameterized query / prepared statement |
+| **Destructive** | UPDATE/DELETE tanpa LIMIT di tabel besar? | Tambahkan `LIMIT` saat pertama kali test |
+| **Naming** | Nama kolom/tabel sesuai schema aktual? | Bandingkan dengan schema file |
+
+**Cara cek performance dengan EXPLAIN:**
+
+```sql
+EXPLAIN SELECT p.name, SUM(oi.quantity) as total_sold
+FROM products p
+JOIN order_items oi ON oi.product_id = p.id
+JOIN orders o ON o.id = oi.order_id
+WHERE o.status = 'PAID'
+GROUP BY p.id
+ORDER BY total_sold DESC
+LIMIT 10;
+```
+
+Perhatikan kolom `type` di hasil EXPLAIN:
+- `const` / `ref` / `range` → baik
+- `ALL` (full table scan) → butuh index
+
+---
+
+### 1.6 Anti-pattern SQL Generation
+
+| Anti-pattern | Kenapa berbahaya | Yang seharusnya |
+|---|---|---|
+| **UPDATE/DELETE tanpa SELECT dulu** | Tidak tahu baris mana yang terpengaruh | Selalu SELECT dengan kondisi yang sama dulu |
+| **Accept query langsung tanpa baca** | Query bisa punya JOIN yang salah atau WHERE yang hilang | Baca setiap baris query sebelum eksekusi |
+| **Prompt terlalu samar** | AI menebak schema dan nama tabel | Selalu sebutkan nama tabel dan kolom yang relevan |
+| **Tidak pakai `EXPLAIN`** | Query berjalan tapi lambat di data besar | Jalankan EXPLAIN dulu di tabel > 10.000 baris |
+| **Copy-paste ke produksi langsung** | Belum teruji di data nyata | Test di staging / data dummy dulu |
+| **Query monolith satu prompt** | Sulit di-debug kalau salah | Pecah jadi bagian kecil, build bertahap |
+
+---
+
+### 1.7 Loop Kerja: Generate → Review → Test → Commit
+
+```mermaid
+flowchart LR
+    K[Kebutuhan bisnis] --> P[Tulis prompt spesifik]
+    P --> G[Generate query]
+    G --> R[Review baris per baris]
+    R -->|ada masalah| P
+    R -->|OK| E[EXPLAIN / cek plan]
+    E -->|ada full scan| I[Tambah index / revisi]
+    I --> P
+    E -->|OK| T[Test di data dummy]
+    T -->|hasil salah| P
+    T -->|hasil benar| C[Simpan ke file .sql]
+    C --> N{Query berikut?}
+    N -->|ya| P
+    N -->|tidak| D[Done]
+```
+
+**Yang membedakan loop SQL dari loop kode biasa:**
+- "Test lokal" untuk SQL = jalankan di data dummy, bukan unit test.
+- "Commit" untuk SQL = simpan ke file `.sql` yang ter-version di Git.
+- Review harus mencakup: logika bisnis **dan** keamanan (WHERE clause, injection).
+
+---
+
+## 2. Praktik Mandiri
+
+Buka file [`../../contoh-prompt-sql-crud.md`](../../contoh-prompt-sql-crud.md) dan pilih minimal **3 skenario** yang paling relevan dengan pekerjaan Anda sehari-hari.
+
+Untuk setiap skenario:
+1. Baca prompt yang tersedia.
+2. **Adaptasi** ke schema atau konteks project Anda sendiri.
+3. Jalankan di Cursor (mode Chat atau Cmd+K).
+4. Review hasil: apakah ada bagian yang perlu dikoreksi?
+5. Jalankan EXPLAIN kalau query-nya SELECT dengan JOIN.
 
 ---
 
 ## 3. Bacaan Lanjutan
 
-- Cursor — *Composer / Agent*: <https://cursor.com/docs/agent>
-- Cursor — *Code completion*: <https://cursor.com/docs/tab>
-- Martin Fowler — *Refactoring*, edisi 2.
-- Kent Beck — *Test-Driven Development by Example*.
-- *Working Effectively with Legacy Code* (Feathers) — relevan untuk generate test pada kode lama.
-- Anthropic — *Patterns for building agentic systems*.
-- Addy Osmani — *Why developers should care about prompt engineering*.
+- MySQL — *EXPLAIN output format*: <https://dev.mysql.com/doc/refman/8.0/en/explain-output.html>
+- MySQL — *Optimization overview*: <https://dev.mysql.com/doc/refman/8.0/en/optimization.html>
+- OWASP — *SQL Injection Prevention Cheat Sheet*: <https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html>
+- Use The Index, Luke — panduan indexing SQL yang praktis: <https://use-the-index-luke.com>
