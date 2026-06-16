@@ -503,80 +503,9 @@ git commit -m "feat: add Contact form + inline validation (Tahap 7)"
 
 ---
 
-## Tahap 8 — Submit Form → localStorage + Toast (20')
+## Tahap 8 — Navigation Sticky + Responsive Mobile (30')
 
-### 8.1 Handler Submit
-
-Di `assets/app.js` via Cmd+K:
-
-```
-Tambah fungsi-fungsi berikut di app.js:
-
-const STORAGE_KEY = 'portfolio:messages';
-
-function getMessages() {
-  // Return array pesan dari localStorage, [] kalau kosong
-  // Pakai try/catch untuk JSON.parse
-}
-
-function saveMessage(data) {
-  // data: { name, email, message }
-  // Buat object message: { id: 'msg-' + Date.now(), ...data, receivedAt: new Date().toISOString() }
-  // Push ke array getMessages(), save ke localStorage
-  // Return message object
-}
-
-function showToast(text, type = 'success') {
-  // Buat <div class="toast toast-{type}"> dengan teks
-  // Append ke body
-  // Auto-remove setelah 3000ms
-  // Tambah class 'toast-visible' setelah 10ms (untuk CSS transition)
-}
-
-function attachContactForm() {
-  const form = document.getElementById('contact-form');
-  if (!form) return;
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    // Validasi semua field (name, email, message)
-    // Jika ada yang tidak valid: tampilkan semua error, return
-    // Jika semua valid: saveMessage, showToast('Pesan terkirim, terima kasih!'), form.reset(), clearAllErrors()
-  });
-}
-
-// Panggil attachContactForm() di dalam DOMContentLoaded
-```
-
-### 8.2 CSS Toast
-
-Di `styles.css` via Cmd+K:
-
-```
-Tambah CSS untuk toast notification:
-- .toast: position fixed, bottom --spacing-lg, right --spacing-lg, z-index 9999
-  background --color-primary, color white, padding --spacing-sm --spacing-md,
-  border-radius 8px, opacity 0, transform translateY(8px),
-  transition opacity 0.3s, transform 0.3s
-- .toast.toast-visible: opacity 1, transform translateY(0)
-```
-
-Test: isi form dengan data valid → submit → toast muncul 3 detik → form kosong kembali.
-
-Verifikasi di DevTools → Application → Local Storage → key `portfolio:messages` ada.
-
-### Commit Tahap 8
-
-```bash
-git add .
-git commit -m "feat: form submit → localStorage + toast notification (Tahap 8)"
-```
-
----
-
-## Tahap 9 — Navigation Sticky + Responsive Mobile (30')
-
-### 9.1 Navigation Sticky
+### 8.1 Navigation Sticky
 
 Di `styles.css` via Cmd+K:
 
@@ -616,7 +545,7 @@ function initActiveNav() {
 // Panggil initActiveNav() di DOMContentLoaded
 ```
 
-### 9.2 Hamburger Menu Mobile
+### 8.2 Hamburger Menu Mobile
 
 Di `index.html` via Agent, tambah tombol hamburger di dalam `<nav>`:
 
@@ -675,92 +604,11 @@ function initMobileNav() {
 
 Test: DevTools → toggle device toolbar → nav harus berubah jadi hamburger di ≤ 768px.
 
-### Commit Tahap 9
+### Commit Tahap 8
 
 ```bash
 git add .
-git commit -m "feat: nav sticky + active highlight + mobile hamburger (Tahap 9)"
-```
-
----
-
-## Tahap 10 — Polish + Lighthouse Audit (20')
-
-### 10.1 Smooth Scroll Global
-
-Di `styles.css`, tambah di bagian atas setelah `:root`:
-
-```css
-html {
-  scroll-behavior: smooth;
-}
-```
-
-### 10.2 Animasi Halus (Opsional)
-
-Di `styles.css` via Cmd+K:
-
-```
-Tambah animasi fade-in untuk section:
-- @keyframes fadeInUp: from opacity 0 translateY(20px), to opacity 1 translateY(0)
-- .section-animate: animation fadeInUp 0.5s ease forwards
-- opacity 0 by default (sebelum animasi jalan)
-```
-
-Di `app.js` via Cmd+K:
-
-```
-Tambah IntersectionObserver untuk animasi section:
-- Observe semua <section>
-- Saat masuk viewport: tambahkan class 'section-animate'
-- Threshold: 0.15
-```
-
-### 10.3 Accessibility Fixes
-
-Pakai mode `Ask` di Cursor:
-
-```
-Review @file index.html untuk accessibility:
-- Apakah semua <img> punya alt text?
-- Apakah semua form input punya <label> yang terhubung via for/id?
-- Apakah ada heading hierarchy yang benar (h1 → h2 → h3)?
-- Apakah tombol dan link punya text yang deskriptif?
-
-Berikan daftar isu yang perlu diperbaiki.
-```
-
-Perbaiki isu yang ditemukan satu per satu via Cmd+K.
-
-### 10.4 Lighthouse Audit
-
-1. Buka `index.html` di Chrome.
-2. DevTools → **Lighthouse** tab.
-3. Pilih: Desktop, categories: Performance + Accessibility + Best Practices.
-4. Klik **Analyze page load**.
-
-Target minimum:
-
-| Kategori | Target |
-|---|---|
-| Performance | ≥ 85 |
-| Accessibility | ≥ 90 |
-| Best Practices | ≥ 90 |
-
-Jika ada skor di bawah target, copy pesan error Lighthouse → paste ke Chat Cursor:
-
-```
-Lighthouse memberi skor Accessibility 78 dengan isu berikut:
-[paste isu dari Lighthouse]
-
-Tolong tunjukkan perbaikan spesifik di @file index.html untuk menaikkan skor ini.
-```
-
-### Commit Tahap 10
-
-```bash
-git add .
-git commit -m "feat: polish, accessibility fix, Lighthouse audit (Tahap 10)"
+git commit -m "feat: nav sticky + active highlight + mobile hamburger (Tahap 8)"
 ```
 
 ---
@@ -773,20 +621,6 @@ Tulis `submissions/<nama>/refleksi.md` (5–8 kalimat):
 2. Momen mana ketika Anda menolak saran AI (`Esc`) dan kenapa?
 3. Kalau mengulang project ini, apa yang akan Anda lakukan berbeda?
 4. Skill apa yang terasa paling dibantu oleh AI, dan skill apa yang tetap harus Anda kerjakan manual?
-
----
-
-## (Bonus) Deploy ke GitHub Pages
-
-```bash
-# Push ke GitHub dulu
-git remote add origin https://github.com/<username>/portfolio.git
-git push -u origin main
-```
-
-Di GitHub → Settings → Pages → Source: Deploy from branch `main`, folder `/` (root).
-
-URL portfolio Anda akan aktif di: `https://<username>.github.io/portfolio/`
 
 ---
 
