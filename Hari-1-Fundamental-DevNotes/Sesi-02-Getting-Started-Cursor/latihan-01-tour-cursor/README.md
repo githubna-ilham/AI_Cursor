@@ -23,10 +23,9 @@ Sebelum mulai, pahami kapan masing-masing mode dipakai:
 |---|------|---------------|-------------|
 | 1 | **Tab** | Ketik kode → `Tab` | Autocomplete 1–10 baris berdasarkan konteks file aktif |
 | 2 | **Cmd/Ctrl+K** | Highlight kode → `Cmd/Ctrl+K` | Modifikasi blok kode yang sudah ada, refactor kecil |
-| 3 | **Ask (Chat)** | `Cmd/Ctrl+L` → pilih mode `Ask` | Tanya jawab tentang codebase, brainstorming, tanpa langsung ubah file |
-| 4 | **Agent** | Panel yang sama → pilih mode `Agent` (atau `Cmd/Ctrl+I`) | Tugas multi-file: scaffold, fitur dari spec |
+| 3 | **Agent** | `Cmd/Ctrl+I` atau panel Chat → pilih mode `Agent` | Tugas multi-file: scaffold, fitur dari spec |
 
-**Aturan praktis**: pakai mode yang **paling kecil** yang masih cukup. Tab dulu, baru Cmd+K, baru Chat, baru Agent.
+**Aturan praktis**: pakai mode yang **paling kecil** yang masih cukup. Tab dulu, baru Cmd+K, baru Agent.
 
 ---
 
@@ -47,8 +46,7 @@ portfolio/
     ├── 01-indexed.png
     ├── 02-tab.png
     ├── 03-inline-edit.png
-    ├── 04-chat.png
-    ├── 05-agent.png
+    ├── 04-agent.png
     └── refleksi.md
 ```
 
@@ -152,20 +150,7 @@ Tambah rules CSS yang memakai variables di atas:
 
 Screenshot diff sebelum accept → `03-inline-edit.png`.
 
-### 2c. Mode Ask — Tanya Codebase
-
-Buka panel `Cmd+L` → pilih mode `Ask` → ketik `@` → pilih folder `portfolio/`.
-
-```
-Jelaskan struktur project ini dalam 5 bullet.
-CSS variables apa yang sudah disiapkan?
-```
-
-Tanya follow-up: *"Kalau saya ingin ganti warna primary jadi #2563eb, cukup ubah di mana?"*
-
-Screenshot percakapan → `04-chat.png`.
-
-### 2d. Mode Agent — Scaffold Struktur HTML
+### 2c. Mode Agent — Scaffold Struktur HTML
 
 Ganti mode ke `Agent`. Prompt:
 
@@ -185,7 +170,7 @@ Kerjakan dua file sekaligus:
 
 Review setiap perubahan sebelum accept. Buka `index.html` di browser — harus tampil nav + 4 section + footer.
 
-Screenshot panel Agent + hasil di browser → `05-agent.png`.
+Screenshot panel Agent + hasil di browser → `04-agent.png`.
 
 ### Commit Tahap 2
 
