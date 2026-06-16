@@ -6,13 +6,13 @@
 **Prasyarat**: Familiar dengan minimal 1 bahasa pemrograman, Git basic, terminal/CLI basic.
 **Project akhir Hari 1**: Website **portfolio personal** Anda sendiri (HTML/CSS/JS vanilla) — siap dipakai dan ditampilkan di CV / LinkedIn.
 
-> Catatan: Hari 2 & 3 melanjutkan project **Laravel + MySQL lokal** — dashboard data berbasis AI-assisted query.
+> Catatan: Hari 2 fokus SQL exploration (tanpa framework). Hari 3 melanjutkan ke project **Laravel + MySQL lokal** — dashboard data berbasis AI-assisted query.
 
 ---
 
 ## Tujuan Hari 1
 
-Hari pertama membentuk **fondasi mental dan teknis** peserta sebelum masuk ke Laravel dan database di Hari 2. Fokusnya bukan "menulis kode lebih cepat", tetapi **mengubah cara berpikir** developer dalam berkolaborasi dengan AI sambil menghasilkan **artefak nyata yang langsung dapat Anda pakai**:
+Hari pertama membentuk **fondasi mental dan teknis** peserta sebelum masuk ke SQL exploration di Hari 2 dan Laravel di Hari 3. Fokusnya bukan "menulis kode lebih cepat", tetapi **mengubah cara berpikir** developer dalam berkolaborasi dengan AI sambil menghasilkan **artefak nyata yang langsung dapat Anda pakai**:
 
 1. Memahami posisi AI coding assistant dalam siklus pengembangan modern.
 2. Menguasai 4 mode Cursor (Tab, Inline Edit, Ask, Agent) lewat latihan nyata.

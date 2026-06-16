@@ -15,27 +15,29 @@ Materi **AI Cursor — AI-Powered Coding & Developer Productivity** dirancang un
 Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak nyata** selama 3 hari:
 
 1. **Hari 1**: Website **portfolio personal** Anda sendiri (HTML/CSS/JS vanilla) — siap di-deploy & dipakai apply kerja.
-2. **Hari 2–3**: Aplikasi **Laravel + MySQL lokal** — dari query database dengan AI hingga dashboard data yang bisa dipakai.
+2. **Hari 2**: Eksplorasi SQL dengan AI — code understanding, debugging, dan refactoring query di MySQL.
+3. **Hari 3**: Aplikasi **Laravel + MySQL lokal** — dari setup project hingga dashboard data yang bisa dipakai.
 
 ### Alur 3 Hari
 
 | Hari | Topik utama                                  | Apa yang Anda hasilkan                                                                        |
 | ---- | -------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | 1    | Fundamental Cursor & AI-Assisted Coding      | **Website portfolio personal** Anda (HTML/CSS/JS) + koleksi **contoh prompt CRUD SQL** siap pakai di Cursor |
-| 2    | Code Understanding, Debugging, Refactoring   | Project Laravel baru: setup Herd, koneksi MySQL, query AI-assisted, eksplorasi & debug data   |
+| 2    | Code Understanding, Debugging, Refactoring   | Eksplorasi SQL: code understanding, debugging query, refactoring — murni MySQL, tanpa framework |
 | 3    | Advanced Workflow, Dashboard & Capstone      | Dashboard data berbasis Laravel + MySQL: visualisasi query, refactor, security, presentasi     |
 
 ### Studi Kasus
 
 - **Hari 1 — Portfolio Personal + CRUD SQL**: Hari 1 berfokus pada fundamental Cursor. Anda membangun dua artefak: website portfolio Anda (HTML/CSS/JS) dan koleksi prompt CRUD SQL siap pakai. BRD portfolio di [`Hari-1-Fundamental-DevNotes/portfolio-brd.md`](./Hari-1-Fundamental-DevNotes/portfolio-brd.md), contoh prompt SQL di [`Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md`](./Hari-1-Fundamental-DevNotes/contoh-prompt-sql-crud.md).
-- **Hari 2 & 3 — Dashboard Laravel**: Aplikasi dashboard data menggunakan Laravel + MySQL lokal via Laravel Herd. AI dipakai untuk menulis, memahami, dan memperbaiki query — hasilnya divisualisasikan sebagai dashboard yang bisa langsung didemonstrasikan.
+- **Hari 2 — SQL Exploration**: Eksplorasi codebase SQL yang sudah ada — paham schema, debug query bermasalah, refactor query yang buruk, dan validasi dengan assertion query. Murni MySQL, tanpa framework.
+- **Hari 3 — Dashboard Laravel**: Aplikasi web Laravel + MySQL lokal via Laravel Herd. AI dipakai untuk scaffold project, menulis query Eloquent, dan memvisualisasikan data dalam dashboard yang siap dipresentasikan.
 
 ### Filosofi Pelatihan
 
 - **Project-driven**: setiap latihan menambah artefak nyata ke project Anda, bukan latihan terpisah.
 - **Cursor sebagai kolaborator**: AI bukan generator yang Anda terima begitu saja; Anda tetap *reviewer-first*.
 - **Belajar dengan tangan**: lebih banyak praktik daripada teori. Materi tipis, latihan tebal.
-- **Hasilnya milik Anda**: di akhir pelatihan Anda pulang dengan **portfolio personal** (Hari 1) + **DevNotes full-stack app** (Hari 2-3) di GitHub.
+- **Hasilnya milik Anda**: di akhir pelatihan Anda pulang dengan **portfolio personal** (Hari 1) + **SQL exploration report** (Hari 2) + **dashboard Laravel** (Hari 3) di GitHub.
 
 ---
 
@@ -45,8 +47,8 @@ Pelatihan ini dirancang **berbasis project**. Anda akan membangun **dua artefak 
 
 Anda **tidak perlu** ahli di semua hal di bawah ini, tapi minimal familiar:
 
-- **Salah satu bahasa pemrograman modern** — PHP paling membantu untuk Hari 2–3, tapi tidak wajib. JavaScript atau Python pun cukup untuk mengikuti alur.
-- **OOP dasar**: paham konsep class, method, dan object — berguna saat masuk Laravel di Hari 2–3.
+- **Salah satu bahasa pemrograman modern** — PHP paling membantu untuk Hari 3 (Laravel), tapi tidak wajib. JavaScript atau Python pun cukup untuk mengikuti alur.
+- **OOP dasar**: paham konsep class, method, dan object — berguna saat masuk Laravel di Hari 3.
 - **SQL dasar**: SELECT, WHERE, JOIN, GROUP BY — paham konsep query dan tabel relasional.
 - **Git basic**: clone, add, commit, push, branch.
 - **Terminal/CLI basic**: navigasi folder, menjalankan perintah.
@@ -57,9 +59,9 @@ Anda **tidak perlu** ahli di semua hal di bawah ini, tapi minimal familiar:
 
 Hal-hal ini boleh **belum** Anda kuasai — pelatihan akan memandu:
 
-- Laravel (MVC, routing, Eloquent, Blade) — diperkenalkan Hari 2 & 3.
-- MySQL lokal via Laravel Herd — setup di Hari 2.
-- Query analytics & agregasi SQL untuk dashboard — dipraktikkan Hari 2–3.
+- Laravel (MVC, routing, Eloquent, Blade) — diperkenalkan Hari 3.
+- MySQL lokal via Laravel Herd — setup sebelum Hari 3.
+- Query analytics & agregasi SQL untuk dashboard — dipraktikkan Hari 3.
 - Visualisasi data sederhana di Blade/dashboard — Hari 3.
 - HTML/CSS/JS tingkat lanjut (animasi, layout responsif, interaktivitas) — dipraktikkan sambil jalan di Hari 1.
 
@@ -72,7 +74,7 @@ Hal-hal ini boleh **belum** Anda kuasai — pelatihan akan memandu:
 | Akun GitHub  | Aktif, sudah login dari laptop Anda (bisa lewat browser atau GitHub CLI)                 |
 | Akun email   | Aktif (untuk login Cursor)                                                               |
 | Browser      | Chrome / Edge / Firefox versi terbaru (untuk DevTools & preview dashboard)               |
-| Laravel Herd | Diinstall sebelum Hari 2 — sudah termasuk PHP, MySQL, Nginx lokal (gratis)              |
+| Laravel Herd | Diinstall sebelum Hari 3 — sudah termasuk PHP, MySQL, Nginx lokal (gratis)              |
 
 ---
 
@@ -136,7 +138,7 @@ mkdir ~/cursor-workshop
 cd ~/cursor-workshop
 ```
 
-Di Hari 1 Sesi 2 Anda akan `git init` folder `portfolio/` di sini. Di Hari 2 Anda akan membuat project Laravel baru di folder yang sama.
+Di Hari 1 Sesi 2 Anda akan `git init` folder `portfolio/` di sini. Di Hari 3 Anda akan membuat project Laravel baru di folder yang sama.
 
 ### 3.6 Akses Repo Pelatihan
 
@@ -149,7 +151,7 @@ Repo ini ([github.com/githubna-ilham/AI_Cursor](https://github.com/githubna-ilha
   git clone https://github.com/githubna-ilham/AI_Cursor.git
   ```
 
-Anda **tidak** perlu menulis kode di repo ini — kode aplikasi (portfolio Hari 1, project Laravel Hari 2-3) ada di folder kerja Anda sendiri (langkah 3.5).
+Anda **tidak** perlu menulis kode di repo ini — kode aplikasi (portfolio Hari 1, project Laravel Hari 3) ada di folder kerja Anda sendiri (langkah 3.5).
 
 ### 3.7 Baca BRD
 
