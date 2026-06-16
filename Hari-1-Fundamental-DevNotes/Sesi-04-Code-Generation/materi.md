@@ -326,27 +326,35 @@ Perhatikan kolom `type` di hasil EXPLAIN:
 
 ### 1.7 Loop Kerja: Generate → Review → Test → Commit
 
+Loop ini berlaku untuk semua jenis output AI — query SQL, kode aplikasi, migration, maupun konfigurasi. Yang berubah hanya **isi tiap langkah**, bukan urutannya.
+
 ```mermaid
 flowchart LR
-    K[Kebutuhan bisnis] --> P[Tulis prompt spesifik]
-    P --> G[Generate query]
-    G --> R[Review baris per baris]
+    K[Kebutuhan / User Story] --> P[Tulis prompt spesifik]
+    P --> G[Generate output]
+    G --> R[Review output]
     R -->|ada masalah| P
-    R -->|OK| E[EXPLAIN / cek plan]
-    E -->|ada full scan| I[Tambah index / revisi]
-    I --> P
-    E -->|OK| T[Test di data dummy]
+    R -->|OK| T[Test / verifikasi]
     T -->|hasil salah| P
-    T -->|hasil benar| C[Simpan ke file .sql]
-    C --> N{Query berikut?}
+    T -->|hasil benar| C[Simpan / commit]
+    C --> N{Ada task berikut?}
     N -->|ya| P
     N -->|tidak| D[Done]
 ```
 
-**Yang membedakan loop SQL dari loop kode biasa:**
-- "Test lokal" untuk SQL = jalankan di data dummy, bukan unit test.
-- "Commit" untuk SQL = simpan ke file `.sql` yang ter-version di Git.
-- Review harus mencakup: logika bisnis **dan** keamanan (WHERE clause, injection).
+**Empat langkah dan maknanya:**
+
+| Langkah | Untuk SQL | Untuk kode aplikasi |
+|---------|-----------|---------------------|
+| **Prompt spesifik** | Sebutkan nama tabel, kolom, filter, dialect | Sebutkan file, fungsi, framework, constraint |
+| **Review output** | Baca WHERE clause, JOIN type, baris per baris | Baca diff, cek logic, perhatikan side effect |
+| **Test / verifikasi** | Jalankan di data dummy / playground | Jalankan unit test / coba di browser |
+| **Simpan / commit** | Simpan ke file `.sql`, commit ke Git | Commit ke Git dengan pesan yang deskriptif |
+
+**Tiga aturan yang berlaku di semua konteks:**
+1. **Jangan skip Review.** Output AI yang terlihat benar bisa punya bug subtle — JOIN salah, WHERE hilang, fungsi yang tidak sesuai.
+2. **Test sebelum commit.** Verifikasi di lingkungan aman dulu, bukan langsung ke produksi.
+3. **Pecah besar jadi kecil.** Satu prompt, satu output, satu review. Jangan campur banyak perubahan dalam satu langkah.
 
 ---
 
