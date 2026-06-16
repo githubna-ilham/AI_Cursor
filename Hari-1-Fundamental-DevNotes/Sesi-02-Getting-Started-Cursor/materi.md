@@ -59,7 +59,26 @@ flowchart LR
 | **Composer / Agent** (Cmd/Ctrl+I)| Buka composer                         | Bikin/edit beberapa file, jalankan terminal           |
 | **Rules**                        | Otomatis dari file `.cursor/rules/`   | Pasang aturan style, arsitektur, keamanan             |
 
-### 1.3 Arsitektur Kerja (model & context)
+### 1.3 Tools yang Tersedia di Agent Mode
+
+Saat Anda menggunakan **Agent** (`Cmd/Ctrl+I`), AI tidak hanya menghasilkan teks — ia bisa memanggil *tools* untuk benar-benar membaca file, menjalankan perintah, dan mencari informasi di codebase Anda. Inilah yang membuat Agent berbeda dari Chat biasa.
+
+| Tool | Fungsi | Kapan dipakai |
+|------|--------|---------------|
+| **Read** | Membaca isi file | Selalu, sebelum memodifikasi — agar Agent tahu konteks file saat ini |
+| **Edit** | Modifikasi file (string replacement) | Perubahan presisi: ubah fungsi, tambah baris, rename variabel |
+| **Write** | Tulis file baru / overwrite total | Membuat file baru, atau rewrite besar yang lebih mudah dari awal |
+| **Bash** | Jalankan perintah shell | `npm install`, `git`, `mkdir`, menjalankan test, dan sebagainya |
+| **Grep** | Cari teks dalam files | Mencari simbol, pattern, pesan error di seluruh codebase |
+| **Glob** | Cari file berdasarkan pattern | Menemukan semua file `.tsx`, `.env`, atau `*.test.js` |
+| **WebFetch** | Ambil konten dari URL spesifik | Membaca dokumentasi online yang URL-nya sudah diketahui |
+| **WebSearch** | Cari di internet | Mencari solusi error, package terbaru, referensi API |
+| **TaskCreate / TaskUpdate** | Kelola task list internal | Memecah dan melacak kemajuan task multi-langkah |
+| **Agent** | Spawn sub-agent untuk task terisolasi | Riset luas atau pekerjaan paralel yang tidak bergantung satu sama lain |
+
+> **Yang perlu Anda perhatikan**: Agent bisa **memanggil tools ini secara otomatis** saat menjalankan instruksi Anda. Artinya, satu prompt bisa berujung pada Agent membaca 5 file, menjalankan `npm test`, lalu menulis 3 file sekaligus — semua tanpa Anda ketik satu pun perintah. Ini kekuatannya, sekaligus alasan Anda harus **review setiap perubahan sebelum accept**.
+
+### 1.5 Arsitektur Kerja (model & context)
 
 ```mermaid
 sequenceDiagram
@@ -113,7 +132,7 @@ Yang penting: **Anda tidak pernah kirim seluruh isi arsip** — selalu pilihan d
 | Khawatir kode sensitif terkirim            | Default mode bisa simpan untuk improvement    | Aktifkan **Privacy mode** + tambahkan `.cursorignore` untuk file rahasia      |
 | Chat panjang mulai "ngawur"                | Token budget penuh, snippet penting kepotong  | Reset chat, mulai sesi baru dengan @-mention yang lebih spesifik              |
 
-### 1.4 Model — Memilih yang Tepat
+### 1.6 Model — Memilih yang Tepat
 
 | Model (per 2026)                    | Cocok untuk                       | Catatan                          |
 | ----------------------------------- | --------------------------------- | -------------------------------- |
@@ -124,7 +143,7 @@ Yang penting: **Anda tidak pernah kirim seluruh isi arsip** — selalu pilihan d
 
 > Nama model berubah cukup cepat. Lihat versi terkini di [cursor.com/docs/models](https://cursor.com/docs/models).
 
-### 1.5 Instalasi & Konfigurasi (ringkas)
+### 1.7 Instalasi & Konfigurasi (ringkas)
 
 Checklist lengkap ada di [`instalasi-checklist.md`](./instalasi-checklist.md). Kalau Anda sudah mengikuti panduan di [`pendahuluan.md`](../../pendahuluan.md#3-persiapan-sebelum-hari-1), poin 1–5 di bawah ini seharusnya sudah selesai.
 
@@ -136,7 +155,7 @@ Checklist lengkap ada di [`instalasi-checklist.md`](./instalasi-checklist.md). K
 6. Aktifkan **Privacy Mode** kalau Anda akan membuka repo yang sensitif.
 7. Pastikan Git terinstall + identitas global ter-set (sudah Anda lakukan di pendahuluan).
 
-### 1.6 Tour Antarmuka
+### 1.8 Tour Antarmuka
 
 Setelah Cursor terbuka dan project ter-load (lihat 3 state antarmuka di [`instalasi-checklist.md`](./instalasi-checklist.md#3b-mengenal-antarmuka-cursor-3x-agents-window)), area utama dari kiri ke kanan:
 
@@ -159,7 +178,7 @@ Shortcut yang akan sering Anda pakai di Hari 1:
 | `Cmd+Shift+P` / `Ctrl+Shift+P` | Command Palette            |
 | `@` di prompt                  | Buka context picker        |
 
-### 1.7 Integrasi Workflow
+### 1.9 Integrasi Workflow
 
 - **Git**: Cursor pakai Git client VS Code; commit message bisa di-generate via tombol "Generate Commit Message".
 - **Terminal**: built-in terminal; output bisa Anda kirim ke Chat dengan shortcut atau "Add to Chat".
@@ -167,7 +186,7 @@ Shortcut yang akan sering Anda pakai di Hari 1:
 - **Sync settings**: via Settings Sync (mirip VS Code) atau export `settings.json`.
 - **Project rules**: file di `.cursor/rules/*.mdc` (markdown + frontmatter). Akan Anda pakai mulai Hari 2.
 
-### 1.8 Privacy & Keamanan (intro)
+### 1.10 Privacy & Keamanan (intro)
 
 - **Privacy Mode**: prompt & kode Anda tidak disimpan / tidak dipakai training oleh provider.
 - **Ignore files**: file `.cursorignore` mencegah indexing file sensitif (mirip `.gitignore`).
