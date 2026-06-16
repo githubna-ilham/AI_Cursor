@@ -35,13 +35,16 @@ Gunakan checklist ini **sebelum hari pelatihan dimulai**. Estimasi total: 45–9
 - [ ] Buka `.dmg`.
 - [ ] Drag `Cursor.app` ke folder `Applications`.
 - [ ] Buka via Launchpad / Spotlight.
-- [ ] (Jika muncul "unidentified developer") System Settings → Privacy & Security → **Open Anyway**.
+- [ ] Jika muncul pop-up "unidentified developer": **System Settings → Privacy & Security → Open Anyway**.
 
 ### Windows
 
-- [ ] Jalankan installer `.exe`.
-- [ ] Tick "Add to PATH" & "Create desktop shortcut".
-- [ ] Selesai → buka dari Start Menu.
+- [ ] Jalankan installer `.exe` (pilih **User Setup** — tidak butuh admin; atau **System Setup** jika ingin tersedia untuk semua user).
+- [ ] Centang **"Add to PATH"** dan **"Create desktop shortcut"**.
+- [ ] Klik Install → tunggu selesai → Cursor terbuka otomatis.
+- [ ] Jika Windows Defender SmartScreen muncul: klik **More info → Run anyway**.
+
+> 💡 **Terminal di Windows**: Cursor menggunakan terminal bawaan Windows (PowerShell atau Command Prompt). Untuk pengalaman terbaik selama pelatihan, **gunakan Git Bash** (terinstall bersama Git for Windows di langkah 5) — perintah `git`, `php`, dan `mysql` berjalan sama seperti di macOS/Linux.
 
 ### Linux (Ubuntu/Debian)
 
@@ -181,27 +184,62 @@ Sejak 2026, Cursor menggunakan model billing berbasis **usage credit** (bukan re
 ## 5. Install Git & Tools Pendukung
 
 ### Git (wajib)
-- [ ] macOS: `git --version` (akan trigger install Xcode CLT) atau pakai Homebrew `brew install git`.
-- [ ] Windows: download dari <https://git-scm.com>.
-- [ ] Linux: `sudo apt install git`.
-- [ ] Konfigurasi: `git config --global user.name "<nama>"` & `user.email`.
 
-### Laravel Herd (wajib — untuk Hari 2 & 3)
+**macOS:**
+- [ ] Buka Terminal → ketik `git --version` → jika belum ada, macOS akan menawarkan install Xcode Command Line Tools → klik **Install**.
+- [ ] Alternatif: `brew install git` (jika sudah pakai Homebrew).
 
-Laravel Herd menyediakan PHP, MySQL, dan Nginx lokal dalam satu installer — tidak perlu setup manual.
+**Windows:**
+- [ ] Buka <https://git-scm.com/download/win> → download **Git for Windows** (64-bit).
+- [ ] Jalankan installer. Pengaturan penting saat wizard:
+  - **Default editor**: pilih **Visual Studio Code** atau **Nano** (jangan Vim jika tidak familiar).
+  - **Adjusting PATH**: pilih **"Git from the command line and also from 3rd-party software"** — ini yang paling penting supaya `git` bisa dipanggil dari Git Bash, PowerShell, maupun terminal Cursor.
+  - **Line ending**: pilih **"Checkout Windows-style, commit Unix-style line endings"** (CRLF → LF saat commit) — mencegah konflik line ending di repo.
+  - **Terminal emulator**: pilih **Git Bash** (lebih kompatibel dengan perintah Unix).
+  - Sisanya: biarkan default → **Install**.
+- [ ] Setelah install, buka **Git Bash** dari Start Menu → verifikasi:
+
+```bash
+git --version   # harus muncul, mis. git version 2.45.x
+```
+
+**Linux:**
+- [ ] `sudo apt install git` (Debian/Ubuntu) atau `sudo dnf install git` (Fedora).
+
+**Konfigurasi (semua OS — wajib):**
+
+```bash
+git config --global user.name "Nama Anda"
+git config --global user.email "email@anda.com"
+git config --global init.defaultBranch main
+```
+
+> 💡 **Windows**: Jalankan perintah konfigurasi di atas di **Git Bash**, bukan Command Prompt, agar tersimpan dengan benar.
+
+---
+
+### Laravel Herd (wajib — untuk Hari 3)
+
+Laravel Herd menyediakan PHP, MySQL, dan Nginx lokal dalam satu installer — tidak perlu setup manual sama sekali.
 
 **macOS:**
 - [ ] Buka <https://herd.laravel.com> → klik **Download for Mac**.
 - [ ] Buka `.dmg` → drag **Herd.app** ke `Applications`.
-- [ ] Buka Herd → ikuti wizard setup awal.
-- [ ] Di Herd dashboard, pastikan layanan **PHP** dan **MySQL** berstatus hijau (running).
+- [ ] Buka Herd → ikuti wizard setup awal (klik Next beberapa kali).
+- [ ] Di menu bar (pojok kanan atas) → klik ikon Herd → pastikan **PHP** dan **MySQL** berstatus hijau.
 
 **Windows:**
 - [ ] Buka <https://herd.laravel.com/windows> → klik **Download for Windows**.
-- [ ] Jalankan installer `.exe` → ikuti wizard.
-- [ ] Buka Herd → pastikan **PHP** dan **MySQL** running di system tray.
+- [ ] Jalankan installer `.exe` → ikuti wizard (minta akses admin — klik **Yes**).
+- [ ] Setelah install, Herd muncul di **system tray** (pojok kanan bawah taskbar, dekat jam).
+- [ ] Klik ikon Herd di system tray → pastikan **PHP** dan **MySQL** berstatus **Running** (ikon hijau).
+- [ ] Herd otomatis menambahkan `php` dan `mysql` ke PATH — **restart Git Bash / terminal** agar perubahan PATH aktif.
+
+> ⚠️ **Windows**: Jika Herd meminta install **Visual C++ Redistributable**, izinkan. Ini dependensi wajib untuk PHP di Windows.
 
 **Verifikasi (semua OS):**
+
+Buka terminal (Git Bash di Windows, Terminal di macOS) dan jalankan:
 
 ```bash
 php --version        # harus ≥ 8.2
@@ -215,16 +253,22 @@ herd --version       # Herd CLI aktif
   - User: `root`
   - Password: *(kosong)*
 
-> ⚠️ Kalau port 3306 sudah dipakai MySQL lain di laptop Anda, matikan dulu service MySQL lama sebelum menjalankan Herd.
+> ⚠️ Jika port 3306 sudah dipakai MySQL lain di laptop Anda, matikan dulu service MySQL lama:
+> - macOS: `brew services stop mysql`
+> - Windows: **Task Manager → Services → MySQL → klik kanan → Stop** (atau cari di `services.msc`)
+
+---
 
 ### Install Extension Database Client di Cursor (wajib — untuk Hari 2 & 3)
 
-- [ ] Buka Cursor → panel Extensions (`Cmd/Ctrl+Shift+X`).
+- [ ] Buka Cursor → panel Extensions (`Cmd+Shift+X` di macOS / `Ctrl+Shift+X` di Windows).
 - [ ] Cari: `Database Client`.
 - [ ] Install extension dari **cweijan** (publisher: `cweijan.vscode-database-client2`).
-- [ ] Setelah install, ikon database akan muncul di Activity Bar kiri.
+- [ ] Setelah install, ikon database muncul di Activity Bar kiri.
 - [ ] Test koneksi: klik ikon database → **New Connection** → pilih MySQL → isi kredensial Herd di atas → **Connect**.
 - [ ] Pastikan koneksi berhasil dan database list muncul.
+
+> 💡 **Windows**: Jika koneksi gagal dengan "connection refused", pastikan Herd MySQL sudah **Running** (cek system tray) dan gunakan `127.0.0.1` — bukan `localhost`.
 
 ---
 
@@ -274,9 +318,15 @@ Bila semua ✓ → peserta siap masuk Lab 01.
 | Indexing stuck | Tutup-buka folder; cek `.cursorignore` terlalu permisif |
 | Extension VS Code tidak ada | Install ulang via Extensions panel; cari di OpenVSX |
 | Tab tidak muncul | Pastikan auto-save aktif, cek Settings → Features → Cursor Tab |
-| Login terus loop | Hapus cache: keluar app → hapus `~/.cursor` (backup dulu) |
-| MySQL Herd tidak jalan | Buka Herd dashboard → klik restart MySQL; cek port 3306 tidak dipakai proses lain |
-| Port 3306 conflict | Matikan MySQL lama: macOS `brew services stop mysql`, Windows → Services → stop MySQL |
+| Login terus loop (macOS) | Hapus cache: keluar app → hapus `~/.cursor` (backup dulu) |
+| Login terus loop (Windows) | Hapus cache: keluar app → hapus `%APPDATA%\Cursor` di File Explorer |
+| MySQL Herd tidak jalan | Buka Herd system tray → klik **Restart MySQL**; cek port 3306 tidak dipakai proses lain |
+| Port 3306 conflict (macOS) | `brew services stop mysql` di terminal |
+| Port 3306 conflict (Windows) | `services.msc` → cari MySQL → klik kanan → Stop |
 | Database Client "connection refused" | Pastikan Herd MySQL running; gunakan `127.0.0.1` bukan `localhost` |
 | Database Client tidak muncul di Activity Bar | Restart Cursor setelah install extension |
+| `git` tidak dikenal di terminal Cursor (Windows) | Pastikan Git for Windows terinstall dengan opsi "Git from the command line"; restart Cursor |
+| `php` tidak dikenal di terminal (Windows) | Restart Git Bash / terminal setelah install Herd; jika tetap tidak ada, cek PATH di System → Advanced System Settings → Environment Variables |
+| Herd minta Visual C++ Redistributable | Install dari link yang disediakan wizard Herd, lalu restart installer |
+| SmartScreen blokir installer Cursor / Herd | Klik **More info → Run anyway** — kedua app sudah code-signed |
 
