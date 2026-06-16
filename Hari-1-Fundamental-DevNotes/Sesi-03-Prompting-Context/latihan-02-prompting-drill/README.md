@@ -1,111 +1,90 @@
-# Latihan 02 — Prompting Drill: SQL Query
+# Latihan 02 — Prompting Drill: SQL Dasar
 
 > 🗺️ Bagian dari [Sesi 3 — Prompting & Context](../materi.md)
-> Sebelumnya: Latihan 01 (Tour Cursor) di Sesi 2 | Setelah ini: Latihan 03 (Build Feature) di Sesi 4
+> Sebelumnya: Latihan 01 (Build Portfolio) di Sesi 2 | Setelah ini: Latihan 03 (SQL Lanjutan) di Sesi 4
 
 **Durasi**: 60 menit (4 tahap × ~13 menit + review)
 **Tipe**: Hands-on individual
-**Output**: 4 file `tahap-N.md` berisi prompt + query SQL hasil + verifikasi + refleksi.
+**Output**: Query MySQL dasar (SELECT, INSERT, UPDATE, DELETE) yang Anda generate lewat Cursor dan verifikasi di SQL playground.
 
 ---
 
 ## Konteks
 
-Sesi 3 mengajarkan **3 pola prompting** (Role-based, Context-based, Constraint-based) plus pola **iterasi**. Latihan ini melatih keempatnya dengan domain yang **familiar untuk semua peserta — SQL query**.
+Sesi 3 mengajarkan cara menyusun prompt yang baik. Latihan ini melatih prompt dengan domain **SQL dasar** — mudah diverifikasi karena hasilnya jelas: query jalan atau tidak, hasilnya sesuai atau tidak.
 
-Kenapa SQL?
-- Dipakai di hampir semua project (backend, data, analytics).
-- Hasilnya **mudah diverifikasi**: query → run → cek hasil.
-- AI sering "kelihatan benar" tapi salah subtle (join salah, group by hilang, dialect ngacau) — bagus untuk latih *reviewer-first mindset*.
-- Tidak butuh setup project besar; cukup playground online.
+Latihan ini adalah **Tahap 1–4**. Latihan 03 melanjutkan dengan query yang lebih kompleks (Tahap 5–8) menggunakan schema dan data yang sama persis.
 
 ---
 
-## Tujuan
+## Schema & Data (MySQL 8.0)
 
-Setelah latihan, peserta mampu:
-
-1. Memberikan **schema** sebagai konteks AI lewat @-mention atau paste langsung.
-2. Memilih **pola prompting** (Role / Context / Constraint) sesuai jenis pertanyaan SQL.
-3. **Iterasi** prompt saat AI memberi query yang salah dialect / mismatch schema.
-4. Memverifikasi output AI dengan menjalankan query di playground & membaca hasil.
-
----
-
-## Prasyarat
-
-- Lulus Latihan 01 (Cursor aktif, 4 mode dipahami).
-- Akses ke **SQL playground** salah satu:
-  - <https://www.db-fiddle.com> (rekomendasi — pilih PostgreSQL 16)
-  - Supabase project Anda (kalau sudah punya dari pelatihan ini)
-  - DBeaver / pgAdmin lokal
-- Tidak perlu hafal SQL — AI yang menulis, Anda yang me-review.
-
----
-
-## Skenario: Schema E-Commerce Mini
-
-Anda diberi schema 4 tabel berikut. **Wajib paste schema ini ke playground SQL Anda sebelum mulai**, supaya bisa run query yang AI generate.
+**Paste SQL ini ke playground Anda sebelum mulai.** Playground yang bisa dipakai:
+- [db-fiddle.com](https://www.db-fiddle.com) — pilih **MySQL 8.0** (rekomendasi, gratis, tanpa install)
+- MySQL lokal via Laravel Herd + DBeaver / TablePlus
 
 ```sql
 -- ==== SCHEMA ====
-create table customers (
-  id serial primary key,
-  name varchar(100) not null,
-  email varchar(120) unique not null,
-  city varchar(60),
-  created_at timestamptz default now()
+CREATE TABLE customers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(120) UNIQUE NOT NULL,
+  city VARCHAR(60),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-create table products (
-  id serial primary key,
-  sku varchar(20) unique not null,
-  name varchar(120) not null,
-  category varchar(60),
-  price numeric(12,2) not null,
-  stock int default 0
+CREATE TABLE products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  sku VARCHAR(20) UNIQUE NOT NULL,
+  name VARCHAR(120) NOT NULL,
+  category VARCHAR(60),
+  price DECIMAL(12,2) NOT NULL,
+  stock INT DEFAULT 0
 );
 
-create table orders (
-  id serial primary key,
-  customer_id int references customers(id),
-  status varchar(20) default 'pending',  -- pending|paid|shipped|cancelled
-  created_at timestamptz default now()
+CREATE TABLE orders (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT,
+  status VARCHAR(20) DEFAULT 'pending',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (customer_id) REFERENCES customers(id)
 );
 
-create table order_items (
-  id serial primary key,
-  order_id int references orders(id),
-  product_id int references products(id),
-  qty int not null,
-  unit_price numeric(12,2) not null
+CREATE TABLE order_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  order_id INT,
+  product_id INT,
+  qty INT NOT NULL,
+  unit_price DECIMAL(12,2) NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
 -- ==== SAMPLE DATA ====
-insert into customers (name, email, city) values
+INSERT INTO customers (name, email, city) VALUES
   ('Andi',  'andi@x.com',  'Jakarta'),
   ('Budi',  'budi@x.com',  'Bandung'),
   ('Citra', 'citra@x.com', 'Jakarta'),
   ('Dewi',  'dewi@x.com',  'Surabaya'),
   ('Eka',   'eka@x.com',   'Jakarta');
 
-insert into products (sku, name, category, price, stock) values
+INSERT INTO products (sku, name, category, price, stock) VALUES
   ('SKU-001', 'Mouse Wireless',   'Electronics', 150000, 50),
   ('SKU-002', 'Keyboard Mech',    'Electronics', 850000, 20),
   ('SKU-003', 'Notebook A5',      'Stationery',  35000,  200),
   ('SKU-004', 'Coffee Beans 1kg', 'Grocery',     180000, 30),
   ('SKU-005', 'USB Cable',        'Electronics', 45000,  100);
 
-insert into orders (customer_id, status, created_at) values
-  (1, 'paid',     '2026-04-15'),
-  (1, 'shipped',  '2026-05-02'),
-  (2, 'paid',     '2026-05-10'),
-  (3, 'paid',     '2026-05-12'),
-  (3, 'cancelled','2026-05-13'),
-  (4, 'shipped',  '2026-06-01'),
-  (5, 'pending',  '2026-06-05');
+INSERT INTO orders (customer_id, status, created_at) VALUES
+  (1, 'paid',      '2026-04-15'),
+  (1, 'shipped',   '2026-05-02'),
+  (2, 'paid',      '2026-05-10'),
+  (3, 'paid',      '2026-05-12'),
+  (3, 'cancelled', '2026-05-13'),
+  (4, 'shipped',   '2026-06-01'),
+  (5, 'pending',   '2026-06-05');
 
-insert into order_items (order_id, product_id, qty, unit_price) values
+INSERT INTO order_items (order_id, product_id, qty, unit_price) VALUES
   (1, 1, 2, 150000), (1, 3, 5, 35000),
   (2, 2, 1, 850000),
   (3, 4, 3, 180000), (3, 5, 2, 45000),
@@ -116,194 +95,151 @@ insert into order_items (order_id, product_id, qty, unit_price) values
 
 ---
 
-## Aturan Main
+## Tahap 1 — SELECT Dasar (15')
 
-- Untuk tiap tahap, peserta **wajib**:
-  1. Tulis prompt di file `submissions/<nama>/tahap-N.md` **sebelum** dijalankan ke Cursor.
-  2. Jalankan di Cursor (Chat/Ask mode disarankan — lebih cepat untuk SQL).
-  3. Salin query yang AI generate ke file submission.
-  4. **Run query** di playground SQL, screenshot atau salin hasil row-nya.
-  5. Tulis refleksi singkat: apakah hasil sesuai harapan? Kalau tidak, iterasi prompt.
-- Boleh iterasi maks 3 kali per tahap (sebut versi `prompt-v1`, `prompt-v2`, dst).
-- Setiap tahap melatih **pola prompting berbeda** — sengaja diatur supaya peserta merasakan kapan tiap pola dipakai.
+**Tujuan**: Generate query SELECT sederhana dengan filter, urutan, dan limit.
+
+### 1.1 Buka Cursor Chat (`Cmd+L` / `Ctrl+L`)
+
+Paste schema di atas ke chat terlebih dahulu agar AI tahu struktur tabel.
+
+### 1.2 Prompt 1 — filter kota
+
+```
+Tulis query MySQL untuk menampilkan semua customer yang tinggal di Jakarta.
+Output: id, name, email, city.
+Urutkan berdasarkan name A–Z.
+
+Tabel: customers (id, name, email, city, created_at)
+```
+
+**Verifikasi**: jalankan di playground — harus muncul 3 baris (Andi, Citra, Eka).
+
+### 1.3 Prompt 2 — status dan limit
+
+```
+Tulis query MySQL untuk menampilkan 3 order terbaru yang statusnya 'paid' atau 'shipped'.
+Output: id, customer_id, status, created_at.
+Urutkan created_at terbaru dulu.
+
+Tabel: orders (id, customer_id, status, created_at)
+```
+
+**Verifikasi**: harus muncul tepat 3 baris, semua berstatus paid atau shipped.
+
+### 1.4 Prompt 3 — filter produk berdasarkan kategori
+
+```
+Tulis query MySQL untuk menampilkan semua produk dengan category = 'Electronics'
+dan stock lebih dari 30.
+Output: sku, name, price, stock.
+Urutkan price dari termurah.
+
+Tabel: products (id, sku, name, category, price, stock)
+```
+
+**Verifikasi**: periksa secara manual dari data sample — produk mana yang lolos filter ini?
 
 ---
 
-## Tahap
+## Tahap 2 — SELECT dengan JOIN (15')
 
-### Tahap 3 — Role-based Prompting (15')
+**Tujuan**: Generate query yang menggabungkan dua tabel.
 
-**Skenario**: Tim sales minta laporan harian "berapa total revenue dari order dengan status `paid` atau `shipped` bulan ini, per kota customer."
-
-**Pola yang dilatih**: **Role-based** — beri AI "topi" peran tertentu sehingga gaya outputnya sesuai standar profesi.
-
-**Contoh prompt** (silakan tiru, lalu sesuaikan):
+### 2.1 Prompt — daftar order beserta nama customer
 
 ```
-Sebagai data analyst SQL berpengalaman di e-commerce, tulis query
-PostgreSQL untuk:
+Tulis query MySQL untuk menampilkan semua order beserta nama customer-nya.
+Output: order.id, customer.name, customer.city, order.status, order.created_at.
+Urutkan order.created_at terbaru dulu.
 
-Pertanyaan: total revenue (sum dari qty * unit_price) dari order
-dengan status 'paid' atau 'shipped' di bulan Mei 2026, di-group by
-kota customer, urut revenue terbesar dulu.
+Tabel:
+- orders (id, customer_id, status, created_at)
+- customers (id, name, email, city)
 
-Schema (paste sekali, AI ingat untuk pertanyaan berikut):
-[paste schema 4 tabel dari atas]
-
-Output yang diharapkan:
-- 1 query SELECT yang bisa langsung dijalankan
-- Beri komentar SQL singkat untuk join dan agregasi
-- Sebutkan asumsi (kalau ada) sebelum query
+Gunakan INNER JOIN.
 ```
 
-**Yang harus diverifikasi**:
-- Apakah AI memakai `INNER JOIN` 4 tabel dengan benar (customers ← orders ← order_items → products)?
-- Apakah filter `status IN ('paid','shipped')` ada?
-- Apakah `date_trunc` atau range tanggal sesuai Mei 2026?
-- Apakah `GROUP BY city` benar dan tidak hilang field?
+**Verifikasi**: semua 7 order harus muncul dengan nama customer yang benar.
 
-**Acceptance**: query bisa di-paste ke playground tanpa edit, hasilkan baris dengan kolom `city, total_revenue`, dan datanya **konsisten dengan hand-count Anda** (Jakarta paling tinggi karena Andi & Citra di sana).
+### 2.2 Iterasi — filter tambahan
 
-### Tahap 4 — Context-based Prompting (15')
-
-**Skenario**: Ada laporan dari user "produk SKU-005 (USB Cable) ada di order, tapi tidak masuk ringkasan penjualan bulan ini." Anda perlu cek apakah ada bug data atau bug query.
-
-**Pola yang dilatih**: **Context-based** — jawaban sangat bergantung pada artefak (schema + sample data). Beri AI **konteks lengkap** supaya analisanya akurat.
-
-**Contoh prompt**:
+Setelah dapat query di atas, lanjutkan di Chat yang sama:
 
 ```
-Berdasarkan schema dan sample data berikut, jawab pertanyaan diagnostik:
-
-[paste schema + sample data dari skenario di atas]
-
-Pertanyaan investigasi:
-1. Berapa kali produk SKU-005 muncul di order_items?
-2. Untuk tiap kemunculan, apa status order-nya?
-3. Apakah ada baris order_items yang order-nya berstatus 'pending'
-   atau 'cancelled'?
-4. Berikan query yang mengisolasi 3 jawaban di atas.
-
-Output: 3 query terpisah dengan label A/B/C, plus penjelasan 1
-kalimat untuk tiap query.
+Tambahkan filter: hanya tampilkan order dengan status = 'paid'.
+Jangan ubah bagian lain dari query.
 ```
 
-**Yang harus diverifikasi**:
-- AI seharusnya temukan: SKU-005 ada di order id=3 (status `paid` ✅) dan order id=... cek lagi.
-- Hand-check sendiri pakai data sample: berapa kali SKU-005 muncul? (jawab: 1× di order 3).
-- Kalau AI bilang "tidak ada masalah", apakah konsisten dengan hand-check?
-
-**Acceptance**: 3 query berjalan, dan kesimpulan AI sesuai dengan data nyata di playground.
-
-### Tahap 5 — Constraint-based Prompting (15')
-
-**Skenario**: Manajemen minta "list 3 customer dengan total belanja terbesar, beserta jumlah order mereka, **tapi jangan pakai subquery** (ada policy review code: subquery sulit di-tune)."
-
-**Pola yang dilatih**: **Constraint-based** — ruang solusi terlalu lebar (subquery, CTE, window function semua bisa), persempit dengan constraint eksplisit.
-
-**Contoh prompt**:
-
-```
-Tulis query PostgreSQL dengan SEMUA constraint berikut:
-
-Tujuan: top 3 customer dengan total spending terbesar all-time,
-hanya hitung order dengan status 'paid' atau 'shipped'.
-
-Output kolom: customer_name, total_orders, total_spending (urut desc).
-
-Constraint TEKNIS:
-1. TIDAK BOLEH pakai subquery (no SELECT ... FROM (SELECT ...))
-2. TIDAK BOLEH pakai WITH/CTE
-3. WAJIB pakai single SELECT dengan JOIN + GROUP BY
-4. Hasil dibatasi 3 baris (pakai LIMIT)
-5. Total spending hitung dari qty * unit_price di order_items
-
-Schema: [paste]
-
-Kalau constraint #1 dan #2 tidak bisa dipenuhi, jelaskan kenapa
-sebelum tulis query alternatif.
-```
-
-**Yang harus diverifikasi**:
-- AI patuh constraint? Cek manual: ada `SELECT ... FROM (SELECT` atau `WITH ... AS`? Kalau iya, tolak.
-- Iterasi: kalau AI melanggar, prompt ulang: *"Kamu masih pakai subquery di baris X. Tulis ulang dengan murni JOIN."*
-- Apakah `LIMIT 3` ada? Apakah `ORDER BY total_spending DESC` benar?
-
-**Acceptance**: query lulus 5 constraint + return tepat 3 baris.
-
-### Tahap 6 — Iterasi & Counter-Example (15')
-
-**Skenario**: Anda dapat query dari Tahap 5, tapi merasa **lambat** untuk data 1 juta baris. Anda ingin AI:
-1. Jelaskan kenapa lambat
-2. Beri 5 cara mempercepat
-3. Implementasi versi tercepat dengan asumsi data 1 juta baris
-
-**Pola yang dilatih**: **Iterasi & Counter-Example** — prompt awal jarang sempurna. Latih siklus *Prompt → Baca → Feedback spesifik*.
-
-**Contoh prompt awal**:
-
-```
-Berikut query saya:
-[paste query Tahap 5]
-
-Skenario produksi:
-- tabel orders: 1 juta baris
-- tabel order_items: 5 juta baris
-- tabel customers: 100 ribu baris
-
-Jelaskan:
-1. Bottleneck query ini di production (estimate, no need EXPLAIN actual)
-2. 5 cara mempercepat — urutkan dari dampak tertinggi ke terendah
-3. Implementasi 1 cara teratas (tulis query baru)
-```
-
-**Iterasi #2 (kalau jawaban kurang spesifik)** — ini bagian latihannya:
-
-```
-Jawaban kamu kurang spesifik di poin 2 — "tambah index" terlalu generik.
-Untuk tiap cara mempercepat:
-- Sebutkan index spesifik (kolom mana, B-tree vs hash)
-- Estimasi peningkatan kasar (mis. 2x lebih cepat)
-- Sebutkan trade-off (mis. write jadi lebih lambat)
-
-Lalu untuk query baru di poin 3, jelaskan kenapa pilih pendekatan itu
-dibanding 4 cara lainnya.
-```
-
-**Counter-example prompt** (opsional, level ekstra):
-
-```
-Beri saya 3 query yang JUSTRU LAMBAT untuk skenario ini, dengan
-penjelasan kenapa lambat. Tujuan: saya mau tahu anti-pattern apa
-yang harus saya hindari saat tulis query agregasi.
-```
-
-**Acceptance**: Anda paham 5 cara optimasi + bisa jelaskan kenapa pilih satu, plus bisa identifikasi anti-pattern.
+**Verifikasi**: harus muncul 3 baris (order id 1, 3, 4).
 
 ---
 
-## Submit
+## Tahap 3 — INSERT dan UPDATE (15')
 
-Folder `submissions/<nama>/` berisi:
+**Tujuan**: Generate query yang memodifikasi data dengan aman.
 
-- `tahap-3.md` — prompt + query + screenshot/result + refleksi singkat
-- `tahap-4.md` — sda
-- `tahap-5.md` — sda
-- `tahap-6.md` — sda (boleh ada prompt-v1, v2, v3 untuk iterasi)
-- `refleksi.md` (≤200 kata) menjawab:
-  1. Pola prompting mana yang paling cocok untuk pertanyaan SQL?
-  2. Bug/hallucination AI yang paling membingungkan dan cara Anda menemukannya
-  3. 1 template prompt yang akan Anda simpan untuk pakai esok hari
+### 3.1 Prompt — INSERT produk baru
+
+```
+Tulis query MySQL untuk menambah produk baru ke tabel products:
+- sku: 'SKU-006'
+- name: 'Standing Desk Mat'
+- category: 'Office'
+- price: 320000
+- stock: 15
+
+Tabel: products (id, sku, name, category, price, stock)
+Kolom id adalah AUTO_INCREMENT, jangan disertakan.
+```
+
+**Verifikasi**: jalankan INSERT, lalu SELECT * FROM products WHERE sku = 'SKU-006' — harus muncul 1 baris.
+
+### 3.2 Prompt — UPDATE dengan WHERE spesifik
+
+```
+Tulis query MySQL untuk mengubah harga produk SKU-002 menjadi 900000
+dan stock menjadi 25.
+
+Tabel: products (id, sku, name, category, price, stock)
+Gunakan WHERE sku = 'SKU-002' agar hanya 1 baris yang terupdate.
+```
+
+**Verifikasi**: setelah UPDATE, SELECT price, stock FROM products WHERE sku = 'SKU-002' harus mengembalikan 900000 dan 25.
+
+---
+
+## Tahap 4 — DELETE dengan SELECT Verifikasi (15')
+
+**Tujuan**: Praktikkan pola aman: SELECT dulu, baru DELETE.
+
+### 4.1 Prompt
+
+```
+Saya ingin menghapus semua order dengan status = 'cancelled'.
+Tulis DUA query secara berurutan:
+1. SELECT untuk melihat baris yang akan dihapus (id, customer_id, status, created_at)
+2. DELETE untuk menghapus baris tersebut
+
+Gunakan kondisi WHERE yang identik di kedua query.
+Tambahkan komentar: "Jalankan SELECT dulu, verifikasi hasilnya, baru jalankan DELETE."
+
+Tabel: orders (id, customer_id, status, created_at)
+```
+
+**Verifikasi**:
+- Jalankan SELECT dulu → harus muncul 1 baris (order id 5, status cancelled).
+- Setelah yakin benar, jalankan DELETE.
+- SELECT ulang dengan kondisi yang sama → harus 0 baris.
 
 ---
 
 ## Tips
 
-- **Paste schema sekali di awal Chat**. Setelah itu AI di Chat ingat untuk pertanyaan berikut di session yang sama.
-- **Sebutkan dialect** (PostgreSQL / MySQL / SQLite) di prompt — sintaks beda (mis. `LIMIT` vs `TOP`, `date_trunc` vs `DATE_FORMAT`).
-- **Jangan percaya, run di playground**. AI sering bikin query yang lolos parse tapi hasilnya salah.
-- **Hand-count untuk data kecil**. Sample data kita kecil — verifikasi manual lebih cepat daripada debug query.
-- **Iterasi dengan feedback spesifik**, bukan "ini salah". Sebutkan baris mana yang melanggar constraint mana.
+- **Sebut nama tabel dan kolom di prompt.** AI tidak tahu schema Anda kecuali Anda ceritakan.
+- **Sebut dialect MySQL di prompt.** Sintaks MySQL beda dengan PostgreSQL (mis. `LIMIT` sama, tapi `DATE_FORMAT` vs `date_trunc`).
+- **Selalu SELECT sebelum DELETE/UPDATE.** Ini kebiasaan yang harus terbentuk dari awal.
+- **Verifikasi manual untuk data kecil.** Sample data ini kecil — Anda bisa hitung manual lebih cepat daripada debug.
 
 ---
 
@@ -311,9 +247,8 @@ Folder `submissions/<nama>/` berisi:
 
 | Issue | Solusi |
 |-------|--------|
-| AI pakai MySQL syntax padahal kita PostgreSQL | Sebut dialect di prompt awal: "PostgreSQL 16" |
-| Query hasil 0 baris padahal harusnya ada | Cek `WHERE` filter — sering AI salah range tanggal atau timezone |
-| AI bilang "subquery tidak bisa dihindari" di Tahap 5 | Tantang: "tulis dengan JOIN saja, izinkan WHERE complex. Subquery selalu bisa di-flatten." |
-| Hasil di playground beda dengan klaim AI | AI hallucinate jumlah baris. **Selalu run sendiri**. |
-| Schema lupa di-paste, AI nebak struktur tabel | Mulai ulang Chat dengan paste schema lengkap |
-| AI nambah tabel yang tidak ada di schema | Beri constraint: "hanya pakai 4 tabel yang saya kasih, jangan asumsikan tabel `inventory` atau lainnya" |
+| AI pakai PostgreSQL syntax | Tambahkan "MySQL 8.0" di prompt |
+| Query hasil 0 baris | Cek WHERE filter — apakah case sensitive? Status pakai huruf kecil semua |
+| AI tambah tabel yang tidak ada | Tambahkan constraint: "hanya pakai tabel yang saya sebutkan" |
+| INSERT gagal karena constraint | Cek apakah SKU sudah ada (UNIQUE); cek foreign key |
+| UPDATE kena semua baris | Pastikan WHERE ada — kalau AI lupa, minta ulang dengan "tambahkan WHERE spesifik" |
