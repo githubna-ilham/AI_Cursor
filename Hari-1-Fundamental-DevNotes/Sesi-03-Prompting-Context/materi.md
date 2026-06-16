@@ -1,6 +1,6 @@
 # Sesi 3 — Prompting & Context Management
 
-Setelah Sesi 2 mengenalkan **alat** Cursor, sesi ini fokus pada **bahasa** untuk berbicara dengannya. Kualitas output AI bukan ditentukan model, tapi prompt + konteks + rules yang Anda susun. Anda akan praktikkan langsung di Latihan 02 dengan mengisi 4 section portfolio (Hero, Skills, Projects, project detail).
+Setelah Sesi 2 mengenalkan **alat** Cursor, sesi ini fokus pada **bahasa** untuk berbicara dengannya. Kualitas output AI bukan ditentukan model, tapi prompt + konteks + rules yang Anda susun. Anda akan praktikkan langsung di Latihan 02 dengan menulis query SQL dasar — SELECT, INSERT, UPDATE, DELETE — menggunakan teknik prompting yang dibahas di sini.
 
 ---
 
@@ -111,40 +111,40 @@ flowchart LR
 ### 1.6 Tiga Pola Prompting (Detail)
 
 #### a. Role-based
-> "Sebagai security reviewer, evaluasi `@file auth.controller.ts`. Sebutkan kerentanan OWASP Top 10 yang relevan dan beri rekomendasi fix."
+> "Sebagai data analyst SQL berpengalaman di e-commerce, tulis query MySQL untuk menghitung total revenue per kota customer bulan ini, hanya order status 'paid' atau 'shipped'. Sertakan komentar singkat di setiap JOIN."
 
-Kapan dipakai: ingin gaya jawaban/standar profesi tertentu.
+Kapan dipakai: ingin gaya jawaban/standar profesi tertentu — AI akan lebih hati-hati soal edge case yang diperhatikan profesi tersebut.
 
 #### b. Context-based
-> "Berdasarkan `@file user.entity.ts` dan `@file order.entity.ts`, buat query untuk mendapatkan top 10 user dengan total order tertinggi bulan ini. Pakai ORM yang sudah dipakai di repo."
+> "Berdasarkan schema berikut: customers (id, name, city), orders (id, customer_id, status), order_items (id, order_id, product_id, qty, unit_price) — tulis query untuk menemukan 3 customer dengan total belanja terbesar sepanjang waktu."
 
-Kapan dipakai: jawaban sangat bergantung pada artefak proyek.
+Kapan dipakai: jawaban sangat bergantung pada struktur tabel yang konkret. Tanpa schema, AI akan menebak nama kolom.
 
 #### c. Constraint-based
-> "Refactor fungsi ini agar memenuhi semua syarat: (1) tidak boleh memakai library eksternal baru, (2) tidak boleh menambah file baru, (3) cyclomatic complexity ≤ 8, (4) tetap lulus test eksisting di `@file user.test.ts`."
+> "Tulis query MySQL untuk top 3 customer berdasarkan total spending. CONSTRAINT: (1) tidak boleh pakai subquery, (2) tidak boleh pakai WITH/CTE, (3) hanya satu SELECT dengan JOIN + GROUP BY, (4) LIMIT 3. Kalau constraint tidak bisa dipenuhi, jelaskan kenapa dulu."
 
-Kapan dipakai: ruang solusi terlalu lebar; Anda ingin AI fokus.
+Kapan dipakai: ruang solusi terlalu lebar — ada banyak cara menulis query yang sama, tapi Anda punya alasan teknis memilih satu pendekatan.
 
-### 1.7 Iterasi Prompt: *Prompt → Diff → Prompt'*
+### 1.7 Iterasi Prompt: *Prompt → Hasil → Prompt'*
 
 Prompt pertama jarang sempurna. Loop:
 
 1. **Submit prompt** awal.
-2. **Baca diff/jawaban**. Catat *deviasi* dari yang Anda inginkan.
-3. **Beri umpan balik** spesifik (bukan "ini salah, coba lagi"). Contoh: *"Bagian transactional belum dibungkus, dan nama variabel masih camelCase padahal repo ini pakai snake_case."*
-4. **Ulangi** maks 3–4 kali. Jika belum konvergen, *reset* dengan prompt baru yang lebih spesifik.
+2. **Baca jawaban / jalankan query**. Catat *deviasi* dari yang Anda inginkan.
+3. **Beri umpan balik spesifik** (bukan "ini salah, coba lagi"). Contoh: *"Query ini masih pakai subquery di baris 4, padahal constraint-nya tidak boleh subquery. Tulis ulang dengan murni JOIN."*
+4. **Ulangi** maks 3–4 kali. Jika belum konvergen, *reset* dengan prompt baru yang menyebut schema lebih lengkap.
 
 ### 1.8 Kebiasaan Prompting yang Sering Gagal
 
 Lima pola prompt yang **terlihat masuk akal tapi konsisten menghasilkan output buruk**. Kenali dan hindari sejak hari pertama.
 
-| Kebiasaan buruk            | Contoh prompt                                              | Cara membenahi                                                                |
+| Kebiasaan buruk            | Contoh prompt (SQL)                                              | Cara membenahi                                                                |
 | -------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **Terlalu samar**          | "buatkan login"                                            | "buat endpoint POST /login pakai JWT, validasi pakai zod, tulis test"         |
-| **Banyak tujuan sekaligus**| "buat login, register, reset password, lupa password"      | Pecah jadi 4 prompt terpisah                                                  |
-| **Tanpa konteks**          | "kenapa kode ini lambat?"                                  | "kenapa `@file query.ts` lambat saat input >10rb baris?"                      |
-| **Menyalahkan AI**         | "kamu salah, harusnya begini"                              | "Saya melihat X di output; expected Y; tolong jelaskan asumsi yang dipakai"   |
-| **Terlalu banyak aturan**  | 30 baris constraint untuk task 10 baris                    | Pakai 3 constraint paling kritikal saja                                       |
+| **Terlalu samar**          | "buatkan laporan penjualan"                                | "tulis SELECT revenue per kota dari tabel orders + customers, filter status='paid', GROUP BY city" |
+| **Banyak tujuan sekaligus**| "buat SELECT, INSERT, UPDATE, DELETE sekaligus"            | Pecah per operasi — satu prompt satu query                                    |
+| **Tanpa schema**           | "tampilkan semua order customer"                           | Sebutkan nama tabel dan kolom: "FROM orders JOIN customers ON orders.customer_id = customers.id" |
+| **Menyalahkan AI**         | "query kamu salah"                                         | "Kolom `city` di output harusnya dari tabel customers, bukan orders. Perbaiki JOIN-nya" |
+| **Terlalu banyak aturan**  | 10 constraint untuk SELECT sederhana                       | Pakai 2–3 constraint paling kritikal; sisanya bisa iterasi                    |
 
 ### 1.9 Reusable Prompt: Snippets & Rules
 
@@ -167,11 +167,13 @@ Sebelum tekan Enter, cek:
 
 ## 2. Lanjut ke Latihan
 
-Setelah membaca materi ini, lanjut ke **[Latihan 02 — Prompting Drill: Isi Section Portfolio](./latihan-02-prompting-drill/README.md)**. Di sana Anda akan:
+Setelah membaca materi ini, lanjut ke **[Latihan 02 — Prompting Drill: SQL Dasar](./latihan-02-prompting-drill/README.md)**. Di sana Anda akan:
 
-- Menyelesaikan 4 tahap prompting yang outputnya **mengisi 4 section portfolio** Anda (Hero, Skills, Projects + `data.js`, project detail modal).
-- Menerapkan 3 lapis (Role + Context + Constraint) dan @-mentions yang Anda baru pelajari.
-- Menilai prompt Anda sendiri dengan rubrik 5 dimensi.
+- Menulis query MySQL dasar — SELECT (filter, JOIN), INSERT, UPDATE, DELETE — dengan Cursor Chat.
+- Menerapkan 3 pola prompting (Role + Context + Constraint) pada konteks SQL yang konkret.
+- Memverifikasi setiap query di playground SQL, bukan hanya percaya output AI.
+
+Latihan 02 (Tahap 1–4) dilanjutkan di **[Latihan 03 — SQL Lanjutan](../Sesi-04-Code-Generation/latihan-03-build-feature/README.md)** (Tahap 5–8) dengan schema dan data yang sama: agregasi, multi-JOIN, CTE, dan pola UPDATE/DELETE aman.
 
 ---
 
