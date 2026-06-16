@@ -15,9 +15,10 @@ Sesi ini melatih cara membangun **mekanisme pemantauan otomatis untuk data**.
 ## Yang Akan Anda Pelajari
 
 1. Apa itu **assertion query** dan perbedaannya dari pengujian aplikasi biasa
-2. **7 jenis aturan** yang paling umum diperiksa (NULL, keunikan, FK, dan sebagainya)
-3. Cara mengonversi **aturan bisnis** menjadi SQL assertion
-4. Cara melakukan **peer review** assertion menggunakan checklist 7 poin
+2. Pola **AAA (Arrange–Act–Assert)** sebagai kerangka penulisan assertion
+3. **7 jenis aturan** yang paling umum diperiksa (NULL, keunikan, FK, dan sebagainya)
+4. Cara mengonversi **aturan bisnis** menjadi SQL assertion
+5. Cara melakukan **peer review** assertion menggunakan checklist 7 poin
 
 ---
 
@@ -41,7 +42,53 @@ Intinya: apabila **integritas data terjamin**, hasil query yang Anda tulis di Se
 
 ---
 
-## 2. Pola Assertion: 0 Baris = Aman
+## 2. Pola AAA untuk Assertion SQL
+
+Pola **AAA (Arrange–Act–Assert)** adalah cara menyusun setiap skenario pengujian menjadi tiga blok berurutan. Tujuannya: setiap assertion mudah dipahami dalam hitungan detik karena strukturnya selalu konsisten.
+
+| Blok | Artinya | Yang Dilakukan dalam Konteks SQL |
+|------|---------|----------------------------------|
+| **Arrange** | Siapkan | Sisipkan data uji — termasuk data yang valid maupun data yang sengaja melanggar aturan |
+| **Act** | Jalankan | Eksekusi assertion query (SELECT yang menerapkan aturan bisnis) |
+| **Assert** | Verifikasi | Periksa hasilnya: 0 baris berarti data valid, N baris berarti terdapat N pelanggar |
+
+**Contoh penerapan AAA pada assertion SQL:**
+
+```sql
+-- ==============================
+-- ARRANGE: siapkan data uji
+-- ==============================
+-- Data valid: stok bernilai positif
+INSERT INTO products (id, sku, name, price, stock) VALUES (901, 'TEST-001', 'Produk Uji A', 50000, 10);
+-- Data pelanggar: stok bernilai negatif (harus terdeteksi)
+INSERT INTO products (id, sku, name, price, stock) VALUES (902, 'TEST-002', 'Produk Uji B', 50000, -5);
+
+-- ==============================
+-- ACT: jalankan assertion
+-- ==============================
+SELECT id, sku, stock
+FROM products
+WHERE stock < 0;
+
+-- ==============================
+-- ASSERT: verifikasi hasil
+-- ==============================
+-- Ekspektasi: hanya id=902 yang muncul (1 baris)
+-- Apabila 0 baris → assertion tidak mendeteksi pelanggar (false negative)
+-- Apabila id=901 juga muncul → logika query salah (false positive)
+
+-- Bersihkan data uji setelah selesai
+DELETE FROM products WHERE id IN (901, 902);
+```
+
+**Manfaat pola AAA dalam konteks SQL:**
+- **Arrange** yang eksplisit memastikan kondisi awal selalu diketahui — tidak bergantung pada data yang ada sebelumnya.
+- **Act** yang terisolasi (satu query, satu aturan) memudahkan identifikasi penyebab kegagalan.
+- **Assert** yang tertulis sebagai komentar menjadi dokumentasi ekspektasi yang dapat dibaca oleh anggota tim lain.
+
+---
+
+## 3. Pola Assertion: 0 Baris = Aman
 
 **Konvensi yang digunakan**:
 - Tulis SELECT yang **mengembalikan 0 baris apabila semua data valid**
@@ -66,7 +113,7 @@ Pola ini **sangat efektif** karena:
 
 ---
 
-## 3. Tujuh Jenis Aturan yang Paling Umum
+## 4. Tujuh Jenis Aturan yang Paling Umum
 
 Berikut adalah jenis-jenis aturan yang paling sering diterapkan. Pelajari polanya agar dapat menggunakannya kembali di berbagai skenario.
 
@@ -133,7 +180,7 @@ WHERE delivered_at < shipped_at;
 
 ---
 
-## 4. Mengonversi Aturan Bisnis Menjadi SQL Assertion
+## 5. Mengonversi Aturan Bisnis Menjadi SQL Assertion
 
 Ini adalah keterampilan terpenting di Sesi 8. Diberikan aturan dalam bahasa Indonesia, Anda perlu mengonversinya menjadi assertion SQL.
 
@@ -187,7 +234,7 @@ Berikan:
 
 ---
 
-## 5. Validasi Assertion Sebelum Digunakan: Checklist 7 Poin
+## 6. Validasi Assertion Sebelum Digunakan: Checklist 7 Poin
 
 Sebelum assertion digunakan di lingkungan produksi, lakukan verifikasi menggunakan daftar berikut:
 
@@ -205,7 +252,7 @@ Salah satu cara paling efektif untuk memvalidasi adalah dengan **menjalankan ula
 
 ---
 
-## 6. False Alarm dan Bug yang Lolos
+## 7. False Alarm dan Bug yang Lolos
 
 Terdapat dua jenis kegagalan assertion:
 
@@ -228,53 +275,7 @@ Apabila assertion tidak mendeteksi pelanggar tersebut, berarti terjadi *false ne
 
 ---
 
-## 7. Pola AAA untuk Assertion SQL
-
-Pola **AAA (Arrange–Act–Assert)** adalah cara menyusun setiap skenario pengujian menjadi tiga blok berurutan. Tujuannya: setiap assertion mudah dipahami dalam hitungan detik karena strukturnya selalu konsisten.
-
-| Blok | Artinya | Yang Dilakukan dalam Konteks SQL |
-|------|---------|----------------------------------|
-| **Arrange** | Siapkan | Sisipkan data uji — termasuk data yang valid maupun data yang sengaja melanggar aturan |
-| **Act** | Jalankan | Eksekusi assertion query (SELECT yang menerapkan aturan bisnis) |
-| **Assert** | Verifikasi | Periksa hasilnya: 0 baris berarti data valid, N baris berarti terdapat N pelanggar |
-
-**Contoh penerapan AAA pada assertion SQL:**
-
-```sql
--- ==============================
--- ARRANGE: siapkan data uji
--- ==============================
--- Data valid: stok bernilai positif
-INSERT INTO products (id, sku, name, price, stock) VALUES (901, 'TEST-001', 'Produk Uji A', 50000, 10);
--- Data pelanggar: stok bernilai negatif (harus terdeteksi)
-INSERT INTO products (id, sku, name, price, stock) VALUES (902, 'TEST-002', 'Produk Uji B', 50000, -5);
-
--- ==============================
--- ACT: jalankan assertion
--- ==============================
-SELECT id, sku, stock
-FROM products
-WHERE stock < 0;
-
--- ==============================
--- ASSERT: verifikasi hasil
--- ==============================
--- Ekspektasi: hanya id=902 yang muncul (1 baris)
--- Apabila 0 baris → assertion tidak mendeteksi pelanggar (false negative)
--- Apabila id=901 juga muncul → logika query salah (false positive)
-
--- Bersihkan data uji setelah selesai
-DELETE FROM products WHERE id IN (901, 902);
-```
-
-**Manfaat pola AAA dalam konteks SQL:**
-- **Arrange** yang eksplisit memastikan kondisi awal selalu diketahui — tidak bergantung pada data yang ada sebelumnya.
-- **Act** yang terisolasi (satu query, satu aturan) memudahkan identifikasi penyebab kegagalan.
-- **Assert** yang tertulis sebagai komentar menjadi dokumentasi ekspektasi yang dapat dibaca oleh anggota tim lain.
-
----
-
-## 9. Menjalankan Assertion Secara Otomatis (Bonus)
+## 8. Menjalankan Assertion Secara Otomatis (Bonus)
 
 Apabila proyek sudah berada di tahap yang lebih serius, assertion dapat dijalankan secara otomatis:
 
@@ -291,7 +292,7 @@ Panduan dasar:
 
 ---
 
-## 10. Anti-Pattern yang Perlu Dihindari
+## 9. Anti-Pattern yang Perlu Dihindari
 
 | ❌ Tidak Disarankan | ✅ Praktik yang Tepat |
 |---------------------|----------------------|
@@ -300,7 +301,7 @@ Panduan dasar:
 | Mengembalikan semua kolom | Cukup tampilkan ID dan kolom yang relevan dengan pelanggaran |
 | Satu assertion untuk banyak aturan sekaligus | Satu assertion = satu aturan bisnis |
 | Menggunakan `SELECT *` | Pilih kolom secara eksplisit |
-| Melewati validasi mandiri sebelum digunakan di produksi | Wajib menggunakan checklist 7 poin di bagian 5 |
+| Melewati validasi mandiri sebelum digunakan di produksi | Wajib menggunakan checklist 7 poin di bagian 6 |
 
 ---
 
@@ -311,7 +312,7 @@ Aturan baru dari Product Manager: *"Order berstatus 'cancelled' tidak boleh memi
 Ikuti langkah bersama fasilitator:
 
 1. **Konversi aturan**: pelanggar = order berstatus cancelled yang memiliki shipment berstatus delivered
-2. **Prompt ke AI** menggunakan template dari bagian 4
+2. **Prompt ke AI** menggunakan template dari bagian 5
 3. **Review query AI**: gunakan checklist 7 poin
 4. **Uji dengan data dummy**: sisipkan order cancelled + shipment delivered → jalankan assertion → pelanggar harus terdeteksi
 5. **Bersihkan data uji**, lakukan commit
@@ -327,7 +328,8 @@ Ikuti langkah bersama fasilitator:
 ## Ringkasan
 
 - **Pengujian SQL = pemantauan otomatis untuk data**. Berbeda dari pengujian unit aplikasi.
-- **Pola**: SELECT yang mengembalikan **0 baris apabila data valid**, dan N baris apabila terdapat pelanggar.
+- **Pola AAA**: Arrange (siapkan data uji) → Act (jalankan assertion) → Assert (verifikasi 0 baris = aman).
+- **Pola dasar**: SELECT yang mengembalikan **0 baris apabila data valid**, dan N baris apabila terdapat pelanggar.
 - **7 jenis aturan**: NULL, keunikan, FK orphan, rentang nilai, status enum, konsistensi jumlah, urutan waktu.
 - **Mengonversi aturan bisnis → SQL**: pendekatan 3 langkah (definisikan pelanggar → identifikasi tabel → tulis SELECT).
 - **Peer review dengan checklist 7 poin**: komentar, sintaks, logika, pola, false alarm, pelanggar yang terlewat, performa.
