@@ -134,8 +134,6 @@ Output: category_name, total_revenue (SUM qty * unit_price)
 Filter: MONTH(orders.created_at) = bulan ini, YEAR = tahun ini, orders.status = 'paid'
 Group: per categories.id
 Urutan: total_revenue DESC
-
-Gunakan LEFT JOIN agar kategori tanpa penjualan tetap muncul.
 ```
 
 ---
