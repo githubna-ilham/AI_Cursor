@@ -46,6 +46,26 @@ Sama dengan query SQL:
 
 Anggap "code smell" sebagai **bau tidak enak** — bukan langsung rusak, tapi tanda ada masalah.
 
+```mermaid
+mindmap
+  root((Lima Ciri Query<br/>Perlu Dirapikan))
+    Ciri 1<br/>Subquery Bertingkat
+      Susah dibaca & di-debug
+      Solusi: CTE
+    Ciri 2<br/>Angka Diulang
+      Magic number di banyak tempat
+      Solusi: CTE constant
+    Ciri 3<br/>Pola JOIN Diulang
+      Copy-paste JOIN & filter
+      Solusi: CTE base
+    Ciri 4<br/>SELECT * Banyak Tabel
+      40+ kolom, nama ambigu
+      Solusi: Kolom eksplisit + alias
+    Ciri 5<br/>Rumus Window Diulang
+      OVER clause ditulis berkali-kali
+      Solusi: Named window
+```
+
 ### Ciri 1: Subquery Bertingkat-Tingkat
 
 ```sql
