@@ -36,6 +36,7 @@ Coba susun prompt Anda sendiri di Cursor, lalu jalankan hasilnya di playground.
 ```
 Tulis query MySQL untuk menghitung jumlah order per status.
 Output: status, jumlah_order (COUNT).
+Group: per status (GROUP BY).
 Urutkan jumlah_order terbesar dulu.
 
 Tabel: orders (id, customer_id, status, created_at)
