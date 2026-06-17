@@ -60,18 +60,19 @@ Coba susun prompt Anda sendiri di Cursor, lalu jalankan hasilnya di playground.
 
 ```
 Tulis query MySQL untuk menghitung total belanja (revenue) setiap customer.
-Revenue dihitung dari qty * unit_price di tabel order_items.
-Hanya hitung order dengan status 'paid' atau 'shipped'.
-
-Output: customer.name, total_revenue (SUM qty * unit_price).
+Revenue dihitung dari SUM(qty * unit_price) di tabel order_items.
+Filter: hanya order dengan status 'paid' atau 'shipped'.
+Group: per customers.id (GROUP BY).
 Urutkan total_revenue terbesar dulu.
+
+Output: customer.name, total_revenue.
 
 Tabel:
 - customers (id, name)
 - orders (id, customer_id, status)
 - order_items (id, order_id, product_id, qty, unit_price)
 
-Gunakan GROUP BY customers.id.
+Gunakan INNER JOIN untuk menghubungkan ketiga tabel.
 ```
 
 </details>
@@ -125,7 +126,7 @@ Tulis query MySQL untuk menampilkan detail setiap item order beserta:
 - subtotal (qty * unit_price)
 - status order
 
-Hanya tampilkan order dengan status 'paid' atau 'shipped'.
+Filter: hanya order dengan status 'paid' atau 'shipped'.
 Urutkan berdasarkan order_id, lalu product_id.
 
 Tabel:
@@ -134,6 +135,7 @@ Tabel:
 - order_items (id, order_id, product_id, qty, unit_price)
 - products (id, name, category)
 
+Gunakan INNER JOIN untuk menghubungkan keempat tabel.
 Gunakan alias tabel (c, o, oi, p) agar query lebih ringkas.
 ```
 
@@ -191,10 +193,12 @@ Tulis query MySQL menggunakan CTE (WITH clause) untuk menemukan
 top 3 customer dengan total belanja terbesar sepanjang waktu.
 
 Langkah:
-1. CTE pertama (customer_spending): hitung total_revenue per customer_id
-   dari order_items JOIN orders, hanya status 'paid' atau 'shipped'
-2. Query utama: JOIN customer_spending ke tabel customers,
-   ambil 3 teratas ORDER BY total_revenue DESC LIMIT 3
+1. CTE (customer_spending): hitung SUM(qty * unit_price) per customer_id
+   dari order_items INNER JOIN orders,
+   filter status 'paid' atau 'shipped',
+   GROUP BY customer_id
+2. Query utama: INNER JOIN customer_spending ke tabel customers,
+   ORDER BY total_revenue DESC, LIMIT 3
 
 Output: customer.name, customer.city, total_revenue
 
