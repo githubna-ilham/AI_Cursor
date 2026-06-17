@@ -15,13 +15,23 @@ Latihan ini **melanjutkan langsung dari Latihan 02**. Schema dan data yang dipak
 
 Kalau membuka sesi baru, paste ulang schema dari [Latihan 02](../../Sesi-03-Prompting-Context/latihan-02-prompting-drill/README.md#schema--data-mysql-80) ke playground sebelum mulai.
 
+> **Cara mengerjakan**: Baca user story di setiap sub-tahap, coba susun prompt Anda sendiri di Cursor, lalu jalankan di playground. Setelah mencoba, buka **Lihat Contoh Prompt** untuk membandingkan dengan referensi.
+
 ---
 
 ## Tahap 5 — Agregasi: GROUP BY, SUM, COUNT (15')
 
 **Tujuan**: Generate query yang meringkas data — dasar laporan bisnis.
 
-### 5.1 Prompt — total order per status
+### 5.1 — Jumlah Order per Status
+
+**User Story:**
+> "Sebagai supervisor operasional, saya ingin mengetahui berapa jumlah order untuk setiap status (pending, paid, shipped, cancelled), agar saya bisa memantau distribusi order harian."
+
+Coba susun prompt Anda sendiri di Cursor, lalu jalankan hasilnya di playground.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Tulis query MySQL untuk menghitung jumlah order per status.
@@ -31,9 +41,21 @@ Urutkan jumlah_order terbesar dulu.
 Tabel: orders (id, customer_id, status, created_at)
 ```
 
+</details>
+
 **Verifikasi**: totalkan dari data sample — apakah angka per status cocok?
 
-### 5.2 Prompt — total revenue per customer
+---
+
+### 5.2 — Total Revenue per Customer
+
+**User Story:**
+> "Sebagai tim finance, saya ingin melihat total belanja setiap customer dari order yang sudah dibayar atau dikirim, diurutkan dari yang terbesar, agar saya bisa mengidentifikasi customer bernilai tinggi."
+
+Coba susun prompt Anda sendiri di Cursor, lalu jalankan hasilnya di playground.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Tulis query MySQL untuk menghitung total belanja (revenue) setiap customer.
@@ -51,17 +73,29 @@ Tabel:
 Gunakan GROUP BY customers.id.
 ```
 
+</details>
+
 **Verifikasi**: hitung manual untuk Andi (customer_id=1) — order 1 (paid) dan order 2 (shipped) keduanya masuk. Apakah angka AI cocok?
 
-### 5.3 Iterasi — tambah filter HAVING
+---
 
-Lanjutkan di Chat yang sama:
+### 5.3 — Filter dengan HAVING
+
+**User Story:**
+> "Dari daftar tadi, saya hanya butuh customer yang total belanjaanya di atas 500.000 — sisanya tidak perlu ditampilkan."
+
+Lanjutkan di Chat yang sama dengan prompt iterasi Anda sendiri.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Tambahkan filter: hanya tampilkan customer yang total_revenue-nya
 lebih dari 500000.
 Gunakan HAVING, bukan WHERE.
 ```
+
+</details>
 
 **Verifikasi**: berapa customer yang lolos? Cek manual dari hasil Tahap 5.2.
 
@@ -71,7 +105,15 @@ Gunakan HAVING, bukan WHERE.
 
 **Tujuan**: Generate query yang menggabungkan 3 atau 4 tabel sekaligus.
 
-### 6.1 Prompt — detail order lengkap
+### 6.1 — Detail Item Order Lengkap
+
+**User Story:**
+> "Sebagai tim operasional, saya ingin melihat rincian setiap item dari order yang sudah dibayar atau dikirim — lengkap dengan nama customer, nama produk, kategori, qty, harga satuan, subtotal, dan status order — agar saya bisa membuat laporan pengiriman yang detail."
+
+Coba susun prompt Anda sendiri di Cursor, lalu jalankan hasilnya di playground.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Tulis query MySQL untuk menampilkan detail setiap item order beserta:
@@ -94,11 +136,23 @@ Tabel:
 Gunakan alias tabel (c, o, oi, p) agar query lebih ringkas.
 ```
 
+</details>
+
 **Verifikasi**:
 - Hitung manual: berapa baris yang harusnya muncul? (hitung order_items yang order-nya paid/shipped)
 - Apakah subtotal setiap baris benar? Cek beberapa baris secara manual.
 
-### 6.2 Prompt — produk yang belum pernah dipesan
+---
+
+### 6.2 — Produk yang Belum Pernah Dipesan
+
+**User Story:**
+> "Sebagai tim gudang, saya ingin tahu produk mana yang belum pernah masuk ke dalam order apapun, agar saya bisa mengevaluasi apakah produk tersebut perlu dipromosikan atau dihapus dari katalog."
+
+Coba susun prompt Anda sendiri di Cursor, lalu jalankan hasilnya di playground.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Tulis query MySQL untuk menampilkan produk yang BELUM PERNAH ada di order_items.
@@ -111,6 +165,8 @@ Tabel:
 Gunakan LEFT JOIN dan filter WHERE order_items.product_id IS NULL.
 ```
 
+</details>
+
 **Verifikasi**: dari 5 produk di sample data, produk mana yang tidak ada di order_items sama sekali? Cek manual.
 
 ---
@@ -119,7 +175,15 @@ Gunakan LEFT JOIN dan filter WHERE order_items.product_id IS NULL.
 
 **Tujuan**: Generate query dengan CTE untuk memecah logika kompleks jadi bagian yang lebih mudah dibaca.
 
-### 7.1 Prompt — top 3 customer berdasarkan total belanja
+### 7.1 — Top 3 Customer Berdasarkan Total Belanja
+
+**User Story:**
+> "Sebagai direktur, saya ingin mengetahui 3 customer dengan total belanja terbesar sepanjang waktu beserta kota asal mereka, agar saya bisa memberikan penghargaan kepada pelanggan setia terbaik."
+
+Coba susun prompt Anda sendiri menggunakan CTE di Cursor.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Tulis query MySQL menggunakan CTE (WITH clause) untuk menemukan
@@ -139,17 +203,29 @@ Tabel:
 - order_items (order_id, qty, unit_price)
 ```
 
+</details>
+
 **Verifikasi**: hasilnya harus konsisten dengan Tahap 5.2. Apakah top 3 sama?
 
-### 7.2 Prompt — iterasi tambah kolom
+---
 
-Lanjutkan di Chat yang sama:
+### 7.2 — Iterasi: Tambah Kolom Jumlah Order
+
+**User Story:**
+> "Selain total belanja, saya juga ingin tahu berapa kali masing-masing dari 3 customer itu melakukan order — tampilkan di kolom yang sama."
+
+Lanjutkan di Chat yang sama dengan prompt iterasi Anda sendiri.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Tambahkan kolom jumlah_order (COUNT DISTINCT order_id) ke dalam CTE customer_spending,
 lalu tampilkan juga di query utama.
 Jangan ubah logika filter dan urutan.
 ```
+
+</details>
 
 **Verifikasi**: apakah jumlah order setiap customer cocok dengan data sample?
 
@@ -159,7 +235,15 @@ Jangan ubah logika filter dan urutan.
 
 **Tujuan**: Praktikkan pola paling penting untuk query destruktif — verifikasi sebelum eksekusi.
 
-### 8.1 Prompt — UPDATE stok produk Electronics
+### 8.1 — Update Stok Produk Electronics
+
+**User Story:**
+> "Sebagai manajer gudang, saya ingin menambah stok sebesar 10 unit untuk semua produk berkategori Electronics karena ada pengiriman baru masuk. Pastikan saya bisa melihat daftar produk yang akan terpengaruh sebelum perubahan dilakukan."
+
+Coba susun prompt Anda sendiri — ingat pola: SELECT dulu, UPDATE kemudian.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Saya ingin menambah stok sebesar 10 untuk semua produk dengan category = 'Electronics'.
@@ -175,13 +259,25 @@ Tambahkan komentar langkah di setiap query.
 Tabel: products (id, sku, name, category, stock)
 ```
 
+</details>
+
 **Cara jalankan**:
 1. Jalankan query SELECT (#1) — catat produk dan stok awal.
 2. Verifikasi: ada 3 produk Electronics (SKU-001, SKU-002, SKU-005).
 3. Jalankan UPDATE (#2).
 4. Jalankan SELECT verifikasi (#3) — stok semua sudah bertambah 10.
 
-### 8.2 Prompt — soft delete order lama
+---
+
+### 8.2 — Soft Delete Order Lama
+
+**User Story:**
+> "Sebagai admin sistem, saya ingin mengarsipkan order yang sudah lama tidak aktif — yaitu order berstatus 'cancelled' atau order yang dibuat sebelum 1 Mei 2026 — dengan mengubah statusnya menjadi 'archived'. Tampilkan dulu order yang akan terpengaruh sebelum saya setujui perubahan."
+
+Coba susun prompt Anda sendiri — ingat: dua query, kondisi WHERE harus identik.
+
+<details>
+<summary>💡 Lihat Contoh Prompt</summary>
 
 ```
 Saya ingin menandai order lama sebagai tidak aktif (soft delete).
@@ -196,6 +292,8 @@ Tambahkan komentar: "Verifikasi SELECT sebelum menjalankan UPDATE."
 
 Tabel: orders (id, customer_id, status, created_at)
 ```
+
+</details>
 
 **Verifikasi**:
 - Dari data sample, order mana yang created_at sebelum 2026-05-01 atau statusnya cancelled?
