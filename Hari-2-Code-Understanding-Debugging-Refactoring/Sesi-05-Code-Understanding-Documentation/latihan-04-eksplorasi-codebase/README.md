@@ -33,7 +33,6 @@ Setelah latihan, peserta mampu:
 ## Prasyarat
 
 - MySQL Server + GUI client (DBeaver / MySQL Workbench / Cursor Database Client) terinstall.
-- Sudah apply `sql-playground/00_schema.sql` + `01_sample_data.sql` ke database `latihan_sql`.
 - Cursor aktif, mode Ask (Chat) familiar (dari Hari 1).
 
 ---
@@ -42,7 +41,13 @@ Setelah latihan, peserta mampu:
 
 ### 1. Setup (10')
 
-1.1. Pastikan database `latihan_sql` ada & ter-populate:
+1.1. Buka file `sql-playground/00_schema.sql` di GUI client, lalu eksekusi seluruh isinya untuk membuat database dan semua tabel.
+
+> Kalau schema sudah pernah dibuat sebelumnya, file ini akan DROP dan recreate semua tabel — data lama akan terhapus.
+
+1.2. Buka file `sql-playground/01_sample_data.sql`, lalu eksekusi untuk mengisi data sample ke semua tabel.
+
+1.3. Verifikasi data sudah masuk:
 
 ```sql
 USE latihan_sql;
@@ -54,9 +59,9 @@ UNION ALL SELECT 'products', COUNT(*) FROM products
 UNION ALL SELECT 'orders', COUNT(*) FROM orders;
 ```
 
-1.2. Buka folder `sql-playground/queries/sesi-05-explore/` di Cursor.
+1.4. Buka folder `sql-playground/queries/sesi-05-explore/` di Cursor.
 
-1.3. Buat folder submission: `mkdir -p submissions/<nama>/`.
+1.5. Buat folder submission: `mkdir -p submissions/<nama>/`.
 
 ### 2. Eksplorasi 8 Query (60')
 
