@@ -167,16 +167,9 @@ Minta AI membuatkan diagram hubungan antar tabel:
 Buatkan ER diagram dalam format Mermaid untuk schema ini.
 Tampilkan semua tabel dan hubungan antar tabelnya.
 Gunakan format erDiagram.
+
+Simpan hasilnya ke file submissions/<nama>/05_er_diagram.md
 ```
-
-Salin output Mermaid dari AI, lalu simpan ke `submissions/<nama>/05_er_diagram.md` dengan format:
-
-    ```mermaid
-    erDiagram
-        -- hasil dari AI di sini
-    ```
-
-Untuk melihat hasilnya, buka preview markdown di Cursor (Ctrl+Shift+V / Cmd+Shift+V).
 
 ---
 
