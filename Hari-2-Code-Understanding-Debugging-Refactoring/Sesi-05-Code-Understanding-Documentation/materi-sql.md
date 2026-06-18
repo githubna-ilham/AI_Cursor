@@ -100,28 +100,7 @@ Saat Anda lihat query baru, tanya: *"Ini pola yang mana?"* Setengah pertanyaan l
 
 ---
 
-## 4. Asumsi Tersembunyi: Yang AI Tidak Bisa Bantu
-
-Coba lihat baris ini:
-
-```sql
-WHERE status NOT IN ('cancelled', 'refunded')
-```
-
-AI bisa jelaskan **apa** yang dilakukan: "filter ini buang order yang dibatalkan atau di-refund".
-
-Tapi AI tidak tahu **kenapa**:
-- Kenapa `refunded` juga di-buang? Bukannya `refunded` artinya sudah pernah bayar?
-- Apakah `cancelled` bisa berarti "user cancel" atau "system cancel"?
-- Mungkin developer asli mengasumsikan revenue = **uang yang benar-benar masuk** (bukan transaksi yang batal-bayar).
-
-**Tugas Anda**: gali "kenapa" ini dengan tanya rekan kerja (atau Slack/Notion), lalu **tulis di catatan**. Supaya developer berikutnya tidak perlu bingung lagi.
-
-> 💡 **Aturan emas**: AI hebat menjelaskan *apa*. *Kenapa* harus dari manusia yang tahu konteks bisnis.
-
----
-
-## 5. Cara Tanya AI yang Bener
+## 4. Cara Tanya AI yang Bener
 
 Ada 2 cara tanya AI. Coba bedakan kualitasnya:
 
@@ -151,7 +130,7 @@ Aturan: **selalu kasih format**. Tanpa format, AI bingung mau detail seberapa.
 
 ---
 
-## 6. Verifikasi: Jangan Percaya, Jalankan
+## 5. Verifikasi: Jangan Percaya, Jalankan
 
 AI sering memberi jawaban yang tidak akurat — istilah teknisnya **hallucination**. Khususnya saat mengklaim "output query-nya seperti ini".
 
@@ -167,7 +146,7 @@ Kalau **tidak match** → AI salah. Tanya ulang dengan paste hasil real:
 
 ---
 
-## 7. Output Wajib: 3 Jenis Dokumentasi
+## 6. Output Wajib: 3 Jenis Dokumentasi
 
 Akhir Sesi 5, Anda akan punya 3 hal:
 
@@ -181,7 +160,7 @@ Dokumentasi yang baik = developer berikutnya **menghemat 2 jam** yang Anda habis
 
 ---
 
-## 8. Jangan Lakukan Ini
+## 7. Jangan Lakukan Ini
 
 | ❌ Salah | ✅ Benar |
 |---------|---------|
