@@ -3,21 +3,20 @@
 > 🗺️ **Tahap 13–15 dari 20** | Sebelumnya: Sesi 5 Code Understanding | Setelah ini: Sesi 7 Refactoring
 
 **Durasi**: 90 menit
-**Tipe**: Hands-on individual (boleh diskusi tetangga)
-**Output**: 5 file `submissions/<nama>/06_NN_<judul>.md` berisi diagnose + fix + verifikasi.
+**Tipe**: Hands-on individual (diskusi dengan peserta lain diperbolehkan)
 
 ---
 
 ## Konteks
 
-5 query di `sql-playground/queries/sesi-06-debug/` adalah query production yang **dilaporkan QA / product owner**:
+5 query di `sql-playground/queries/sesi-06-debug/` adalah query production yang **dilaporkan oleh QA atau product owner**:
 
-- Hasil tidak sesuai expectation
-- Hilang baris yang harusnya muncul
-- Inflasi angka yang tidak masuk akal
-- Filter yang tidak bekerja
+- Hasil tidak sesuai ekspektasi
+- Baris yang seharusnya muncul tidak tampil
+- Angka yang tidak masuk akal
+- Filter yang tidak bekerja sebagaimana mestinya
 
-Tugas Anda: pakai AI sebagai **debugging partner** untuk diagnose + fix tanpa rewrite total.
+Tugas Anda: gunakan AI sebagai **mitra debugging** untuk mendiagnosis dan memperbaiki tanpa menulis ulang query secara total.
 
 ---
 
@@ -25,111 +24,81 @@ Tugas Anda: pakai AI sebagai **debugging partner** untuk diagnose + fix tanpa re
 
 Setelah latihan, peserta mampu:
 
-1. **Membedakan symptom vs penyebab** (banyak bug terlihat sama tapi root cause beda).
-2. **Pakai AI untuk diagnose dulu**, bukan langsung minta fix (anti-pattern utama).
-3. **Memverifikasi hipotesis** dengan query investigatif minimal.
-4. **Menulis fix minimal** yang menyelesaikan bug tanpa mengubah behaviour lain.
+1. Membedakan symptom dari penyebab — banyak bug tampak serupa padahal root cause-nya berbeda.
+2. Menggunakan AI untuk mendiagnosis terlebih dahulu, bukan langsung meminta perbaikan.
+3. Memverifikasi hipotesis dengan query investigatif yang minimal.
+4. Menulis perbaikan minimal yang menyelesaikan bug tanpa mengubah perilaku lainnya.
 
 ---
 
 ## Prasyarat
 
 - Latihan 04 selesai (familiar dengan schema 9 tabel).
-- `latihan_sql` database ter-populate fresh (kalau ragu, re-apply `00_schema.sql` + `01_sample_data.sql`).
+- Database `latihan_sql` sudah terisi data — apabila ragu, jalankan ulang `00_schema.sql` + `01_sample_data.sql`.
 
 ---
 
 ## Langkah Per Bug
 
-Untuk **setiap 5 query** (idealnya semua), loop berikut:
+Untuk setiap query (minimal 3, idealnya semua 5), ikuti loop berikut:
 
 ### A. Reproduce (3')
 
-1. Buka file query (mis. `01_inflated_revenue.sql`).
-2. **Baca header `LAPORAN BUG`** — itu symptom yang harus Anda reproduce.
-3. Run query as-is di MySQL. Catat hasil aktual.
+1. Buka file query (contoh: `01_inflated_revenue.sql`).
+2. **Baca bagian `LAPORAN BUG`** di header — itulah symptom yang perlu Anda reproduce.
+3. Jalankan query apa adanya di MySQL. Catat hasil aktual.
 
-### B. Diagnose dengan AI (5')
+### B. Diagnosis dengan AI (5')
 
-Pakai prompt **diagnose dulu, bukan fix langsung**:
+Gunakan prompt **diagnosis dulu, bukan perbaikan langsung**:
 
 ```
-Query berikut hasilnya salah. Symptom:
+Query berikut hasilnya salah. Gejala:
 <paste isi header LAPORAN BUG>
 
 Query:
 <paste isi query>
 
-Tugas kamu:
-1. Diagnose: cari penyebab dalam 1-2 kalimat
-2. Reproduce: query SELECT pendek (mis. SELECT COUNT(*) FROM ...)
-   untuk membuktikan hipotesismu
-3. JANGAN beri fix dulu
+Tolong lakukan hal berikut:
+1. Tentukan kemungkinan penyebab (1-2 kalimat)
+2. Berikan query SELECT singkat untuk membuktikan dugaan tersebut
+3. JANGAN berikan perbaikan dulu
 
-Saya akan minta fix di prompt berikutnya setelah saya yakin diagnose
-benar.
+Saya akan meminta perbaikan di prompt berikutnya setelah yakin diagnosis benar.
 ```
 
 ### C. Verifikasi Diagnosis (3')
 
-Run query investigatif yang AI sarankan di point 2. Pastikan hasilnya **konsisten** dengan hipotesis.
+Jalankan query investigatif yang disarankan AI di poin 2. Pastikan hasilnya **konsisten** dengan hipotesis.
 
-> ⚠️ Kalau hipotesis AI tidak terbukti, jangan langsung minta fix — minta AI re-diagnose dengan data baru.
+> Apabila hipotesis AI tidak terbukti, jangan langsung meminta perbaikan — minta AI mendiagnosis ulang dengan data baru yang Anda temukan.
 
-### D. Fix (5')
+### D. Perbaikan (5')
 
-Sekarang minta fix:
+Setelah diagnosis terverifikasi, minta perbaikan:
 
 ```
-Hipotesismu benar (output investigatif sesuai). Sekarang:
+Hipotesis Anda benar (output investigatif sudah saya verifikasi). Sekarang:
 
-1. Berikan query fix — ubah seminimal mungkin (jangan rewrite total)
-2. Komentar 1 baris di atas baris yang diubah, format:
-   -- FIX: <apa yang diubah & kenapa>
-3. Query SELECT untuk verifikasi: bandingkan hasil sebelum & sesudah fix
+1. Berikan query perbaikan — ubah sesedikit mungkin, jangan tulis ulang secara total
+2. Tambahkan komentar 1 baris di atas baris yang diubah, dengan format:
+   -- FIX: <apa yang diubah & mengapa>
+3. Sertakan query SELECT untuk membandingkan hasil sebelum dan sesudah perbaikan
 ```
 
-### E. Tulis Submission (2')
-
-`submissions/<nama>/06_01_inflated_revenue.md`:
-
-```markdown
-# Bug 01 — Inflated Revenue
-
-**Symptom**: ...
-**Root cause** (1 paragraf): ...
-**Fix**:
-\`\`\`sql
-<query fix>
-\`\`\`
-**Verifikasi**: hasil before ~4.9jt → after 1.25jt ✅
-**Pelajaran**: ...
-```
-
-Ulangi A–E untuk 5 bug.
+Ulangi A–D untuk setiap bug.
 
 ---
 
-## Submit
+## Anti-Pattern yang Perlu Dihindari
 
-`submissions/<nama>/`:
-- 5 file `06_NN_<judul>.md`
-- `refleksi.md` (≤200 kata):
-  - Bug mana paling sulit di-diagnose? Kenapa?
-  - 1 kali AI memberi diagnose salah — bagaimana Anda tahu?
-  - 1 pelajaran SQL yang Anda dapat dari bug-bug ini
-
----
-
-## Tips Anti-Pattern
-
-| ❌ Hindari | ✅ Lakukan |
-|-----------|-----------|
-| "Fix query ini" | "Diagnose dulu, baru fix" |
-| Accept fix tanpa verify | Run query sebelum & sesudah, bandingkan output |
-| Rewrite total query | Patch minimal — ubah baris yang salah saja |
-| Cuma fix happy path | Test edge case lain (kosong, NULL, banyak baris) |
-| Lupa save query asli | `git diff` atau backup file sebelum edit |
+| ❌ Tidak Disarankan | ✅ Praktik yang Tepat |
+|---------------------|----------------------|
+| "Fix query ini" | "Diagnosis dulu, baru perbaiki" |
+| Menerapkan perbaikan tanpa verifikasi | Jalankan query sebelum dan sesudah, bandingkan output |
+| Menulis ulang query secara total | Perbaikan minimal — ubah hanya baris yang bermasalah |
+| Hanya menguji kondisi normal | Uji edge case lain (kosong, NULL, banyak baris) |
+| Tidak menyimpan query asli | Gunakan `git diff` atau backup file sebelum diedit |
 
 ---
 
@@ -137,6 +106,6 @@ Ulangi A–E untuk 5 bug.
 
 | Issue | Solusi |
 |-------|--------|
-| AI fix berhasil tapi `count(*)` baseline tidak match | Mungkin AI ubah lebih dari yang seharusnya, baca diff baris per baris |
-| Fix bekerja di sample data tapi rusak di edge case | Generate test case sendiri (mis. order dengan total = NULL) |
-| Bug yang Anda fix muncul lagi setelah sample data direset | Itu artinya seeded bug — wajar. Fix di query, jangan di data. |
+| AI memberikan perbaikan yang benar tetapi `COUNT(*)` baseline tidak cocok | Kemungkinan AI mengubah lebih dari yang seharusnya — baca diff baris per baris |
+| Perbaikan berhasil di data sample tetapi gagal di edge case | Buat test case sendiri (contoh: order dengan total = NULL) |
+| Bug muncul kembali setelah data sample direset | Hal ini wajar — perbaikan dilakukan di query, bukan di data |
