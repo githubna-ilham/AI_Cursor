@@ -1,21 +1,21 @@
-# Latihan 04 — Eksplorasi Codebase: 8 Query SQL
+# Latihan 04 — Eksplorasi Database: Kenali Schema dan Data
 
 > 🗺️ **Tahap 11–12 dari 20** di [Perjalanan Project Hari 2](../../perjalanan-project.md)
-> Sebelumnya: Hari 1 selesai (portfolio + SQL prompting drill) | Setelah ini: Sesi 6 Debugging
+> Sebelumnya: Hari 1 selesai (SQL prompting drill) | Setelah ini: Sesi 6 Debugging
 
 **Durasi**: 90 menit
 **Tipe**: Hands-on individual
-**Output**: 4–8 file `submissions/<nama>/05_NN_<judul>.md` berisi docstring + diagram + asumsi bisnis hasil eksplorasi.
+**Output**: File catatan eksplorasi + ER diagram hasil pemahaman Anda terhadap schema database.
 
 ---
 
 ## Konteks
 
-Anda baru "join project" e-commerce. Di repo (`sql-playground/queries/sesi-05-explore/`) ada 8 query SQL yang ditulis developer sebelum Anda — **tanpa komentar, tanpa dokumentasi**.
+Anda baru "join project" e-commerce. Yang tersedia hanya dua file:
+- `sql-playground/00_schema.sql` — struktur tabel
+- `sql-playground/01_sample_data.sql` — data contoh
 
-Tugas Anda: **pahami semuanya** dengan bantuan AI, dan **tulis dokumentasi** yang akan dibaca developer baru berikutnya.
-
-Mensimulasikan kondisi nyata: 80% waktu developer dihabiskan **memahami kode orang lain**, bukan menulis kode baru.
+Tidak ada dokumentasi, tidak ada penjelasan bisnis. Tugas Anda: **pahami database ini** dengan bantuan AI, lalu catat apa yang Anda temukan agar developer berikutnya tidak perlu mulai dari nol.
 
 ---
 
@@ -23,10 +23,10 @@ Mensimulasikan kondisi nyata: 80% waktu developer dihabiskan **memahami kode ora
 
 Setelah latihan, peserta mampu:
 
-1. **Membaca query SQL kompleks** (multi-JOIN, CTE, window function, recursive) dengan bantuan AI tanpa terlena disuapi.
-2. Menggunakan **@-mention file** di Cursor Chat untuk attach query sebagai context.
-3. **Memvalidasi penjelasan AI** dengan run query investigatif sendiri (bukan terima mentah).
-4. **Menulis docstring & ER diagram** untuk knowledge transfer.
+1. Membaca schema SQL dan memahami hubungan antar tabel dengan bantuan AI.
+2. Menggunakan **@-mention file** di Cursor Chat untuk attach schema sebagai konteks.
+3. Mengajukan pertanyaan bisnis sederhana dan mencari jawabannya langsung dari data.
+4. Mendokumentasikan pemahaman dalam bentuk catatan dan ER diagram.
 
 ---
 
@@ -59,78 +59,118 @@ UNION ALL SELECT 'products', COUNT(*) FROM products
 UNION ALL SELECT 'orders', COUNT(*) FROM orders;
 ```
 
-1.4. Buka folder `sql-playground/queries/sesi-05-explore/` di Cursor.
+1.4. Buat folder submission: `mkdir -p submissions/<nama>/`.
 
-1.5. Buat folder submission: `mkdir -p submissions/<nama>/`.
+---
 
-### 2. Eksplorasi 8 Query (60')
+### 2. Kenali Schema dengan AI (20')
 
-Untuk **minimal 4 query** (idealnya semua 8), lakukan langkah berikut:
+Buka Cursor Chat (mode **Ask**), lalu ajukan pertanyaan berikut satu per satu:
 
-#### 2a. Baca dulu (2 menit per query)
-
-Buka file query, baca pelan-pelan, coba tebak kira-kira query ini mengambil data apa. Jangan tanya AI dulu.
-
-#### 2b. Tanya AI (3 menit)
-
-Di Cursor Chat (mode **Ask**):
+**Pertanyaan 1 — Gambaran umum:**
 
 ```
-@file 01_customer_lifetime_value.sql
+@file sql-playground/00_schema.sql
 
-Tolong jelaskan query ini dalam bahasa yang mudah dipahami:
-
-1. Query ini mengambil data apa?
-2. Tabel mana saja yang dipakai?
-3. Ada filter atau kondisi apa di query ini?
-4. Hasil akhirnya akan tampak seperti apa? Berikan contoh 3 baris data.
+Tolong jelaskan database ini dalam bahasa yang mudah dipahami:
+1. Ini database untuk bisnis apa?
+2. Ada tabel apa saja?
+3. Tabel mana yang paling penting?
 ```
 
-#### 2c. Jalankan query (3 menit)
+**Pertanyaan 2 — Hubungan antar tabel:**
 
-Jalankan query di MySQL. Bandingkan hasilnya dengan penjelasan AI di poin 4. Kalau berbeda, paste hasil aslinya ke chat dan tanya AI lagi.
+```
+@file sql-playground/00_schema.sql
 
-#### 2d. Catat pemahaman Anda (2 menit)
+Jelaskan hubungan antar tabel di database ini:
+1. Tabel mana yang terhubung ke tabel mana?
+2. Apa artinya hubungan tersebut dalam konteks bisnis?
+   Contoh: "Satu customer bisa punya banyak order"
+```
 
-Buat file `submissions/<nama>/05_01_customer_lifetime_value.md`:
+**Pertanyaan 3 — Cek data sample:**
+
+```
+@file sql-playground/01_sample_data.sql
+
+Dari data sample ini:
+1. Ada berapa customer, produk, dan order?
+2. Produk apa saja yang tersedia?
+3. Apa status order yang ada?
+```
+
+Catat poin penting dari jawaban AI di `submissions/<nama>/05_catatan_schema.md`.
+
+---
+
+### 3. Eksplorasi Data dengan Pertanyaan Bisnis (40')
+
+Pilih **minimal 4** pertanyaan bisnis di bawah, minta AI membuatkan query-nya, lalu jalankan di MySQL:
+
+| # | Pertanyaan Bisnis |
+|---|-------------------|
+| 1 | Siapa saja customer yang sudah melakukan order? |
+| 2 | Produk apa yang paling banyak dipesan? |
+| 3 | Berapa total pendapatan dari order yang sudah dibayar? |
+| 4 | Customer mana yang paling banyak belanja? |
+| 5 | Produk apa yang belum pernah dipesan sama sekali? |
+| 6 | Berapa rata-rata nilai order per customer? |
+
+**Cara mengerjakan setiap pertanyaan:**
+
+1. Tanya AI di Cursor Chat:
+
+```
+@file sql-playground/00_schema.sql
+
+Buatkan query MySQL untuk menjawab pertanyaan ini:
+"[tulis pertanyaan bisnis yang Anda pilih]"
+
+Gunakan tabel yang tersedia di schema ini.
+Jelaskan juga apa yang dilakukan query tersebut.
+```
+
+2. Jalankan query di MySQL, lihat hasilnya.
+
+3. Catat di `submissions/<nama>/05_eksplorasi_data.md`:
 
 ```markdown
-# Query 01 — Customer Lifetime Value
+## Pertanyaan: [tulis pertanyaan]
 
-**Menurut saya, query ini berguna untuk**: ...
-
-**Tabel yang dipakai**:
-- ...
-
-**Yang menarik atau mengejutkan dari query ini**:
-- ...
+**Query yang dipakai**:
+```sql
+-- paste query di sini
 ```
 
-Ulangi 2a–2d untuk minimal 4 query.
+**Hasil yang saya temukan**: ...
 
-### 3. Generate ER Diagram (10')
-
-```
-@file ../../sql-playground/00_schema.sql
-
-Generate ER diagram dalam Mermaid syntax untuk schema ini. Tampilkan:
-- Semua 9 tabel dengan kolom utama
-- Relasi 1:N dengan label
-- Foreign key dengan notasi crow's foot
-
-Format Mermaid `erDiagram`, langsung paste-able ke markdown.
+**Yang menarik dari hasil ini**: ...
 ```
 
-Simpan ke `submissions/<nama>/05_er_diagram.md`.
+---
 
-### 4. Architecture Note (10')
+### 4. Generate ER Diagram (10')
 
-Berdasarkan 4 query yang sudah dipahami + ER diagram, tulis `submissions/<nama>/05_arsitektur.md` (max 300 kata):
+```
+@file sql-playground/00_schema.sql
 
-- **Domain bisnis apa**: e-commerce, scope: ?
-- **Entitas utama**: core vs supporting
-- **Pola query yang sering muncul**
-- **1 hal yang developer berikutnya perlu tahu duluan**
+Buatkan ER diagram dalam format Mermaid untuk schema ini.
+Tampilkan semua tabel dan hubungan antar tabelnya.
+Gunakan format erDiagram.
+```
+
+Simpan hasil diagram ke `submissions/<nama>/05_er_diagram.md`.
+
+---
+
+### 5. Catatan Penutup (10')
+
+Tulis `submissions/<nama>/05_refleksi.md` (bebas, max 150 kata):
+
+- Tabel atau kolom mana yang paling membingungkan? Kenapa?
+- Hal apa yang paling mengejutkan dari data atau schema ini?
+- Pertanyaan bisnis apa yang belum terjawab dan ingin Anda cari tahu?
 
 ---
 
@@ -138,22 +178,18 @@ Berdasarkan 4 query yang sudah dipahami + ER diagram, tulis `submissions/<nama>/
 
 Folder `submissions/<nama>/` minimal berisi:
 
-- 4–8 file `05_NN_<judul>.md` (docstring per query)
-- `05_er_diagram.md` (Mermaid)
-- `05_arsitektur.md` (note 300 kata)
-- `refleksi.md` (≤150 kata):
-  - Query mana paling sulit dipahami? Kenapa?
-  - 1 hallucination AI yang Anda temukan & cara menemukannya
-  - 1 template prompt yang akan Anda simpan
+- `05_catatan_schema.md` — pemahaman tentang struktur database
+- `05_eksplorasi_data.md` — hasil eksplorasi minimal 4 pertanyaan bisnis
+- `05_er_diagram.md` — ER diagram Mermaid
+- `05_refleksi.md` — catatan penutup
 
 ---
 
 ## Tips
 
-- **Baca sebelum tanya** — prompt jadi lebih tajam setelah Anda punya hipotesis.
-- **@-mention file**, jangan paste manual.
-- **Run setiap klaim AI** di MySQL.
-- **Pakai EXPLAIN** sebelum tanya kenapa query lambat — sering jawab sendiri.
+- **Tanya AI dulu, jalankan kemudian** — pahami query sebelum dieksekusi.
+- **Kalau hasil tidak sesuai ekspektasi**, paste hasil aslinya ke chat dan tanya AI: "kenapa hasilnya seperti ini?"
+- **Tidak harus mengerti semua SQL-nya** — fokus pada apa yang ingin Anda tahu dari data.
 
 ---
 
@@ -161,7 +197,7 @@ Folder `submissions/<nama>/` minimal berisi:
 
 | Issue | Solusi |
 |-------|--------|
-| `Unknown column 'X'` saat run query | Schema belum di-apply ulang, run `00_schema.sql` lagi |
-| AI bilang tabel `category` (singular) | Refresh @file mention; AI cache outdated. Schema kita pakai `categories` |
-| Recursive CTE error di MySQL | Pastikan MySQL ≥ 8.0; MariaDB ≥ 10.2 |
-| Hasil agregat berbeda dari klaim AI | Itu **expected** — sample data sengaja ada subtle mismatch. Tulis di docstring. |
+| `Unknown table` saat jalankan query | Pastikan sudah eksekusi `00_schema.sql` terlebih dahulu |
+| `Unknown column` | Cek nama kolom di `00_schema.sql` — minta AI untuk menyesuaikan query |
+| Data tidak muncul setelah query dijalankan | Pastikan `01_sample_data.sql` sudah dieksekusi |
+| Query error tapi tidak tahu kenapa | Copy error message-nya, paste ke Cursor Chat, minta AI menjelaskan |
