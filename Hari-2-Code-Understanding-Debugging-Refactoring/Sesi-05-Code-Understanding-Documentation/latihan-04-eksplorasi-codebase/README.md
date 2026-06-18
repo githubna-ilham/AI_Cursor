@@ -65,48 +65,44 @@ UNION ALL SELECT 'orders', COUNT(*) FROM orders;
 
 ### 2. Eksplorasi 8 Query (60')
 
-Untuk **minimal 4 query** (idealnya semua 8), lakukan loop berikut:
+Untuk **minimal 4 query** (idealnya semua 8), lakukan langkah berikut:
 
 #### 2a. Baca dulu (2 menit per query)
 
-Buka file query, **baca pelan-pelan**, coba terka apa yang query lakukan. Jangan tanya AI dulu.
+Buka file query, baca pelan-pelan, coba tebak kira-kira query ini mengambil data apa. Jangan tanya AI dulu.
 
-#### 2b. Tanya AI dengan format terstruktur (3 menit)
+#### 2b. Tanya AI (3 menit)
 
 Di Cursor Chat (mode **Ask**):
 
 ```
 @file 01_customer_lifetime_value.sql
 
-Tolong jelaskan query ini dengan format:
+Tolong jelaskan query ini dalam bahasa yang mudah dipahami:
 
-1. **TL;DR** (1 kalimat)
-2. **Tabel & kolom yang dipakai** (list)
-3. **Logika step-by-step** (FROM → WHERE → GROUP BY → HAVING → ORDER → LIMIT)
-4. **Asumsi bisnis** (apa yang diasumsikan developer asli)
-5. **Edge case yang bisa bikin hasil aneh**
-6. **Output sample** (3-5 baris dummy)
+1. Query ini mengambil data apa?
+2. Tabel mana saja yang dipakai?
+3. Ada filter atau kondisi apa di query ini?
+4. Hasil akhirnya akan tampak seperti apa? Berikan contoh 3 baris data.
 ```
 
-#### 2c. Verifikasi (3 menit)
+#### 2c. Jalankan query (3 menit)
 
-Run query di MySQL. Bandingkan hasil dengan klaim AI di point 6. **Kalau tidak match** → AI hallucinate, tanya ulang dengan paste hasil real.
+Jalankan query di MySQL. Bandingkan hasilnya dengan penjelasan AI di poin 4. Kalau berbeda, paste hasil aslinya ke chat dan tanya AI lagi.
 
-#### 2d. Tulis docstring sendiri (2 menit)
+#### 2d. Catat pemahaman Anda (2 menit)
 
-Di file `submissions/<nama>/05_01_customer_lifetime_value.md`:
+Buat file `submissions/<nama>/05_01_customer_lifetime_value.md`:
 
 ```markdown
 # Query 01 — Customer Lifetime Value
 
-**TL;DR (versi saya)**: ...
+**Menurut saya, query ini berguna untuk**: ...
 
-**Asumsi bisnis yang implisit**:
+**Tabel yang dipakai**:
 - ...
 
-**1 hal yang saya tidak duga sebelum baca**: ...
-
-**Edge case yang perlu di-handle ke depan**:
+**Yang menarik atau mengejutkan dari query ini**:
 - ...
 ```
 
