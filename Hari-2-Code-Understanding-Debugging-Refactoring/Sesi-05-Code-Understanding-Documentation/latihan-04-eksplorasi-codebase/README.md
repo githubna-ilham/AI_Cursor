@@ -133,24 +133,33 @@ Jelaskan juga apa yang dilakukan query tersebut.
 
 2. Jalankan query di MySQL, lihat hasilnya.
 
-3. Catat di `submissions/<nama>/05_eksplorasi_data.md`:
+3. Catat di `submissions/<nama>/05_eksplorasi_data.md`. Contoh format:
 
-```markdown
-## Pertanyaan: [tulis pertanyaan]
+---
 
-**Query yang dipakai**:
-```sql
--- paste query di sini
-```
+**Pertanyaan: Produk apa yang paling banyak dipesan?**
 
-**Hasil yang saya temukan**: ...
+Query yang dipakai:
 
-**Yang menarik dari hasil ini**: ...
-```
+    SELECT p.name, COUNT(oi.id) AS jumlah_dipesan
+    FROM products p
+    JOIN order_items oi ON oi.product_id = p.id
+    GROUP BY p.id, p.name
+    ORDER BY jumlah_dipesan DESC;
+
+Hasil yang saya temukan: Produk "Laptop ASUS" paling banyak dipesan, sebanyak 5 kali.
+
+Yang menarik dari hasil ini: Ada 2 produk yang sama sekali tidak pernah dipesan.
+
+---
+
+Gunakan format yang sama untuk setiap pertanyaan yang Anda kerjakan.
 
 ---
 
 ### 4. Generate ER Diagram (10')
+
+Minta AI membuatkan diagram hubungan antar tabel:
 
 ```
 @file sql-playground/00_schema.sql
@@ -160,7 +169,14 @@ Tampilkan semua tabel dan hubungan antar tabelnya.
 Gunakan format erDiagram.
 ```
 
-Simpan hasil diagram ke `submissions/<nama>/05_er_diagram.md`.
+Salin output Mermaid dari AI, lalu simpan ke `submissions/<nama>/05_er_diagram.md` dengan format:
+
+    ```mermaid
+    erDiagram
+        -- hasil dari AI di sini
+    ```
+
+Untuk melihat hasilnya, buka preview markdown di Cursor (Ctrl+Shift+V / Cmd+Shift+V).
 
 ---
 
